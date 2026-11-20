@@ -55,8 +55,7 @@ class Ranker:
         if not candidates:
             return []
         claimed_sold_out = claimed_sold_out or set()
-        preferred = list(dict.fromkeys(memory.preferred + request.stated_preferences))
-        avoided = [a for a in memory.avoided if a not in request.stated_preferences]
+        preferred, avoided = request.preference_signals(memory)
         pref_words = " ".join(ATTRIBUTES[a]["terms"][0] for a in preferred if a in ATTRIBUTES)
         query = f"{request.raw} {' '.join(request.ja_terms)} {pref_words}".strip()
         docs = [f"{c.title} {c.description or ''} {' '.join(ATTRIBUTES[a]['label'] for a in c.attributes if a in ATTRIBUTES)}"
@@ -96,10 +95,10 @@ class Ranker:
             elif request.budget_usd is None:
                 budget = 0.7
             elif cost.total_usd <= request.budget_usd:
-                budget = 1.0 - 0.2 * (cost.total_usd / request.budget_usd)
+                budget = 1.0 - 0.2 * (cost.total_usd / max(request.budget_usd, 0.01))
                 reasons.append(f"Estimated ${cost.total_usd:.2f} delivered, within ${request.budget_usd:.0f}")
             else:
-                over = (cost.total_usd - request.budget_usd) / request.budget_usd
+                over = (cost.total_usd - request.budget_usd) / max(request.budget_usd, 0.01)
                 budget = max(0.0, 0.5 - 2 * over)
                 reasons.append(f"Estimated ${cost.total_usd:.2f} delivered, over ${request.budget_usd:.0f} by {over:.0%}")
             # availability

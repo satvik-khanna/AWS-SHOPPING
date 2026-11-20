@@ -46,7 +46,8 @@ def make_kai(tmp_path):
 
     def _make(handler=None, resolver=public_resolver, cognee_module=None, **overrides) -> tuple[Kai, Net]:
         net = Net(handler)
-        base = dict(data_dir=tmp_path, fx_live=False, fetch_min_interval_s=0.0)
+        base = dict(data_dir=tmp_path, fx_live=False, fetch_min_interval_s=0.0,
+                    live_only=False, allow_fixtures=True)
         base.update(overrides)
         k = build(Settings(**base), transport=httpx.MockTransport(net), resolver=resolver,
                   cognee_module=cognee_module, db_path=str(tmp_path / f"kai{len(made)}.sqlite3"))

@@ -26,7 +26,7 @@ from .ranking import Ranker
 from .security import UNTRUSTED_SYSTEM_RULE, sanitize_untrusted, wrap_untrusted
 from .store import Store
 from .textutil import nfkc
-from .vocab import ATTRIBUTES, CATEGORIES, detect_attributes, detect_category
+from .vocab import ATTRIBUTES, CATEGORIES, detect_category
 from .xdiscovery.agent import XDiscoveryAgent
 from .xdiscovery.storefront import STORE_LABELS
 
@@ -70,7 +70,9 @@ class ShoppingAgent:
             if re.search(rf"\b{state}\b", raw, re.I):
                 dest = f"{state}, US"
                 break
-        stated = [a for a in detect_attributes(raw) if a not in ("limited",)]
+        facts = self.memory._facts_from_text(raw)
+        stated = [a for a, polarity in facts if polarity == "like" and a != "limited"]
+        avoided = [a for a, polarity in facts if polarity == "avoid"]
         wants_social = not re.search(r"\b(no social|marketplace only|without (x|twitter))\b", raw, re.I)
         category = detect_category(raw)
         method = "heuristic"
@@ -94,7 +96,8 @@ class ShoppingAgent:
             if not terms:
                 return None
         return ParsedRequest(raw=raw, category=category, category_label=label, ja_terms=terms, budget_usd=budget,
-                             destination=dest, wants_social=wants_social, stated_preferences=stated, parse_method=method)
+                             destination=dest, wants_social=wants_social, stated_preferences=stated,
+                             stated_avoidances=avoided, parse_method=method)
 
     # ---- candidates ------------------------------------------------------
     @staticmethod
@@ -123,7 +126,9 @@ class ShoppingAgent:
         )
 
     # ---- main ------------------------------------------------------------
-    async def run(self, message: str, user_id: str = "default") -> AgentRun | dict[str, Any]:
+    async def run(self, message: str, user_id: str = "default", *,
+                  prepare_draft: bool = True, refresh_imports: bool = False,
+                  learn_preferences: bool = True) -> AgentRun | dict[str, Any]:
         run_id = new_id("run")
         self.log.log("request", f"Request received: {message[:200]}", "info", run_id)
         req = await self.parse_request(message, run_id)
@@ -142,7 +147,7 @@ class ShoppingAgent:
                      "ok", run_id, {"parsed": req.to_json()})
 
         # A request that states a lasting preference ("I prefer matte") is remembered.
-        if self.memory.looks_like_preference(req.raw) and re.search(r"\b(i|my|me)\b", req.raw, re.I) \
+        if learn_preferences and self.memory.looks_like_preference(req.raw) and re.search(r"\b(i|my|me)\b", req.raw, re.I) \
                 and re.search(r"\b(prefer|always|never|don'?t like|dislike|hate|love|i (really |only )?like)\b", req.raw, re.I):
             await self.memory.add_preference(req.raw, user_id, source="learned_from_request", run_id=run_id)
 
@@ -158,7 +163,7 @@ class ShoppingAgent:
 
         run = AgentRun(id=run_id, request=req, memory=mem)
         budget = FetchBudget(self.fetch_max_per_run)
-        preferred = list(dict.fromkeys(mem.preferred + req.stated_preferences))
+        preferred, _avoided = req.preference_signals(mem)
 
         # ---- discovery ---------------------------------------------------
         leads: list[SocialProductLead] = []
@@ -169,7 +174,8 @@ class ShoppingAgent:
             leads = run.discovery.leads
 
         # ---- marketplace -------------------------------------------------
-        market, sources = await self.marketplace.search(req.category, req.ja_terms, run_id)
+        market, sources = await self.marketplace.search(req.category, req.ja_terms, run_id,
+                                                      refresh_imports=refresh_imports, budget=budget)
         run.marketplace_sources = sources
         run.marketplace_count = len(market)
 
@@ -202,12 +208,22 @@ class ShoppingAgent:
         def affordable(r: RankedCandidate) -> bool:
             return r.cost is None or r.cost.within_budget != "no"
 
-        pick = next((r for r in run.ranked if r.purchase_path == "PROXY_REQUEST_DRAFT" and affordable(r)), None)
-        if pick is not None:
+        def fits_taste(r: RankedCandidate) -> bool:
+            return not set(r.candidate.attributes).intersection(_avoided)
+
+        pick = next((r for r in run.ranked if r.purchase_path == "PROXY_REQUEST_DRAFT"
+                     and affordable(r) and fits_taste(r)), None)
+        if not prepare_draft:
+            run.manual_next_steps = ["Hunt checked without preparing another draft. Review the comparison "
+                                     "and prepare a draft for an item when you want one."]
+            self.log.log("draft", "Saved hunt check: no draft created.", "info", run_id)
+        elif pick is not None:
             run.draft = self.purchase.create_draft(pick, req, lead_by_cand.get(pick.candidate.id), run_id)
         else:
-            over = next((r for r in run.ranked if r.purchase_path == "PROXY_REQUEST_DRAFT"), None)
-            manual = next((r for r in run.ranked if r.purchase_path == "MANUAL_ONLY" and affordable(r)), None)
+            over = next((r for r in run.ranked if r.purchase_path == "PROXY_REQUEST_DRAFT"
+                         and not affordable(r) and fits_taste(r)), None)
+            manual = next((r for r in run.ranked if r.purchase_path == "MANUAL_ONLY"
+                           and affordable(r) and fits_taste(r)), None)
             steps: list[str] = []
             if over is not None:
                 steps.append(f"The best purchasable match, {over.candidate.title}, is estimated at "
@@ -217,10 +233,10 @@ class ShoppingAgent:
                 run.draft = self.purchase.create_draft(manual, req, lead_by_cand.get(manual.candidate.id), run_id)
                 steps.append(f"Manual purchase notes were prepared for {manual.candidate.title}: {manual.purchase_path_reason}")
             if not run.ranked:
-                steps.append("Nothing was found. Add X or marketplace credentials, import a post or listing URL, "
-                             "or enable fixtures to see the workflow.")
+                steps.append("Nothing was found. Configure X or Brave Search and marketplace credentials, "
+                             "or import a real post or listing URL.")
             elif not steps:
-                steps.append("No candidate can be purchased right now (sold out or unverified). Add creators to your "
+                steps.append("No candidate meets your preferences and purchase requirements right now. Add creators to your "
                              "watch list and refresh Social Drops later.")
             run.manual_next_steps = steps
             self.log.log("draft", "No supported nonbinding purchase draft could be prepared; manual next steps provided.",

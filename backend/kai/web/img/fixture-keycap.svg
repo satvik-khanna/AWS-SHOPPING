@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 168 168" role="img" aria-label="Sample image">
+  <rect width="168" height="168" fill="#ece6f8"/>
+  <path d="M44 112 L56 60 Q58 52 66 52 H102 Q110 52 112 60 L124 112 Q126 122 116 122 H52 Q42 122 44 112 Z" fill="#3b3560"/>
+  <path d="M60 64 Q62 58 68 58 H100 Q106 58 108 64 L114 98 Q115 104 108 104 H60 Q53 104 54 98 Z" fill="#5b4f96"/>
+  <circle cx="92" cy="76" r="9" fill="#f3e9b5"/>
+  <circle cx="96" cy="73" r="8" fill="#5b4f96"/>
+  <text x="84" y="150" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="700" fill="#5b3fa0">SAMPLE IMAGE</text>
+</svg>

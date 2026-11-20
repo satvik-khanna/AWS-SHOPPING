@@ -1,5 +1,4 @@
-"""Runtime settings. Everything is optional; missing credentials produce
-explicit fallback states rather than errors."""
+"""Runtime settings. Production defaults require live data; test doubles are opt-in."""
 
 from __future__ import annotations
 
@@ -66,10 +65,14 @@ class Settings:
     # Senso
     senso_api_key: str | None = None
     senso_base_url: str = "https://apiv2.senso.ai/api/v1"
+    senso_rules_content_id: str | None = None
 
     # Cognee
     cognee_enabled: str = "auto"  # auto | true | false
     cognee_llm_api_key: str | None = None
+    cognee_llm_provider: str | None = None
+    cognee_llm_endpoint: str | None = None
+    cognee_llm_model: str | None = None
 
     # Rakuten
     rakuten_app_id: str | None = None
@@ -77,7 +80,8 @@ class Settings:
     rakuten_referer: str | None = None
 
     # Behaviour
-    allow_fixtures: bool = True
+    live_only: bool = True
+    allow_fixtures: bool = False
     fetch_timeout_s: float = 8.0
     fetch_max_bytes: int = 1_500_000
     fetch_max_per_run: int = 12
@@ -87,6 +91,10 @@ class Settings:
     fx_fallback_usd_per_jpy: float = 0.0070
     fx_live: bool = True
     ca_use_tax_rate: float = 0.1025
+
+    def __post_init__(self) -> None:
+        if self.live_only:
+            self.allow_fixtures = False
 
     @property
     def db_path(self) -> Path:
@@ -136,12 +144,17 @@ class Settings:
             sie_rerank_model=_s(env, "SIE_RERANK_MODEL") or d.sie_rerank_model,
             senso_api_key=_s(env, "SENSO_API_KEY"),
             senso_base_url=(_s(env, "SENSO_BASE_URL") or d.senso_base_url).rstrip("/"),
+            senso_rules_content_id=_s(env, "SENSO_RULES_CONTENT_ID"),
             cognee_enabled=(_s(env, "COGNEE_ENABLED") or "auto").lower(),
             cognee_llm_api_key=_s(env, "LLM_API_KEY"),
+            cognee_llm_provider=_s(env, "LLM_PROVIDER"),
+            cognee_llm_endpoint=_s(env, "LLM_ENDPOINT"),
+            cognee_llm_model=_s(env, "COGNEE_LLM_MODEL") or _s(env, "LLM_MODEL"),
             rakuten_app_id=_s(env, "RAKUTEN_APP_ID"),
             rakuten_access_key=_s(env, "RAKUTEN_ACCESS_KEY"),
             rakuten_referer=_s(env, "RAKUTEN_REFERER"),
-            allow_fixtures=_b(env, "KAI_ALLOW_FIXTURES", True),
+            live_only=_b(env, "KAI_LIVE_ONLY", True),
+            allow_fixtures=_b(env, "KAI_ALLOW_FIXTURES", False),
             fetch_max_per_run=int(_f(env, "KAI_FETCH_MAX_PER_RUN", d.fetch_max_per_run)),
             respect_robots=_b(env, "KAI_RESPECT_ROBOTS", True),
             fx_fallback_usd_per_jpy=_f(env, "FX_FALLBACK_USD_PER_JPY", d.fx_fallback_usd_per_jpy),

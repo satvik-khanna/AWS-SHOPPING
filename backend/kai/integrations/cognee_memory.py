@@ -16,6 +16,7 @@ import os
 from typing import Any
 
 from ..config import Settings
+from ..errors import LiveDataUnavailable
 from ..observability import ActivityLog
 from . import IntegrationState
 
@@ -40,6 +41,10 @@ class CogneeAdapter:
         elif not has_key and module is None:
             configured, why = False, ("cognee is installed but LLM_API_KEY is not set, which Cognee needs to "
                                       "build its knowledge graph; using the local preference store.")
+        elif settings.live_only and module is None and not all((settings.cognee_llm_provider,
+                                                               settings.cognee_llm_endpoint,
+                                                               settings.cognee_llm_model)):
+            configured, why = False, "Set LLM_PROVIDER, LLM_ENDPOINT and COGNEE_LLM_MODEL for the supplied LLM_API_KEY."
         else:
             configured, why = True, ""
         self.state = IntegrationState(
@@ -47,11 +52,20 @@ class CogneeAdapter:
             fallback_label="local preference store (SQLite, keyword recall)", unconfigured_detail=why,
             extra={"packageInstalled": installed},
         )
+        if settings.live_only:
+            self.state.fallback_label = "unavailable; graph-memory fallback disabled"
 
     def _mod(self) -> Any:
         if self._cognee is None:
             if self.settings.cognee_llm_api_key:
                 os.environ.setdefault("LLM_API_KEY", self.settings.cognee_llm_api_key)
+            for key, value in (("LLM_PROVIDER", self.settings.cognee_llm_provider),
+                               ("LLM_ENDPOINT", self.settings.cognee_llm_endpoint),
+                               ("LLM_MODEL", self.settings.cognee_llm_model)):
+                if value:
+                    os.environ[key] = value
+            os.environ.setdefault("SYSTEM_ROOT_DIRECTORY", str(self.settings.data_dir / "cognee-system"))
+            os.environ.setdefault("DATA_ROOT_DIRECTORY", str(self.settings.data_dir / "cognee-data"))
             import cognee  # type: ignore[import-not-found]
 
             self._cognee = cognee
@@ -63,6 +77,8 @@ class CogneeAdapter:
 
     async def remember(self, text: str, user_id: str = "default", run_id: str | None = None) -> bool:
         if not self.state.configured:
+            if self.settings.live_only:
+                raise LiveDataUnavailable("Cognee", self.state.unconfigured_detail)
             self.state.used_fallback()
             return False
         try:
@@ -73,12 +89,16 @@ class CogneeAdapter:
             return True
         except Exception as e:  # noqa: BLE001
             self.state.fail(f"{type(e).__name__}: {e}")
+            if self.settings.live_only:
+                raise LiveDataUnavailable("Cognee", self.state.last_error) from e
             self.log.log("memory", f"Cognee remember failed; kept in local store only. {self.state.last_error}", "warn", run_id)
             return False
 
     async def recall(self, query: str, user_id: str = "default", top_k: int = 5, run_id: str | None = None) -> list[str] | None:
         """Return recalled text snippets, or None when Cognee was not used."""
         if not self.state.configured:
+            if self.settings.live_only:
+                raise LiveDataUnavailable("Cognee", self.state.unconfigured_detail)
             self.state.used_fallback()
             return None
         try:
@@ -106,5 +126,7 @@ class CogneeAdapter:
                 self.state.extra["note"] = "Cognee memory is empty for this user."
                 return []
             self.state.fail(f"{name}: {e}")
+            if self.settings.live_only:
+                raise LiveDataUnavailable("Cognee", self.state.last_error) from e
             self.log.log("memory", f"Cognee recall failed; using local preference store. {self.state.last_error}", "warn", run_id)
             return None

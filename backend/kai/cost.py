@@ -18,6 +18,7 @@ from typing import Any
 import httpx
 
 from .config import PKG, Settings
+from .errors import LiveDataUnavailable
 from .integrations.senso import SensoAdapter
 from .models import Candidate, Citation, CostLine, LandedCost, now_iso
 from .observability import ActivityLog
@@ -67,13 +68,17 @@ class FxService:
                 if not 0.001 < rate < 0.05:
                     raise RuntimeError(f"implausible rate {rate}")
                 data = {"rate": rate, "source": "Frankfurter API (ECB reference rate), live", "asOf": body.get("date")}
+                if not data["asOf"]:
+                    raise RuntimeError("FX response is missing its reference date")
                 self.store.cache_set("fx:JPYUSD", data, 6 * 3600)
                 self.last_error = None
                 self.log.log("fx", f"Live FX rate: 1 JPY = {rate:.6f} USD (as of {body.get('date')})", "ok", run_id)
                 return rate, data["source"], data["asOf"]
             except Exception as e:  # noqa: BLE001
                 self.last_error = f"{type(e).__name__}: {e}"[:200]
-                self.log.log("fx", f"Live FX lookup failed ({self.last_error}); using configured fallback rate.", "warn", run_id)
+                self.log.log("fx", f"Live FX lookup failed ({self.last_error}).", "error", run_id)
+        if self.settings.live_only:
+            raise LiveDataUnavailable("FX", self.last_error or "Live FX lookup is disabled")
         return (self.settings.fx_fallback_usd_per_jpy,
                 "Configured fallback rate (FX_FALLBACK_USD_PER_JPY) - not a live rate", None)
 
@@ -121,6 +126,8 @@ class LandedCostEstimator:
 
     async def estimate(self, cand: Candidate, category: str, budget_usd: float | None, destination: str,
                        price_observed: bool = True, run_id: str | None = None) -> LandedCost:
+        if self.settings.live_only:
+            self.params = await self.senso.cost_parameters()
         p = self.params
         cites, backend = await self._citations(run_id)
         rate, fx_source, fx_as_of = await self.fx.usd_per_jpy(run_id)

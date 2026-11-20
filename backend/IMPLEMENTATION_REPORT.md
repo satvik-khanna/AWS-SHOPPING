@@ -2,6 +2,14 @@
 
 Written 2026-11-20, at the end of the build session.
 
+## Follow-up verification on November 20
+
+The current build adds persistent Saved Hunts: save an existing comparison as a baseline, recheck the same brief on demand, and report new qualifying matches, restocks, listed-price changes, meaningful delivered-cost changes, and products that now fit the brief. Each change retains before/after evidence and sample provenance. Rechecks refresh matching imported listings within the run's fetch budget, preserve observations across failed or partial searches, and do not create duplicate drafts. Product identity retains variant query parameters. Checks are serialized per hunt within the local process; deletion during a check is refused. There is no scheduler or outbound notification service. Posts and pages can be cached for 15 minutes.
+
+Personalization now separates positive and negative request attributes. “Matte and not glossy” no longer promotes glossy products. A current brief can override stored taste for that search; an explicit lasting preference is remembered. Rechecking an old brief does not relearn its old preference statement into current memory. Automatic draft selection avoids known conflicting attributes. Zero-dollar budgets no longer divide by zero.
+
+Verification: **123 tests pass**, with outbound network calls mocked, plus Python compilation and JavaScript syntax checks. The new tests exercise real API/service paths against a simulated changing storefront, failure and recovery, persistent baselines, updated preferences, concurrent checks, and unchanged rechecks. Browser verification of the updated UI was attempted but blocked by an unavailable browser connection and a native Chrome tool timeout. The local server starts successfully. No X, LLM, SIE, Senso, Cognee, or Rakuten credentials are configured, so their live behavior remains unverified. The original build-session results below are historical.
+
 ## Summary
 
 The end-to-end workflow runs: search, memory, ranking, cited cost, purchase draft, human review. X discovery is implemented as a P0 feature with four providers. No X, Superlinked SIE, Senso, Cognee or LLM call was made against a live service in this session, because no credentials for any of them exist on this machine. Those adapters are tested against simulated servers only.

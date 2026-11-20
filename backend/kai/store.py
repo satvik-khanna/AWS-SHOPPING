@@ -40,6 +40,30 @@ class Store:
             self._db.commit()
 
     # ---- documents -------------------------------------------------------
+    def hide_sample_documents(self) -> None:
+        """Quarantine legacy demo records so old samples cannot re-enter live feeds.
+
+        Preserve originals in a separate table, including mixed historical runs.
+        Preferences, watched creators, and usage history are retained.
+        """
+        with self._lock:
+            self._db.execute("CREATE TABLE IF NOT EXISTS sample_archive AS SELECT * FROM docs WHERE 0")
+            rows = self._db.execute("SELECT kind,id,data FROM docs").fetchall()
+            def sample(value: Any) -> bool:
+                if isinstance(value, dict):
+                    return bool(value.get("isFixture") or value.get("is_fixture")) or any(sample(v) for v in value.values())
+                if isinstance(value, list):
+                    return any(sample(v) for v in value)
+                return isinstance(value, str) and "kai-fixture.invalid" in value
+            for row in rows:
+                if row["kind"] not in {"preference", "watched", "search_history"} and sample(json.loads(row["data"])):
+                    self._db.execute("INSERT INTO sample_archive SELECT * FROM docs WHERE kind=? AND id=?",
+                                     (row["kind"], row["id"]))
+                    self._db.execute("DELETE FROM docs WHERE kind=? AND id=?", (row["kind"], row["id"]))
+            # Old test page responses and generated FX values must not survive a mode switch.
+            self._db.execute("DELETE FROM cache")
+            self._db.commit()
+
     def put(self, kind: str, id: str, data: dict[str, Any]) -> None:
         ts = now_iso()
         with self._lock:

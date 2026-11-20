@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KAI · Japan shopping agent</title>
+<link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <span class="logo">買</span>
+    <div>
+      <h1>KAI</h1>
+      <p>Japan-focused personal shopping agent</p>
+    </div>
+  </div>
+  <div id="integrations" class="chips" aria-label="Integration status"></div>
+</header>
+
+<nav class="tabs" role="tablist">
+  <button data-tab="agent" class="active">Agent</button>
+  <button data-tab="hunts">Saved Hunts</button>
+  <button data-tab="social">Social Drops</button>
+  <button data-tab="shortlist">Shortlist <span id="count-shortlist" class="count"></span></button>
+  <button data-tab="review">Review <span id="count-review" class="count"></span></button>
+  <button data-tab="listings">Listings</button>
+  <button data-tab="memory">Memory</button>
+  <button data-tab="activity">Activity</button>
+</nav>
+
+<main>
+  <section id="tab-agent" class="tab active">
+    <div class="panel">
+      <form id="run-form" class="ask">
+        <textarea id="run-input" rows="2" placeholder="What are you looking for?">Find me Japanese artisan keycaps announced recently on X, under $120 delivered to California.</textarea>
+        <button type="submit" class="primary" id="run-btn">Find it</button>
+      </form>
+      <div class="examples">
+        Try:
+        <button class="link" data-example="Find me Japanese artisan keycaps announced recently on X, under $120 delivered to California.">Artisan keycaps under $120</button>
+        <button class="link" data-example="Any new figure preorders from Japanese creators under $250 to California?">Figure preorders</button>
+        <button class="link" data-example="Handmade accessories from Japan under $80 delivered to California">Handmade accessories</button>
+      </div>
+      <p class="gate-note">KAI prepares drafts for you to review. It cannot place orders, bids or payments.</p>
+    </div>
+    <div id="run-output"></div>
+  </section>
+
+  <section id="tab-hunts" class="tab">
+    <div class="panel">
+      <h2>Saved Hunts</h2>
+      <p class="muted">Keep a shopping brief. KAI remembers what it has seen and compares new checks for restocks, price changes, and new matches.</p>
+      <p class="gate-note">Save a hunt from an Agent comparison. Checks run when you press Check now, using your current preferences. Each check reports its sources.</p>
+    </div>
+    <div id="hunts"></div>
+    <div id="hunt-output" aria-live="polite"></div>
+  </section>
+
+  <section id="tab-social" class="tab">
+    <div class="panel">
+      <div class="row between">
+        <div>
+          <h2>Social Drops</h2>
+          <p class="muted">Product announcements from Japanese creators on X, traced to the store that sells them.</p>
+        </div>
+        <div class="row">
+          <select id="social-category"></select>
+          <button id="social-refresh" class="primary">Refresh</button>
+        </div>
+      </div>
+      <div id="social-providers"></div>
+      <div id="social-refresh-info"></div>
+    </div>
+    <div class="grid-2">
+      <div>
+        <div id="social-feed"></div>
+      </div>
+      <aside>
+        <div class="panel">
+          <h3>Watched Creators</h3>
+          <p class="muted">Public X handles, categories and search terms to include when you refresh. Refresh is on demand; nothing polls in the background.</p>
+          <div id="watched-list"></div>
+          <form id="watched-form" class="stack">
+            <label>X handle <input name="handle" placeholder="@creator" maxlength="16"></label>
+            <label>Search terms <input name="terms" placeholder="レジン キーキャップ, 陶器"></label>
+            <div id="watched-cats" class="checks"></div>
+            <button type="submit">Save</button>
+            <p id="watched-error" class="error"></p>
+          </form>
+        </div>
+        <div class="panel">
+          <h3>Import a post</h3>
+          <p class="muted">Paste a post URL and its text. With an X API token, the URL alone is enough.</p>
+          <form id="import-post-form" class="stack">
+            <label>Post URL <input name="url" placeholder="https://x.com/handle/status/123…" required></label>
+            <label>Post text <textarea name="text" rows="4" placeholder="Paste the Japanese post text"></textarea></label>
+            <label>Store links <input name="links" placeholder="https://… (comma-separated, optional)"></label>
+            <button type="submit">Import</button>
+            <p id="import-post-error" class="error"></p>
+          </form>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section id="tab-shortlist" class="tab">
+    <div class="panel"><h2>Shortlist</h2><p class="muted">Items you saved. Prepare a draft when you are ready to review one.</p></div>
+    <div id="shortlist"></div>
+  </section>
+
+  <section id="tab-review" class="tab">
+    <div class="panel">
+      <h2>Review</h2>
+      <p class="muted">Every purchase stops here. Approving a draft marks it ready for you to act on yourself; KAI takes no purchase action.</p>
+    </div>
+    <div id="drafts"></div>
+  </section>
+
+  <section id="tab-listings" class="tab">
+    <div class="panel">
+      <h2>Import a listing</h2>
+      <p class="muted">Paste a product page from a Japanese store. KAI fetches it once, within robots.txt, and reads price and availability. Imported listings join future comparisons.</p>
+      <form id="import-listing-form" class="ask">
+        <input name="url" placeholder="https://shop.example.jp/items/123" required>
+        <button type="submit" class="primary">Import</button>
+      </form>
+      <p id="import-listing-error" class="error"></p>
+    </div>
+    <div id="listings"></div>
+  </section>
+
+  <section id="tab-memory" class="tab">
+    <div class="panel">
+      <h2>Memory</h2>
+      <div id="memory-backend"></div>
+      <form id="pref-form" class="ask">
+        <input name="text" placeholder="I prefer handmade pieces with a matte finish, not glossy" required>
+        <button type="submit" class="primary">Remember</button>
+      </form>
+    </div>
+    <div class="grid-2">
+      <div class="panel"><h3>Preferences</h3><div id="pref-list"></div></div>
+      <div class="panel"><h3>Recent searches</h3><div id="search-list"></div></div>
+    </div>
+  </section>
+
+  <section id="tab-activity" class="tab">
+    <div class="panel">
+      <div class="row between">
+        <h2>Integrations</h2>
+        <div class="row">
+          <button id="check-integrations">Run connectivity check</button>
+          <button id="seed-senso">Upload cost sources to Senso</button>
+        </div>
+      </div>
+      <div id="integration-detail"></div>
+    </div>
+    <div class="panel"><h2>Usage and cost</h2><div id="usage"></div></div>
+    <div class="panel"><h2>Activity log</h2><div id="activity"></div></div>
+  </section>
+</main>
+
+<div id="toast" role="status"></div>
+<script src="/static/app.js"></script>
+</body>
+</html>

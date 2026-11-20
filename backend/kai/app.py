@@ -8,11 +8,13 @@ from typing import Any
 
 import httpx
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from .config import PKG, Settings
+from .errors import LiveDataUnavailable
+from .hunts import HuntService
 from .cost import FxService, LandedCostEstimator
 from .integrations.cognee_memory import CogneeAdapter
 from .integrations.senso import SensoAdapter
@@ -54,12 +56,16 @@ class Kai:
     costs: LandedCostEstimator
     purchase: PurchaseService
     agent: ShoppingAgent
+    hunts: HuntService
 
 
 def build(settings: Settings, transport: httpx.AsyncBaseTransport | None = None, resolver: Resolver | None = None,
           cognee_module: Any | None = None, db_path: str | None = None) -> Kai:
     """Wire the application. `transport` replaces every outbound HTTP call (tests)."""
+    # Sample data needs KAI_LIVE_ONLY=false and KAI_ALLOW_FIXTURES=true; it is served from disk and labeled.
     store = Store(db_path or settings.db_path)
+    if not settings.allow_fixtures:
+        store.hide_sample_documents()
     log = ActivityLog(store)
     fetcher = SafeFetcher(settings, store, log, transport, resolver)
     llm = LLMClient(settings, log, transport)
@@ -79,7 +85,7 @@ def build(settings: Settings, transport: httpx.AsyncBaseTransport | None = None,
     agent = ShoppingAgent(store, log, llm, memory, discovery, marketplace, costs, Ranker(sie, log), purchase, sie,
                           senso, settings.fetch_max_per_run)
     return Kai(settings, store, log, fetcher, llm, sie, senso, cognee, memory, official, discovery, marketplace,
-               costs, purchase, agent)
+               costs, purchase, agent, HuntService(store, agent))
 
 
 # ---- request bodies -------------------------------------------------------
@@ -87,6 +93,11 @@ def build(settings: Settings, transport: httpx.AsyncBaseTransport | None = None,
 
 class RunBody(BaseModel):
     message: str = Field(min_length=2, max_length=1000)
+
+
+class HuntBody(BaseModel):
+    runId: str
+    title: str | None = Field(default=None, max_length=100)
 
 
 class RefreshBody(BaseModel):
@@ -138,16 +149,17 @@ def create_app(settings: Settings | None = None, kai: Kai | None = None) -> Fast
     k = kai or build(settings or Settings.from_env())
     app = FastAPI(title="KAI", version="0.1.0")
     app.state.kai = k
-    web = PKG / "web"
-    # kai/web/ was not committed with the backend; without this guard the server cannot start.
-    if web.is_dir():
-        app.mount("/static", StaticFiles(directory=str(web)), name="static")
 
-    @app.get("/", include_in_schema=False, response_model=None)
-    async def index():
-        if (web / "index.html").is_file():
-            return FileResponse(str(web / "index.html"))
-        return {"ui": "not committed (kai/web/ missing)", "docs": "/docs", "status": "/api/status"}
+    @app.exception_handler(LiveDataUnavailable)
+    async def live_unavailable(_request, error: LiveDataUnavailable) -> JSONResponse:
+        return JSONResponse(status_code=503, content={"detail": str(error), "service": error.service,
+                                                     "liveOnly": True})
+    web = PKG / "web"
+    app.mount("/static", StaticFiles(directory=str(web)), name="static")
+
+    @app.get("/", include_in_schema=False)
+    async def index() -> FileResponse:
+        return FileResponse(str(web / "index.html"))
 
     # ---- status ----------------------------------------------------------
     def status_payload() -> dict[str, Any]:
@@ -156,6 +168,7 @@ def create_app(settings: Settings | None = None, kai: Kai | None = None) -> Fast
             "xProviders": k.discovery.provider_overview(),
             "marketplace": {"rakutenConfigured": k.marketplace.rakuten_configured()},
             "fixturesAllowed": k.settings.allow_fixtures,
+            "liveOnly": k.settings.live_only,
             "usage": k.store.usage_summary(),
             "xSpend": {"spentUsd": round(k.official.spent(), 4), "maxUsd": k.settings.x_max_spend_usd,
                        "note": "Estimated from returned post/user counts and configured unit prices."},
@@ -198,6 +211,34 @@ def create_app(settings: Settings | None = None, kai: Kai | None = None) -> Fast
         if not r:
             raise HTTPException(404, "Run not found")
         return r
+
+    # ---- saved hunts -----------------------------------------------------
+    @app.get("/api/hunts")
+    async def hunts_list() -> list[dict[str, Any]]:
+        return k.hunts.list()
+
+    @app.post("/api/hunts")
+    async def hunt_create(body: HuntBody) -> dict[str, Any]:
+        try:
+            return k.hunts.create(body.runId, body.title)
+        except KeyError:
+            raise HTTPException(404, "Run not found") from None
+
+    @app.post("/api/hunts/{hunt_id}/check")
+    async def hunt_check(hunt_id: str) -> dict[str, Any]:
+        try:
+            return await k.hunts.check(hunt_id)
+        except KeyError:
+            raise HTTPException(404, "Hunt not found") from None
+        except ValueError as e:
+            raise HTTPException(409, str(e)) from None
+
+    @app.delete("/api/hunts/{hunt_id}")
+    async def hunt_delete(hunt_id: str) -> dict[str, Any]:
+        try:
+            return {"deleted": k.hunts.delete(hunt_id)}
+        except ValueError as e:
+            raise HTTPException(409, str(e)) from None
 
     # ---- social drops ----------------------------------------------------
     @app.get("/api/social/leads")

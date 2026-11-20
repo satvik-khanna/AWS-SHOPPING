@@ -74,17 +74,39 @@ class MemoryService:
         like:handmade, like:matte, avoid:glossy."""
         facts: list[tuple[str, str]] = []
         t = nfkc(text)
-        clauses = re.split(r"[,;.。、]|\bbut\b|\band not\b|けど|が、", t)
+        # Keep the negation in its clause: consuming "and not" used to turn
+        # "matte and not glossy" into two positive facts.
+        clauses = re.split(r"[,;.。、]|\bbut\b|\band (?=not\b)|\b(?=not (?!only\b))|けど|が、", t,
+                           flags=re.I)
         for clause in clauses:
             attrs = detect_attributes(clause)
             if not attrs:
                 continue
-            neg = bool(_NEG.search(clause)) and not re.search(r"\bnot only\b", clause, re.I)
-            for a in attrs:
+            # Scope local adjective negation to its attribute. In "not glossy
+            # artisan keycaps", "not" describes glossy, not artisan. A taste
+            # verb ("I avoid glossy handmade pieces") covers the whole clause.
+            lowered = clause.lower()
+            positions = sorted((min((lowered.find(term.lower()), len(term))
+                                    for term in ATTRIBUTES[a]["terms"] if term.lower() in lowered), a)
+                               for a in attrs)
+            neg = bool(re.search(r"嫌い|苦手|不要|なし|避け", clause))
+            local_negation = False
+            last_end = 0
+            for ((start, length), a) in positions:
+                between = clause[last_end:start]
+                negatives = list(_NEG.finditer(between + "x"))  # preserve the boundary before the attribute
+                if negatives and not re.search(r"\bnot only\b", between, re.I):
+                    neg = True
+                    local_negation = bool(re.fullmatch(r"not\s*|no\s*|without", negatives[-1].group(), re.I))
+                elif _PREF.search(between):
+                    neg, local_negation = False, False
+                elif last_end and local_negation and not re.search(r"\b(and|or)\b|と|や", between, re.I):
+                    neg, local_negation = False, False
                 fact = (a, "avoid" if neg else "like")
                 if fact not in facts:
                     facts.append(fact)
-        return facts
+                last_end = start + length
+        return list(dict(facts).items())  # the final statement about an attribute wins
 
     @staticmethod
     def looks_like_preference(text: str) -> bool:

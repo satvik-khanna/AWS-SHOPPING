@@ -20,6 +20,7 @@ from urllib.parse import quote
 import httpx
 
 from ..config import Settings
+from ..errors import LiveDataUnavailable
 from ..observability import ActivityLog
 from ..textutil import hash_embed
 from . import IntegrationState
@@ -41,6 +42,9 @@ class SIEAdapter:
             extra={"baseUrl": self.base_url, "embedModel": settings.sie_embed_model,
                    "rerankModel": settings.sie_rerank_model},
         )
+        if settings.live_only:
+            self.state.fallback_label = "unavailable; local ranking disabled"
+            self.state.unconfigured_detail = "SIE_API_KEY / SIE_BASE_URL not set; live ranking unavailable."
 
     def _headers(self) -> dict[str, str]:
         h = {"Content-Type": "application/json", "Accept": "application/json"}
@@ -99,11 +103,17 @@ class SIEAdapter:
                              "warn", run_id)
         else:
             self.state.used_fallback()
+        if self.settings.live_only:
+            raise LiveDataUnavailable("Superlinked embeddings", self.state.last_error or "SIE is not configured")
         return [hash_embed(t) for t in texts], FALLBACK_BACKEND
 
     async def rerank(self, query: str, docs: list[tuple[str, str]], run_id: str | None = None) -> tuple[dict[str, float] | None, str]:
         """Cross-encoder rerank. Returns ({id: score normalised to 0..1} or None, backend_label)."""
-        if not docs or not self.base_url:
+        if not docs:
+            return None, "none"
+        if not self.base_url:
+            if self.settings.live_only:
+                raise LiveDataUnavailable("Superlinked reranking", "SIE is not configured")
             return None, "none"
         try:
             data = await self._post("score", self.settings.sie_rerank_model, {
@@ -114,6 +124,8 @@ class SIEAdapter:
             raw = {e.get("item_id"): float(e.get("score", 0.0)) for e in entries if e.get("item_id") is not None}
             if not raw:
                 raise RuntimeError("SIE score returned no scores")
+            if set(raw) != {i for i, _ in docs}:
+                raise RuntimeError("SIE score did not return a score for every requested item")
             lo, hi = min(raw.values()), max(raw.values())
             span = (hi - lo) or 1.0
             self.state.ok()
@@ -122,6 +134,8 @@ class SIEAdapter:
             return {k: (v - lo) / span if hi != lo else 1.0 for k, v in raw.items()}, f"sie:{self.settings.sie_rerank_model}"
         except Exception as e:  # noqa: BLE001
             self.state.fail(f"{type(e).__name__}: {e}")
+            if self.settings.live_only:
+                raise LiveDataUnavailable("Superlinked reranking", self.state.last_error) from e
             self.log.log("ranking", f"Superlinked SIE score failed; skipping rerank. {self.state.last_error}", "warn", run_id)
             return None, "none"
 

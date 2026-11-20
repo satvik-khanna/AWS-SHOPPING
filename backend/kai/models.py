@@ -367,7 +367,15 @@ class ParsedRequest(KaiModel):
     wants_social: bool = True
     recency_days: int = 7
     stated_preferences: list[str] = Field(default_factory=list)
+    stated_avoidances: list[str] = Field(default_factory=list)
     parse_method: str = "heuristic"
+
+    def preference_signals(self, memory: MemoryRecall) -> tuple[list[str], list[str]]:
+        """The current brief overrides stored taste, without changing that memory."""
+        liked = list(dict.fromkeys(memory.preferred + self.stated_preferences))
+        avoided = list(dict.fromkeys(memory.avoided + self.stated_avoidances))
+        return ([a for a in liked if a not in self.stated_avoidances],
+                [a for a in avoided if a not in self.stated_preferences])
 
 
 class MemoryRecall(KaiModel):

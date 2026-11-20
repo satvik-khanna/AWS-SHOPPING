@@ -39,7 +39,8 @@ class MarketplaceService:
     def rakuten_configured(self) -> bool:
         return bool(self.settings.rakuten_app_id and self.settings.rakuten_access_key)
 
-    async def search(self, category: str, ja_terms: list[str], run_id: str | None = None
+    async def search(self, category: str, ja_terms: list[str], run_id: str | None = None, *,
+                     refresh_imports: bool = False, budget: FetchBudget | None = None
                      ) -> tuple[list[Candidate], list[dict[str, Any]]]:
         sources: list[dict[str, Any]] = []
         out: list[Candidate] = []
@@ -62,13 +63,23 @@ class MarketplaceService:
         if category in CATEGORIES:
             terms += [t.lower() for t in CATEGORIES[category]["en"]]
         imported = []
+        refresh_errors = []
+        budget = budget or FetchBudget(self.settings.fetch_max_per_run)
         for d in self.store.list("imported_listing"):
             c = Candidate.model_validate(d)
             hay = nfkc(f"{c.title} {c.description or ''}").lower()
             if any(t in hay for t in terms):
+                if refresh_imports and c.purchase_url:
+                    refreshed, error = await self.import_url(c.purchase_url, run_id, candidate_id=c.id, budget=budget)
+                    if refreshed is None:
+                        refresh_errors.append({"url": c.purchase_url, "error": error})
+                        continue  # old stock/price is not a current observation
+                    c = refreshed
                 imported.append(c)
-        sources.append({"provider": "URL_IMPORT", "state": "ok" if imported else "empty", "count": len(imported),
-                        "isFixture": False, "error": None})
+        sources.append({"provider": "URL_IMPORT", "state": "ok" if imported else ("error" if refresh_errors else "empty"),
+                        "count": len(imported), "isFixture": False,
+                        "error": f"Could not refresh {len(refresh_errors)} imported listing(s)." if refresh_errors else None,
+                        "refreshErrors": refresh_errors})
         out.extend(imported)
 
         # ---- fixtures ---------------------------------------------------
@@ -138,16 +149,17 @@ class MarketplaceService:
             ))
         return out
 
-    async def import_url(self, url: str, run_id: str | None = None) -> tuple[Candidate | None, str | None]:
+    async def import_url(self, url: str, run_id: str | None = None, *, candidate_id: str | None = None,
+                         budget: FetchBudget | None = None) -> tuple[Candidate | None, str | None]:
         """Live listing import: fetch a product page the user supplies and parse it."""
-        res = await self.tracer.resolve_url(url, FetchBudget(4))
+        res = await self.tracer.resolve_url(url, budget if budget is not None else FetchBudget(4))
         if res.status != "RESOLVED_PRODUCT":
             msg = res.error or res.blocked_reason or f"Could not read a product listing ({res.status})."
             self.log.log("listing_import", f"Listing import failed for {url[:120]}: {msg}", "warn", run_id,
                          {"status": res.status})
             return None, msg
         cand = Candidate(
-            id=new_id("imp"), source="URL_IMPORT",
+            id=candidate_id or new_id("imp"), source="URL_IMPORT",
             source_label=f"Imported listing ({STORE_LABELS.get(res.store_type or '', res.store_type or 'store')})"
                          + (" (FIXTURE page)" if res.is_fixture else ""),
             title=res.product_title or "Untitled listing", description=res.description_excerpt,

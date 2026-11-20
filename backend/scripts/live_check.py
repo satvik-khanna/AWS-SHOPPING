@@ -14,7 +14,10 @@ import asyncio
 import dataclasses
 import sys
 import tempfile
+import re
 from pathlib import Path
+
+import httpx
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
@@ -31,6 +34,8 @@ async def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--listing", help="a public product page URL to import")
     ap.add_argument("--x-search", metavar="CATEGORY", help="run one real X recent search for this category")
+    ap.add_argument("--x-web-check", action="store_true", help="probe unauthenticated X search access")
+    ap.add_argument("--models", action="store_true", help="list available SIE model metadata")
     args = ap.parse_args()
 
     settings = dataclasses.replace(Settings.from_env(), data_dir=Path(tempfile.mkdtemp(prefix="kai-live-")),
@@ -52,6 +57,12 @@ async def main() -> int:
 
     if settings.sie_effective_base_url:
         h = await k.sie.health()
+        if args.models:
+            async with httpx.AsyncClient(timeout=15) as client:
+                r = await client.get(k.sie.base_url + "/v1/models", headers=k.sie._headers())
+                if r.status_code == 200:
+                    for model in r.json().get("models", []):
+                        print("    SIE model:", model)
         line("Superlinked SIE /v1/models", h["mode"].upper(), h.get("lastError") or f"{h.get('modelsListed')} model(s) listed")
         if h["mode"] == "live":
             _, backend = await k.sie.embed(["マット仕上げのアルチザンキーキャップ"])
@@ -105,6 +116,16 @@ async def main() -> int:
                                               f"type={cand.store_type} intl={cand.ships_internationally} restrictions={cand.restrictions}")
         else:
             line("Listing import", "FAILED", err or "")
+
+    if args.x_web_check:
+        async with httpx.AsyncClient(timeout=15, follow_redirects=True) as client:
+            try:
+                r = await client.get("https://x.com/search", params={"q": "キーキャップ 販売", "f": "live"})
+                posts = set(re.findall(r'https://x\.com/\w+/status/\d+', r.text))
+                line("X public search HTML", "POSTS FOUND" if posts else "NO POSTS",
+                     f"HTTP {r.status_code}; {len(posts)} post URLs; final URL {r.url}")
+            except httpx.HTTPError as e:
+                line("X public search HTML", "FAILED", str(e))
 
     await k.fetcher.aclose()
     return 0
