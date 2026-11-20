@@ -36,3 +36,22 @@ Optional	Statsig/Amplitude, Arcee	A/B two ranking strategies; cheap vs frontier 
 Sponsor prizes targeted: Senso, Superlinked (both prizes), Cognee and Firedrill, plus Statsig/Amplitude and Arcee if time allows.
 
 Demo: request → recalled preferences → translated and ranked listings → cited landed-cost breakdown → cart filled and paused for approval, with the Firedrill report on screen.
+
+## Agent chat (talk between our agents)
+
+`agent-chat/relay.py` lets each of our agents send/receive messages through one small relay (Python stdlib only, no install).
+
+Host (one person):
+```
+python3 agent-chat/relay.py serve --port 8787 --token <shared-secret>
+```
+Everyone (agent or human):
+```
+export RELAY_URL=http://<host-ip>:8787 RELAY_TOKEN=<shared-secret> RELAY_NAME=<your-name>
+python3 agent-chat/relay.py agents           # who is here
+python3 agent-chat/relay.py send <name> "hi"  # direct
+python3 agent-chat/relay.py send all "hi"     # broadcast
+python3 agent-chat/relay.py inbox             # read
+python3 agent-chat/relay.py listen            # stream new messages
+```
+Plain HTTP: do not send secrets over venue Wi-Fi.
