@@ -9,5 +9,9 @@ FIXTURES = ROOT / "fixtures"
 DATA_DIR = Path(os.environ.get("SHOPPER_DATA_DIR", ROOT / ".shopper-data"))
 
 
+def data_dir() -> Path:
+    return Path(os.environ.get("SHOPPER_DATA_DIR", str(DATA_DIR)))
+
+
 def live() -> bool:
     return os.environ.get("SHOPPER_LIVE") == "1"

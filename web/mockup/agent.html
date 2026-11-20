@@ -173,7 +173,7 @@ body.asked .work{margin-top:48px}
 .opt .s{font-size:14px;color:var(--ink-50)}
 .opt .price{text-align:right;font-size:20px;font-weight:500;font-variant-numeric:tabular-nums}
 .opt .price small{display:block;font-family:var(--mono);font-size:12px;color:var(--ink-50);font-weight:400}
-.tag{display:inline-block;white-space:nowrap;font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.04em;margin-left:8px;padding:2px 8px;border-radius:999px;background:var(--lilac);color:#2a2a7a;vertical-align:2px}
+.tag{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.04em;margin-left:8px;padding:2px 8px;border-radius:999px;background:var(--lilac);color:#2a2a7a;vertical-align:2px}
 .tag.live{background:#d9f5e3;color:#0b5a2a}
 .tag.sample{background:var(--sunk);color:var(--ink-50)}
 .opt .t a{color:inherit;text-underline-offset:3px}
@@ -241,59 +241,6 @@ a.src:hover .key{color:var(--ink);text-decoration:underline;text-underline-offse
   .trail li{grid-template-columns:7px minmax(0,1fr)}.trail .kind{grid-column:2}.trail .txt{grid-column:2}
   .step{grid-template-columns:70px minmax(0,1fr)}.step span:nth-child(n+3){grid-column:2}
 }
-
-/* 8. history panel: past searches (this browser) and the agent's memory as a graph */
-.nav-btn{border:0;background:none;padding:0;font:inherit;color:inherit}
-.nav-btn:hover{color:var(--ink)}
-.scrim{position:fixed;inset:0;z-index:35;background:rgba(0,0,0,.18);opacity:0;pointer-events:none;transition:opacity .3s}
-.scrim.show{opacity:1;pointer-events:auto}
-.drawer{position:fixed;top:0;right:0;bottom:0;z-index:40;width:min(480px,100vw);background:var(--paper);box-shadow:-24px 0 60px rgba(0,0,0,.12);
-  transform:translateX(102%);transition:transform .45s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column}
-.drawer.show{transform:none}
-.drawer-h{display:flex;align-items:center;justify-content:space-between;padding:22px 22px 10px}
-.drawer-h h2{margin:0;font-family:var(--serif);font-weight:400;font-size:32px;line-height:1}
-.drawer-x{border:0;background:none;font-size:24px;line-height:1;color:var(--ink-50);padding:4px 8px}
-.drawer-x:hover{color:var(--ink)}
-.tabs{display:flex;gap:6px;padding:4px 22px 14px}
-.tab{border:0;border-radius:999px;padding:6px 14px;font-size:14px;background:transparent;color:var(--ink-50);box-shadow:inset 0 0 0 1px var(--line)}
-.tab[aria-selected="true"]{background:var(--btn);color:var(--btn-ink);box-shadow:none}
-.drawer-body{flex:1;overflow:auto;padding:0 22px 28px}
-.hist{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
-.hist li{border-bottom:1px solid var(--line-2);padding:14px 0}
-.hist-q{display:block;width:100%;text-align:left;border:0;background:none;padding:0;font-size:15px;font-weight:500;color:var(--ink)}
-.hist-q:hover{text-decoration:underline;text-underline-offset:3px}
-.hist-meta{display:flex;gap:8px;align-items:center;margin-top:3px;font-family:var(--mono);font-size:11px;color:var(--ink-35);text-transform:uppercase;letter-spacing:.04em}
-.hist-meta .st-bought{color:#0b7a3b}.hist-meta .st-skipped{color:var(--red)}
-.hist-items{list-style:none;margin:8px 0 0;padding:0}
-.hist-items li{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:8px;align-items:baseline;border:0;padding:3px 0;font-size:13px;color:var(--ink-50)}
-.hist-items li span:nth-child(2){white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.hist-items li b{font-weight:500;color:var(--ink);font-variant-numeric:tabular-nums}
-.hist-items li.chosen{color:var(--ink)}
-.hist-foot{display:flex;justify-content:space-between;align-items:center;margin-top:14px;font-size:13px;color:var(--ink-50)}
-.hist-foot button{border:0;background:none;padding:0;color:var(--ink-50);text-decoration:underline;text-underline-offset:3px}
-.hist-foot button:hover{color:var(--red)}
-.empty{padding:28px 0;color:var(--ink-50);font-size:14px}
-.graph-wrap{position:relative;border-radius:18px;background:var(--surface);box-shadow:0 0 0 1px var(--line);overflow:hidden}
-.graph{display:block;width:100%;height:auto;aspect-ratio:1/1;touch-action:none}
-.graph line{stroke:var(--ink-35);stroke-width:1;opacity:.55;transition:opacity .2s}
-.graph line.bought{stroke:#16a34a;stroke-width:1.8;opacity:.9}
-.graph line.rejected{stroke:var(--red);stroke-dasharray:4 3;stroke-width:1.5;opacity:.9}
-.graph .node{cursor:pointer;transition:opacity .2s}
-.graph .node circle{stroke:var(--surface);stroke-width:2}
-.graph .node text{font:500 10px var(--sans);fill:var(--ink);paint-order:stroke;stroke:var(--surface);stroke-width:3px;stroke-linejoin:round;pointer-events:none}
-.graph .node.item text,.graph .node.category text{fill:var(--ink-50);font-weight:400}
-.graph.focus .node,.graph.focus line{opacity:.12}
-.graph.focus .node.near,.graph.focus line.near{opacity:1}
-.graph-tip{position:absolute;left:12px;right:12px;bottom:12px;padding:8px 12px;border-radius:12px;background:var(--btn);color:var(--btn-ink);font-size:13px;line-height:1.35;opacity:0;transition:opacity .15s;pointer-events:none}
-.graph-tip.show{opacity:1}
-.graph-tip small{display:block;font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.04em;opacity:.6}
-.legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin:12px 0 0;font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-50)}
-.legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:-1px}
-.facts{margin-top:22px}
-.facts h3{margin:0 0 8px;font-family:var(--mono);font-size:12px;font-weight:400;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-50)}
-.facts ul{list-style:none;margin:0 0 18px;padding:0;border-top:1px solid var(--line)}
-.facts li{padding:8px 0;border-bottom:1px solid var(--line-2);font-size:14px;overflow-wrap:anywhere}
-.facts .src-note{font-size:12px;color:var(--ink-35)}
 
 /* 5. notification */
 .toast{position:fixed;z-index:30;left:50%;bottom:24px;transform:translate(-50%,24px);opacity:0;pointer-events:none;transition:.3s cubic-bezier(.2,.8,.2,1);
@@ -407,7 +354,6 @@ a.src:hover .key{color:var(--ink);text-decoration:underline;text-underline-offse
   const SPEED = qs.has("fast") ? 0.1 : 1;
   const DEFAULT_BUDGET = 900, SHIP_TO = "US-CA";
 
-  let syncDock = () => {};
   let RUN = null, PICKS = [], decided = "", decisions = [], runSeq = 0;
 
   const PLAN = [
@@ -497,15 +443,13 @@ a.src:hover .key{color:var(--ink);text-decoration:underline;text-underline-offse
     el.classList.add("hl");
     if (click) setTimeout(() => { cur.classList.remove("click"); void cur.offsetWidth; cur.classList.add("click"); }, 800 * SPEED);
   }
-  const working = on => { $("#ring").classList.toggle("working", on); $("#dockRing").classList.toggle("working", on); };
+  const working = on => $("#ring").classList.toggle("working", on);
   function halt(state) { clearInterval(clock); working(false); $("#rec").className = "state off"; $("#rec").textContent = state; $("#stop").disabled = true; }
 
   async function start() {
     timers.forEach(clearTimeout); timers = []; stopped = false;
     const seq = ++runSeq, text = $("#ask").value.trim(), budget = parseBudget(text);
     RUN = null; PICKS = []; decided = ""; decisions = [];
-    if (document.activeElement === $("#ask")) $("#ask").blur();
-    document.body.classList.add("asked"); syncDock();
     $("#work").hidden = false; $("#results").hidden = true; $("#toast").classList.remove("show");
     $("#rec").className = "state"; $("#rec").textContent = "Working"; $("#stop").disabled = false;
     working(true);
@@ -555,7 +499,6 @@ a.src:hover .key{color:var(--ink);text-decoration:underline;text-underline-offse
     $("#caption").innerHTML = n ? "Cart is ready." : (none ? "The search came back empty." : "No listing fits.") + " <em>Nothing was added to a cart.</em>";
     if (!n) show(bare(API) + "/api/run", PAGES.note(none ? "No listings found" : "No match within budget", none ? "No listing matched that search. The audit trail below shows where the agent looked." : "The audit trail below shows what was found and why each listing was skipped."), $("#caption").innerHTML);
     renderResults(n ? cartPick().id : null);
-    record(text0());
     $("#results").hidden = false;
     loadSession();
     if (n) notify("Your shortlist is ready", `${n} match${n === 1 ? "" : "es"}. ${cartPick().t} is waiting in your cart.`);
@@ -578,49 +521,11 @@ a.src:hover .key{color:var(--ink);text-decoration:underline;text-underline-offse
     const c = cartPick();
     // The backend carts its top pick only; the approval token covers that one listing.
     $("#approveRow").innerHTML = p.id === c.id
-      ? `<p>Buy <b>${esc(p.t)}</b> through Buyee for <b>${usd(p.usd)}</b> landed. Nothing is paid until you slide.</p>
-         <button class="btn btn-quiet" id="skip" type="button">Skip</button>${swipeHTML(`Slide to pay ${usd(p.usd)}`, false)}`
+      ? `<p>Buy <b>${esc(p.t)}</b> through Buyee for <b>${usd(p.usd)}</b> landed. Nothing is paid until you approve.</p>
+         <button class="btn btn-quiet" id="skip" type="button">Skip</button>
+         <button class="btn btn-dark" id="approve" type="button">Approve ${usd(p.usd)}</button>`
       : `<p><b>${esc(p.t)}</b> is not in the cart. The agent carted its top pick, <b>${esc(c.t)}</b>; skip that one and search again to move on.</p>
-         ${swipeHTML(`Slide to pay ${usd(p.usd)}`, true)}`;
-    wireSwipe();
-  }
-
-  // Swipe to pay. Dragging the thumb past 82% of the track (or Enter/Space on it) approves the cart.
-  // The payment itself is whatever the backend's checkout driver does; with the default driver that is simulated.
-  const swipeHTML = (label, off) => `<div class="swipe${off ? " off" : ""}" id="swipe" role="group" aria-label="${esc(label)}">
-      <span class="swipe-fill"></span><span class="swipe-label">${esc(label)}</span>
-      <button class="swipe-thumb" type="button" ${off ? "disabled" : ""} aria-label="${esc(label)}. Drag right, or press Enter.">→</button></div>`;
-  function wireSwipe() {
-    const track = $("#swipe");
-    if (!track || track.classList.contains("off")) return;
-    const thumb = track.querySelector(".swipe-thumb"), fill = track.querySelector(".swipe-fill"), text = track.querySelector(".swipe-label"), label = text.textContent;
-    let x = 0, max = 0, from = 0, drag = false, done = false;
-    const measure = () => { max = Math.max(40, track.clientWidth - thumb.offsetWidth - 8); };
-    const set = px => {
-      x = Math.max(0, Math.min(max, px));
-      thumb.style.transform = `translateX(${x}px)`;
-      fill.style.width = x ? (x + thumb.offsetWidth + 8) + "px" : "0";
-      text.style.opacity = Math.max(0, 1 - x / (max * 0.7));
-    };
-    const complete = () => {
-      if (done) return;
-      done = true; set(max); track.classList.add("confirmed"); thumb.disabled = true;
-      text.textContent = "Paying…"; text.style.opacity = 1;
-      approve(false);
-    };
-    track.reset = () => { done = false; thumb.disabled = false; track.classList.remove("confirmed"); text.textContent = label; set(0); };
-    thumb.onpointerdown = e => {
-      if (done) return;
-      drag = true; measure(); from = e.clientX - x; track.classList.add("dragging");
-      try { thumb.setPointerCapture(e.pointerId); } catch (_) {}
-    };
-    thumb.onpointermove = e => { if (drag && !done) set(e.clientX - from); };
-    thumb.onpointerup = thumb.onpointercancel = () => {
-      if (!drag) return;
-      drag = false; track.classList.remove("dragging");
-      if (x >= max * 0.82) complete(); else set(0);
-    };
-    thumb.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); measure(); complete(); } };
+         <button class="btn btn-dark" type="button" disabled>Approve ${usd(p.usd)}</button>`;
   }
 
   // The agent cannot browse Buyee itself (Buyee blocks automated clients), so it hands the person
@@ -695,17 +600,16 @@ a.src:hover .key{color:var(--ink);text-decoration:underline;text-underline-offse
 
   function decide(html, line) {
     decided = html; if (line) decisions.push(line);
-    if (line) markDecision(/approved .*→ placed/.test(line) ? "bought" : /^human skipped/.test(line) ? "skipped" : "");
     $("#approveRow").innerHTML = decided; renderTrail(); loadSession();
   }
   const outcome = c => `${c.status}: ${noSession(c.detail)}`;
 
   async function approve(again) {
-    const p = cartPick(), btn = again ? $("#again") : null, swipe = again ? null : $("#swipe");
+    const p = cartPick(), btn = $(again ? "#again" : "#approve");
     if (btn) btn.disabled = true;
     let c;
     try { c = await api("/api/approve", { approval_token: RUN.cart.approval_token }); }
-    catch (e) { if (btn) btn.disabled = false; if (swipe && swipe.reset) swipe.reset(); return notify("Approval failed", e.message); }
+    catch (e) { if (btn) btn.disabled = false; return notify("Approval failed", e.message); }
     if (again) return decide(decided.replace(/<button[^>]*id="again"[^>]*>.*?<\/button>/, "") + `<p class="done-note">Same token again → <b>${esc(outcome(c))}</b></p>`, `human reused the approval token → ${outcome(c)}`);
     if (c.status === "placed") {
       setPlan(6);
@@ -725,206 +629,15 @@ a.src:hover .key{color:var(--ink);text-decoration:underline;text-underline-offse
       `human skipped ${p.id} → approval token revoked, seller ${p.seller} remembered as rejected`);
   }
 
-  // Hero backdrop. Colours follow the theme: translucent sky blue on paper, deeper blue in the dark.
-  if (window.GradientWaves) {
-    const dark = matchMedia("(prefers-color-scheme: dark)");
-    const palette = () => dark.matches && document.documentElement.dataset.theme !== "light"
-      ? { lightMode: false, horizonColor: "#0F2F5C", waveColor: "#38BDF8", brightness: 0.7, opacity: 0.6 }
-      : { lightMode: true, horizonColor: "#7CC4FF", waveColor: "#38BDF8", brightness: 1, opacity: 0.9 };
-    const waves = GradientWaves($("#waves"), { crestColor: "#FFFFFF", speed: 0.5, amplitude: 1.8, relief: 1, lightAngle: 150,
-      mouseInteraction: true, swellOnClick: true, swell: 25, tilt: 40, grain: 0.12, dpr: 1.5, ...palette() });
-    if (waves) dark.addEventListener("change", () => waves.set(palette()));
-  }
-
-  // ---------- History: searches are kept in this browser; memory comes from the backend (/api/memory).
-  const HKEY = "agent-niche.history.v1";
-  const text0 = () => $("#ask").value.trim();
-  const loadHist = () => { try { return JSON.parse(localStorage.getItem(HKEY) || "[]"); } catch (_) { return []; } };
-  const saveHist = h => { try { localStorage.setItem(HKEY, JSON.stringify(h.slice(0, 30))); } catch (_) {} };
-  let histId = "";
-  function record(q) {
-    if (!RUN) return;
-    const c = PICKS.length ? cartPick() : null;
-    histId = Date.now().toString(36);
-    const entry = { id: histId, at: Date.now(), q, budget: parseBudget(q), user: USER, cart: c ? c.id : "", decision: "",
-      picks: PICKS.map(p => ({ id: p.id, t: p.t, usd: p.usd, src: p.src, seller: p.seller, cat: (RUN.picks.find(x => x.listing.id === p.id) || { listing: {} }).listing.category || "", url: p.real ? p.url : "", emoji: p.emoji })) };
-    saveHist([entry, ...loadHist().filter(e => e.q !== q || e.user !== USER)]);
-  }
-  function markDecision(d) {
-    if (!histId || !d) return;
-    saveHist(loadHist().map(e => e.id === histId ? { ...e, decision: d } : e));
-  }
-  const ago = t => { const m = Math.round((Date.now() - t) / 60000); return m < 1 ? "just now" : m < 60 ? m + "m ago" : m < 1440 ? Math.round(m / 60) + "h ago" : Math.round(m / 1440) + "d ago"; };
-
-  let tab = "searches";
-  function openHistory() {
-    $("#drawer").classList.add("show"); $("#scrim").classList.add("show"); $("#drawer").inert = false;
-    renderDrawer(); setTimeout(() => $("#closeHistory").focus(), 50);
-  }
-  function closeHistory() {
-    $("#drawer").classList.remove("show"); $("#scrim").classList.remove("show"); $("#drawer").inert = true; $("#openHistory").focus();
-  }
-  function setTab(t) {
-    tab = t; $("#tabSearches").setAttribute("aria-selected", t === "searches"); $("#tabMemory").setAttribute("aria-selected", t === "memory"); renderDrawer();
-  }
-  function renderDrawer() { tab === "searches" ? renderSearches() : renderMemory(); }
-
-  function renderSearches() {
-    const h = loadHist().filter(e => e.user === USER);
-    if (!h.length) { $("#drawerBody").innerHTML = `<p class="empty">No searches yet. Everything you search for shows up here, with what the agent found.</p>`; return; }
-    $("#drawerBody").innerHTML = `<ul class="hist">${h.map(e => `<li>
-        <button class="hist-q" type="button" data-q="${esc(e.q)}" title="Search again">${esc(e.q)}</button>
-        <div class="hist-meta"><span>${ago(e.at)}</span><span>·</span><span>${e.picks.length} match${e.picks.length === 1 ? "" : "es"}</span>${e.decision ? `<span>·</span><span class="st-${e.decision}">${e.decision}</span>` : ""}</div>
-        ${e.picks.length ? `<ul class="hist-items">${e.picks.map(p => `<li class="${p.id === e.cart ? "chosen" : ""}"><span>${p.emoji || "📦"}</span><span>${p.url && httpUrl(p.url) ? `<a href="${esc(p.url)}" target="_blank" rel="noopener noreferrer">${esc(p.t)}</a>` : esc(p.t)}</span><b>${usd(p.usd)}</b></li>`).join("")}</ul>` : ""}
-      </li>`).join("")}</ul>
-      <div class="hist-foot"><span>Saved in this browser only.</span><button type="button" id="clearHist">Clear history</button></div>`;
-  }
-
-  async function renderMemory() {
-    $("#drawerBody").innerHTML = `<p class="empty">Recalling<em>…</em></p>`;
-    let mem = null, err = "";
-    try { mem = await api("/api/memory?user=" + encodeURIComponent(USER)); } catch (e) { err = e.message; }
-    if (tab !== "memory") return;
-    const g = buildGraph(mem, loadHist().filter(e => e.user === USER).slice(0, 8));
-    const bought = (mem && mem.notes || []).filter(n => /^bought /.test(n));
-    const facts = [
-      ["Bought", bought.map(n => n.replace(/^bought \S+?:\s+/, ""))],
-      ["Rejected sellers", (mem && mem.rejected_sellers) || []],
-      ["Preferences", mem ? [...Object.entries(mem.sizes || {}).map(([k, v]) => `${k} size ${v}`), ...(mem.condition_min ? [`condition at least ${mem.condition_min.replace(/_/g, " ")}`] : [])] : []],
-    ].filter(([, v]) => v.length);
-    $("#drawerBody").innerHTML = `${g.nodes.length > 1 ? `<div class="graph-wrap">${drawGraph(g)}<div class="graph-tip" id="gtip"></div></div>
-        <div class="legend"><span><i style="background:var(--ink)"></i>You</span><span><i style="background:var(--blue)"></i>Search</span><span><i style="background:var(--pink)"></i>Item</span><span><i style="background:var(--yellow)"></i>Seller</span><span><i style="background:var(--lilac);box-shadow:inset 0 0 0 1px var(--ink-35)"></i>Kind</span><span><i style="background:#16a34a"></i>Bought</span><span><i style="background:var(--red)"></i>Rejected</span></div>`
-        : `<p class="empty">Nothing remembered yet. Search, then buy or skip something and it shows up here as a graph.</p>`}
-      <div class="facts">${facts.map(([h, v]) => `<h3>${h}</h3><ul>${v.map(x => `<li>${esc(x)}</li>`).join("")}</ul>`).join("")}
-      <p class="src-note">${mem ? `Memory for <b>${esc(USER)}</b> from the agent. Searches come from this browser.` : `Agent offline (${esc(err)}). Showing this browser's searches only.`}</p></div>`;
-    wireGraph(g);
-  }
-
-  // Entities and relations, Cognee style: you -searched-> query -found-> item -sold by-> seller, item -is a-> kind,
-  // you -bought-> item, you -rejected-> seller.
-  function buildGraph(mem, hist) {
-    const nodes = new Map(), links = [];
-    const node = (id, label, type) => { if (!nodes.has(id)) nodes.set(id, { id, label, type }); return id; };
-    const link = (a, b, kind) => { if (!links.some(l => l.a === a && l.b === b && l.kind === kind)) links.push({ a, b, kind }); };
-    const you = node("you", "You", "you");
-    const titles = {};
-    hist.forEach(e => e.picks.forEach(p => { titles[p.id] = p.t; }));
-    hist.forEach(e => {
-      const q = node("q:" + e.id, e.q.replace(/\s*(?:under|below)\s*\$[\d,.]+.*$/i, "").replace(/^find (?:a |an |me )?(?:used )?/i, ""), "search");
-      link(you, q, "searched");
-      e.picks.forEach(p => {
-        const it = node("i:" + p.id, p.t, "item");
-        link(q, it, "found");
-        if (p.seller) link(it, node("s:" + p.seller, p.seller, "seller"), "sold by");
-        if (p.cat) link(it, node("c:" + p.cat, p.cat.replace(/_/g, " "), "category"), "is a");
-        if (e.decision === "bought" && p.id === e.cart) link(you, it, "bought");
-      });
-    });
-    if (mem) {
-      (mem.notes || []).forEach(n => {
-        const m = n.match(/^bought (\S+?):\s+(.*?)(?: from (.+))?$/);
-        if (!m) return;
-        const it = node("i:" + m[1], titles[m[1]] || m[2], "item");
-        link(you, it, "bought");
-        if (m[3]) link(it, node("s:" + m[3], m[3], "seller"), "sold by");
-      });
-      (mem.past_purchases || []).forEach(id => { if (nodes.has("i:" + id)) link(you, "i:" + id, "bought"); });
-      (mem.rejected_sellers || []).forEach(sl => link(you, node("s:" + sl, sl, "seller"), "rejected"));
-      Object.entries(mem.sizes || {}).forEach(([k, v]) => link(you, node("p:" + k, `${k} ${v}`, "category"), "wears"));
-    }
-    return layout([...nodes.values()], links);
-  }
-
-  // A small force layout, run to rest once (no animation), then scaled into a 400x400 box.
-  function layout(nodes, links) {
-    const idx = new Map(nodes.map((n, i) => [n.id, i]));
-    nodes.forEach((n, i) => { const a = i * 2.39996, r = 20 + 9 * Math.sqrt(i); n.x = Math.cos(a) * r; n.y = Math.sin(a) * r; n.vx = n.vy = 0; });
-    const L = links.map(l => ({ ...l, s: idx.get(l.a), t: idx.get(l.b) }));
-    for (let k = 0; k < 320; k++) {
-      const cool = 1 - k / 320;
-      for (let i = 0; i < nodes.length; i++) for (let j = i + 1; j < nodes.length; j++) {
-        const a = nodes[i], b = nodes[j]; let dx = a.x - b.x, dy = a.y - b.y; const d2 = Math.max(dx * dx + dy * dy, 25), f = 900 / d2, d = Math.sqrt(d2);
-        dx /= d; dy /= d; a.vx += dx * f; a.vy += dy * f; b.vx -= dx * f; b.vy -= dy * f;
-      }
-      L.forEach(l => {
-        const a = nodes[l.s], b = nodes[l.t], dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy) || 1, rest = l.kind === "found" ? 46 : 56, f = (d - rest) * 0.04;
-        a.vx += dx / d * f; a.vy += dy / d * f; b.vx -= dx / d * f; b.vy -= dy / d * f;
-      });
-      nodes.forEach(n => { n.vx -= n.x * 0.004; n.vy -= n.y * 0.004; n.x += n.vx * 0.5 * cool; n.y += n.vy * 0.5 * cool; n.vx *= 0.6; n.vy *= 0.6; });
-    }
-    const xs = nodes.map(n => n.x), ys = nodes.map(n => n.y);
-    const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
-    const sc = Math.min(290 / Math.max(maxX - minX, 1), 320 / Math.max(maxY - minY, 1), 2.2);
-    nodes.forEach(n => { n.x = 200 + (n.x - (minX + maxX) / 2) * sc; n.y = 200 + (n.y - (minY + maxY) / 2) * sc; });
-    return { nodes, links: L };
-  }
-
-  const NODE = { you: ["var(--ink)", 11], search: ["var(--blue)", 8], item: ["var(--pink)", 6], seller: ["var(--yellow)", 6], category: ["var(--lilac)", 5] };
-  const short = (t, n) => t.length > n ? t.slice(0, n - 1) + "…" : t;
-  function drawGraph(g) {
-    const labelled = t => t === "you" || t === "search" || t === "seller" || g.nodes.length < 18;
-    return `<svg class="graph" id="graph" viewBox="0 0 400 400" role="img" aria-label="Memory graph: ${g.nodes.length} things the agent remembers and ${g.links.length} links between them">
-      ${g.links.map((l, i) => `<line data-i="${i}" class="${l.kind === "bought" ? "bought" : l.kind === "rejected" ? "rejected" : ""}" x1="${g.nodes[l.s].x.toFixed(1)}" y1="${g.nodes[l.s].y.toFixed(1)}" x2="${g.nodes[l.t].x.toFixed(1)}" y2="${g.nodes[l.t].y.toFixed(1)}"/>`).join("")}
-      ${g.nodes.map((n, i) => { const [fill, r] = NODE[n.type]; return `<g class="node ${n.type}" data-n="${i}" tabindex="0" transform="translate(${n.x.toFixed(1)} ${n.y.toFixed(1)})">
-        <circle r="${r}" fill="${fill}"/>${labelled(n.type) ? `<text ${n.x > 230 ? `x="${-r - 4}" text-anchor="end"` : `x="${r + 4}"`} y="3.5">${esc(short(n.label, n.type === "item" ? 22 : 26))}</text>` : ""}<title>${esc(n.label)}</title></g>`; }).join("")}
-    </svg>`;
-  }
-  function wireGraph(g) {
-    const svg = $("#graph"), tip = $("#gtip");
-    if (!svg) return;
-    const show = i => {
-      const n = g.nodes[i], rel = g.links.map((l, k) => [l, k]).filter(([l]) => l.s === i || l.t === i);
-      const near = new Set([i, ...rel.map(([l]) => l.s === i ? l.t : l.s)]);
-      svg.classList.add("focus");
-      svg.querySelectorAll(".node").forEach(el => el.classList.toggle("near", near.has(+el.dataset.n)));
-      svg.querySelectorAll("line").forEach(el => el.classList.toggle("near", rel.some(([, k]) => k === +el.dataset.i)));
-      const says = rel.slice(0, 4).map(([l]) => l.s === i ? `${l.kind} ${short(g.nodes[l.t].label, 30)}` : `${short(g.nodes[l.s].label, 30)} ${l.kind} this`).join(" · ");
-      tip.innerHTML = `<small>${n.type === "category" ? "kind" : n.type}</small>${esc(n.label)}${says ? `<br><span style="opacity:.65">${esc(says)}</span>` : ""}`;
-      tip.classList.add("show");
-    };
-    const hide = () => { svg.classList.remove("focus"); tip.classList.remove("show"); };
-    svg.querySelectorAll(".node").forEach(el => {
-      el.addEventListener("mouseenter", () => show(+el.dataset.n)); el.addEventListener("focus", () => show(+el.dataset.n));
-      el.addEventListener("mouseleave", hide); el.addEventListener("blur", hide);
-      el.addEventListener("click", () => show(+el.dataset.n));
-    });
-  }
-
-  $("#openHistory").onclick = openHistory;
-  $("#closeHistory").onclick = closeHistory;
-  $("#scrim").onclick = closeHistory;
-  $("#tabSearches").onclick = () => setTab("searches");
-  $("#tabMemory").onclick = () => setTab("memory");
-  addEventListener("keydown", e => { if (e.key === "Escape" && $("#drawer").classList.contains("show")) closeHistory(); });
-  $("#drawerBody").onclick = e => {
-    const q = e.target.closest(".hist-q");
-    if (q) { closeHistory(); $("#ask").value = q.dataset.q; $("#dockAsk").value = q.dataset.q; $("#form").requestSubmit(); }
-    if (e.target.id === "clearHist") { saveHist(loadHist().filter(x => x.user !== USER)); renderSearches(); }
-  };
-
   // events
   $("#form").onsubmit = e => { e.preventDefault(); if (!$("#ask").value.trim()) $("#ask").value = $("#ask").placeholder; start(); };
   $("#ask").onkeydown = e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); $("#form").requestSubmit(); } };
   document.querySelectorAll(".ex").forEach(b => b.onclick = () => { $("#ask").value = b.textContent; $("#ask").focus(); });
   $("#notifyMe").onchange = e => { if (e.target.checked && "Notification" in window && Notification.permission === "default") Notification.requestPermission(); };
-  // Docked prompt: mirrors the main box and takes over while that one is off screen.
-  const dock = $("#dock"), ask = $("#ask"), dockAsk = $("#dockAsk");
-  ask.addEventListener("input", () => { dockAsk.value = ask.value; });
-  dockAsk.addEventListener("input", () => { ask.value = dockAsk.value; });
-  $("#form").addEventListener("submit", () => { dockAsk.value = ask.value; });
-  $("#dockForm").onsubmit = e => { e.preventDefault(); ask.value = dockAsk.value; $("#form").requestSubmit(); dockAsk.blur(); };
-  // Before the first search the dock only appears once the big box is scrolled away; after it, the big box
-  // has collapsed into the dock and the dock stays.
-  let ringSeen = true;
-  syncDock = () => {
-    const asked = document.body.classList.contains("asked"), on = asked || !ringSeen;
-    dock.classList.toggle("show", on); dock.inert = !on; $("#ring").inert = asked;
-    if (!on && document.activeElement === dockAsk) ask.focus({ preventScroll: true });
-  };
-  if ("IntersectionObserver" in window) new IntersectionObserver(([en]) => { ringSeen = en.isIntersecting; syncDock(); }).observe($("#ring"));
   $("#stop").onclick = () => { stopped = true; timers.forEach(clearTimeout); halt("Stopped"); $("#caption").innerHTML = "Stopped. <em>Nothing was paid.</em>"; };
   $("#opts").onchange = e => renderResults(e.target.value);
   $("#approveRow").onclick = e => {
+    if (e.target.id === "approve") approve(false);
     if (e.target.id === "again") approve(true);
     if (e.target.id === "skip") skip();
   };

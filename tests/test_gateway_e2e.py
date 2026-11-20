@@ -206,6 +206,17 @@ class GatewayE2E(unittest.TestCase):
         self.assertEqual(done["status"], "completed")
         self.assertTrue(done["order"]["id"])
 
+    def test_cors_preflight_and_input_hardening(self):
+        code, hdrs, _ = self._req("OPTIONS", "/mcp")
+        self.assertEqual(code, 204)
+        self.assertEqual(hdrs.get("Access-Control-Allow-Origin"), "*")
+        code, _, raw = self._req("POST", "/mcp", [1, 2])
+        self.assertEqual(code, 400)
+        self.assertIn("object", json.loads(raw)["error"])
+        big = {"x": "a" * (70 * 1024)}
+        code, _, _ = self._req("POST", "/mcp", big)
+        self.assertEqual(code, 413)
+
 
 if __name__ == "__main__":
     unittest.main()

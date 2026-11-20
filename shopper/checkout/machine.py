@@ -1,13 +1,17 @@
 """Checkout state machine.
 
-    created -> listing_opened -> added_to_cart -> cart_filled -> awaiting_approval
-                                                                    |-> approved -> placed
-                                                                    |-> rejected
-                                                                    |-> expired
-    (any state before awaiting_approval can also end in blocked / failed)
+    Chrome / computer-use flow (default):
+    created -> listing_opened -> added_to_cart -> cart_filled -> checkout_opened
+            -> shipping_filled -> awaiting_swipe -> approved -> placed
+    Cart-only flow (drivers without a checkout page, e.g. the Playwright Buyee cart):
+    created -> listing_opened -> added_to_cart -> cart_filled -> awaiting_approval -> approved -> placed
+
+    awaiting_* can also end in rejected / expired / blocked (token bound to another user,
+    amount changed). Any state before that can end in needs_sign_in / needs_address /
+    blocked / failed, each with a one-line next step for the human.
 
 The hard guarantee lives in the table below: the only edge into `placed` starts at
-`approved`, the only edge into `approved` starts at `awaiting_approval`, and both need
+`approved`, the only edges into `approved` start at the two waiting states, and both need
 an ApprovalGrant, which only the approval gate mints after a valid single-use token.
 """
 from __future__ import annotations
@@ -25,23 +29,34 @@ APPROVED = "approved"
 PLACED = "placed"
 REJECTED = "rejected"
 EXPIRED = "expired"
+CHECKOUT_OPENED = "checkout_opened"
+SHIPPING_FILLED = "shipping_filled"
+AWAITING_SWIPE = "awaiting_swipe"
+NEEDS_SIGN_IN = "needs_sign_in"
+NEEDS_ADDRESS = "needs_address"
 BLOCKED = "blocked"
 FAILED = "failed"
 
 TRANSITIONS: dict[str, frozenset[str]] = {
     CREATED: frozenset({LISTING_OPENED, BLOCKED, FAILED}),
-    LISTING_OPENED: frozenset({ADDED_TO_CART, BLOCKED, FAILED}),
-    ADDED_TO_CART: frozenset({CART_FILLED, BLOCKED, FAILED}),
-    CART_FILLED: frozenset({AWAITING_APPROVAL, BLOCKED, FAILED}),
-    AWAITING_APPROVAL: frozenset({APPROVED, REJECTED, EXPIRED}),
+    LISTING_OPENED: frozenset({ADDED_TO_CART, NEEDS_SIGN_IN, BLOCKED, FAILED}),
+    ADDED_TO_CART: frozenset({CART_FILLED, NEEDS_SIGN_IN, BLOCKED, FAILED}),
+    CART_FILLED: frozenset({AWAITING_APPROVAL, CHECKOUT_OPENED, NEEDS_SIGN_IN, BLOCKED, FAILED}),
+    CHECKOUT_OPENED: frozenset({SHIPPING_FILLED, NEEDS_SIGN_IN, NEEDS_ADDRESS, BLOCKED, FAILED}),
+    SHIPPING_FILLED: frozenset({AWAITING_SWIPE, BLOCKED, FAILED}),
+    AWAITING_APPROVAL: frozenset({APPROVED, REJECTED, EXPIRED, BLOCKED}),
+    AWAITING_SWIPE: frozenset({APPROVED, REJECTED, EXPIRED, BLOCKED}),
     APPROVED: frozenset({PLACED, FAILED}),
     PLACED: frozenset(),
     REJECTED: frozenset(),
+    NEEDS_SIGN_IN: frozenset(),
+    NEEDS_ADDRESS: frozenset(),
     EXPIRED: frozenset(),
     BLOCKED: frozenset(),
     FAILED: frozenset(),
 }
 NEEDS_GRANT = frozenset({APPROVED, PLACED})
+WAITING = frozenset({AWAITING_APPROVAL, AWAITING_SWIPE})   # the human gate
 TERMINAL = frozenset(s for s, nxt in TRANSITIONS.items() if not nxt)
 
 
@@ -95,6 +110,11 @@ class Session:
     cart_url: str | None = None
     order_ref: str | None = None
     grant_id: str | None = None
+    user_id: str = "default"
+    binding: dict | None = None        # what the approval token is bound to: user, listing, amount, expiry
+    binding_hash: str | None = None    # sha256(token | binding); recomputed at approve
+    next_step: str | None = None       # one line for the human when the flow stops early
+    payment: dict | None = None        # {"brand","last4","exp"} shown on the swipe UI (never the token)
 
     @property
     def listing_id(self) -> str:

@@ -57,3 +57,19 @@ def preflight(pick: RankedPick, budget_usd: float | None) -> str | None:
     if budget_usd is not None and total > budget_usd:
         return f"landed ${total:.2f} is over the budget ${budget_usd:.2f}"
     return None
+
+
+class UnsafeUrl(ValueError):
+    """A URL the browser driver must not open."""
+
+
+def check_open_url(url: str) -> str:
+    """Only plain http(s) URLs with a host may reach a browser / dt-ax. Returns the URL or raises UnsafeUrl."""
+    import urllib.parse
+    u = str(url or "").strip()
+    if not u or u.startswith("-") or len(u) > 2048 or any(c in u for c in "\r\n\t\x00 "):
+        raise UnsafeUrl(f"refusing to open {u[:60]!r}: not a plain http(s) URL")
+    p = urllib.parse.urlsplit(u)
+    if p.scheme.lower() not in ("http", "https") or not p.hostname or p.username or p.password:
+        raise UnsafeUrl(f"refusing to open {u[:60]!r}: only http(s) URLs with a host are allowed")
+    return u

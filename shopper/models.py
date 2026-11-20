@@ -101,3 +101,58 @@ class PipelineResult:
     picks: list[RankedPick]
     cart: CartResult | None
     trail: list[str]                # step-by-step reasoning trail for the demo
+
+
+@dataclass
+class ShippingAddress:
+    """Per-user shipping address kept in the vault (gitignored data dir, 0600)."""
+    name: str
+    line1: str
+    city: str
+    postal_code: str
+    country: str                    # ISO 3166-1 alpha-2, e.g. "US"
+    line2: str = ""
+    region: str = ""                # state / prefecture, e.g. "CA"
+    phone: str = ""
+
+
+@dataclass
+class PaymentMethodRef:
+    """A reference to a card the user saved with a provider / the site. Never a card number or CVV."""
+    token: str                      # provider token, e.g. "pm_..." / "tok_..."
+    brand: str                      # visa | mastercard | amex | jcb | ...
+    last4: str                      # exactly 4 digits
+    exp: str                        # "MM/YY"
+    label: str = ""
+    kind: str = "card"              # card | stripe | paypal | venmo (payments); paypal/venmo use brand=kind, last4="", exp=""
+
+
+@dataclass
+class VaultRecord:
+    user_id: str
+    address: ShippingAddress | None = None
+    signed_in_sites: list[str] = field(default_factory=list)   # sites this user's Chrome profile is signed into
+    payment_methods: list[PaymentMethodRef] = field(default_factory=list)
+    default_payment: str | None = None                          # token of the default PaymentMethodRef
+
+
+# ---- payments (owner: shopper/payments) ------------------------------------------------------
+PaymentKind = Literal["card", "stripe", "paypal", "venmo"]
+PaymentStatus = Literal["requires_approval", "payer_action_required", "succeeded", "canceled", "blocked", "failed"]
+
+
+@dataclass
+class PaymentIntent:
+    """One attempt to pay the approved cart. amount_usd must equal the approved cart's landed total."""
+    id: str                         # local id "pi_local_..."
+    kind: PaymentKind
+    user_id: str
+    amount_usd: float
+    method_ref: str                 # PaymentMethodRef.token
+    idempotency_key: str            # same key -> same intent; sent to the provider as its idempotency header
+    cart_session_id: str            # checkout session whose ApprovalGrant can confirm this intent
+    status: PaymentStatus = "requires_approval"
+    provider_ref: str | None = None # Stripe pi_..., PayPal order id; None offline
+    currency: str = "usd"
+    approve_url: str | None = None  # PayPal / Venmo buyer approval link when the provider needs one
+    detail: str = ""

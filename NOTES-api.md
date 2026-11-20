@@ -12,3 +12,11 @@
 - models: `LandedCost.total_usd` is a property, so `asdict()` drops it. The API adds `picks[].cost.total_usd` itself (web/server.py does the same). A field or a `to_dict()` in models would remove the copy.
 - web pane: `web/server.py` already serves a similar API on :8642 with a different contract (`token` instead of `approval_token`, `user_id` instead of `user`, reject re-runs the search). The frontend teammate should target `shopper.api` (docs/API.md); worth deciding whether web/ switches to it.
 - rank / listings: with the 40-listing fixtures, `"Fujifilm X100V" --budget 900` now ranks a leather case (m007, $66) and an empty box (m008, $31) above any camera, and puts the case in the cart. The API passes this through unchanged; docs/API.md shows that real output.
+
+## A1 (chat + buy) — mismatches with web/ (not edited: web/ belongs to Terminal 3)
+
+- Component names: web/static/modules/chat_ui.js header names `product_list` and `swipe_pay`; the API (per the A1 spec) emits `listing_table` and `swipe_to_pay`. `agent_browser` and `cost_breakdown` match. No JSON component renderer exists in web/ yet (the page renders `/api/run` picks itself).
+- Approve body: web/app.js sends `{token}` to /api/approve (web/server.py contract); shopper.api uses `{approval_token}` (unchanged, also used by web/mockup/agent.html).
+- web/server.py /api/buy opens Chrome when `open_real` is true even offline; shopper.api opens a real browser only with SHOPPER_LIVE=1 (rule 3).
+- Sort keys: web uses `best|price_asc|price_desc|cond`; API uses `relevance|price|condition` + `dir`.
+- checkout: superseding a cart uses `checkout.reject(token)`, which also writes a "rejected ..." note to memory; a `cancel(token)` without memory feedback would be cleaner.

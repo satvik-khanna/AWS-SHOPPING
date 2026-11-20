@@ -146,6 +146,20 @@ class Api(WebCase):
         self.assertEqual(out["request"]["condition_min"], "like_new")
         self.assertEqual({p["listing"]["condition"] for p in out["picks"]} - {"like_new", "new"}, set())
 
+    def test_buy_second_pick_prepares_cart_and_approves(self):
+        _, first = self.post("/api/run", REQ)
+        self.assertGreaterEqual(len(first["picks"]), 2)
+        second_id = first["picks"][1]["listing"]["id"]
+        old_token = first["cart"]["approval_token"]
+        status, bought = self.post("/api/buy", dict(REQ, listing_id=second_id))
+        self.assertEqual(status, 200)
+        self.assertEqual(bought["cart"]["listing_id"], second_id)
+        self.assertEqual(bought["cart"]["status"], "awaiting_approval")
+        self.assertEqual(self.post("/api/approve", {"token": old_token})[1]["cart"]["status"], "blocked")
+        _, placed = self.post("/api/approve", {"token": bought["cart"]["approval_token"]})
+        self.assertEqual(placed["cart"]["status"], "placed")
+        self.assertEqual(placed["cart"]["listing_id"], second_id)
+
 
 class Hardening(WebCase):
     def test_bad_input_is_400_with_a_message(self):

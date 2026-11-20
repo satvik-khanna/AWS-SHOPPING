@@ -6,6 +6,8 @@
     POST /api/reject        {user?, seller, approval_token?, reason?}        -> Preferences
     GET  /api/memory?user=                                                   -> Preferences
     GET  /api/sessions/<id>                                                  -> Checkout session step log
+    POST /api/chat          {user?, message, session?, payment_method?}      -> {reply, components, trail, ...}
+    POST /api/buy           {query, budget, ..., listing_id, session?}       -> PipelineResult + cua + components
 
 One Deps lives for the whole server, so approval tokens issued by /api/run are still
 valid on a later /api/approve. Approval is decided only by deps.checkout.approve
@@ -13,9 +15,12 @@ valid on a later /api/approve. Approval is decided only by deps.checkout.approve
 """
 from __future__ import annotations
 
+import inspect
 import json
 import math
 import threading
+import time
+from collections import OrderedDict
 from dataclasses import asdict
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlsplit
@@ -24,10 +29,24 @@ from .. import config
 from ..app import build_deps
 from ..models import CartResult, Listing, ShoppingRequest
 from ..pipeline import Deps, run
+from . import chat as C
+from .sie_rerank import rerank
 
 MAX_BODY = 64 * 1024
 CONDITIONS = ("new", "like_new", "good", "fair")
 VERSION = "1"
+MAX_SESSIONS = 500
+SESSION_IDLE_S = 24 * 3600
+
+
+class _NoCart:
+    """Checkout stand-in for listing only: the pipeline would otherwise mint a cart for picks[0]."""
+
+    def fill_cart(self, pick, **_):
+        return CartResult(status="blocked", listing_id=pick.listing.id, detail="list only")
+
+    def approve(self, approval_token):
+        return CartResult(status="blocked", listing_id="", detail="list only")
 
 
 class ApiError(Exception):
@@ -85,6 +104,9 @@ class Service:
         self.lock = threading.Lock()
         self.carts: dict[str, tuple[str, Listing]] = {}   # approval_token -> (user, listing)
         self.revoked: set[str] = set()   # carts whose seller the user rejected (Checkout has no cancel())
+        self.chats: OrderedDict[str, C.ChatSession] = OrderedDict()
+        self.list_deps = Deps(memory=self.deps.memory, source=self.deps.source, cost=self.deps.cost,
+                              ranker=self.deps.ranker, checkout=_NoCart())
 
     def health(self) -> dict:
         d = self.deps
@@ -135,15 +157,22 @@ class Service:
         if len(seller) > 120:
             raise _bad("seller is too long (max 120 characters)")
         user = _user(body)
+        seller_clean = seller.strip()
         token = body.get("approval_token")
         reason = body.get("reason") if isinstance(body.get("reason"), str) else ""
         with self.lock:
-            self.deps.memory.reject_seller(user, seller.strip())
+            self.deps.memory.reject_seller(user, seller_clean)
+            tokens_to_reject: list[str] = []
             if isinstance(token, str) and token:
-                self.revoked.add(token)
-                self.carts.pop(token, None)
+                tokens_to_reject.append(token)
+            for t, (u, l) in list(self.carts.items()):
+                if u == user and l.seller == seller_clean and t not in tokens_to_reject:
+                    tokens_to_reject.append(t)
+            for t in tokens_to_reject:
+                self.revoked.add(t)
+                self.carts.pop(t, None)
                 if hasattr(self.deps.checkout, "reject"):
-                    self.deps.checkout.reject(token, reason=reason, reject_seller=False)
+                    self.deps.checkout.reject(t, reason=reason or "seller rejected", reject_seller=False)
             return asdict(self.deps.memory.recall(user))
 
     def session(self, session_id: str) -> dict:
@@ -166,6 +195,252 @@ class Service:
             "steps": [asdict(st) for st in s.steps],
         }
 
+    # ------------------------------------------------------------ chat + buy (A1)
+    def _ranker_name(self) -> str:
+        r = self.deps.ranker
+        st = getattr(r, "last_status", "")
+        return type(r).__name__ + (f" [{st}]" if st else "")
+
+    def _search(self, req: ShoppingRequest) -> tuple[list, list[str], dict]:
+        """Pipeline without a cart, then the optional Superlinked SIE rerank. Caller holds the lock."""
+        result = run(req, self.list_deps, top_k=C.MAX_ROWS)
+        trail = [t for t in result.trail if not t.startswith("cart ")]
+        picks, line = rerank(req.query, result.picks, self._ranker_name())
+        trail.append(line)
+        if picks:
+            trail.append("no cart yet: waiting for the user to press Buy on a row")
+        return picks, trail, asdict(result.preferences)
+
+    def _revoke(self, token: str | None, reason: str) -> None:
+        if not token or token in self.revoked:
+            return
+        self.revoked.add(token)
+        self.carts.pop(token, None)
+        if hasattr(self.deps.checkout, "reject"):
+            self.deps.checkout.reject(token, reason=reason, reject_seller=False)
+
+    def _fill(self, req: ShoppingRequest, pick) -> CartResult:
+        sig = inspect.signature(self.deps.checkout.fill_cart)
+        kw = {}
+        if "budget_usd" in sig.parameters:
+            kw["budget_usd"] = req.max_total_usd
+        if "user_id" in sig.parameters:
+            kw["user_id"] = req.user_id
+        cart = self.deps.checkout.fill_cart(pick, **kw)
+        if cart.approval_token:
+            self.carts[cart.approval_token] = (req.user_id, pick.listing)
+        return cart
+
+    def _cua(self, pick, cart: CartResult, open_real: bool, trail: list[str]) -> dict:
+        """Open the real site in Chrome only when SHOPPER_LIVE=1 and the client asked (open_real)."""
+        if not config.live():
+            return {"opened_in_chrome": False, "skipped": "offline (SHOPPER_LIVE is not 1): no browser opened"}
+        if not open_real:
+            return {"opened_in_chrome": False, "skipped": "open_real not requested"}
+        from ..checkout import don_tacos_cua
+        info = don_tacos_cua.probe()
+        if not info.get("ok"):
+            return {**info, "opened_in_chrome": False}
+        try:
+            drv = don_tacos_cua.DonTacosChromeDriver()
+            sid = cart.session_id or pick.listing.id
+            info["opened_url"] = drv.open_listing(sid, asdict(pick.listing))
+            info["opened_in_chrome"] = True
+            try:
+                info.update(drv.inspect_window(sid))
+            except Exception:
+                pass
+            trail.append(f"don-tacos dt-ax opened Chrome: {info['opened_url']}")
+        except Exception as e:
+            info["error"] = str(e)[:200]
+            info["opened_in_chrome"] = False
+        return info
+
+    def _buy_pick(self, s: C.ChatSession | None, req: ShoppingRequest, pick, open_real: bool,
+                  payment_method: dict | None, trail: list[str]) -> tuple[CartResult, dict, list[dict]]:
+        if s is not None:
+            self._revoke(s.cart_token, "superseded by a newer cart")
+        cart = self._fill(req, pick)
+        trail.append(f"cart {cart.status} for {cart.listing_id}"
+                     + (" (stopped: waiting for the swipe)" if cart.status == "awaiting_approval" else ""))
+        cua = self._cua(pick, cart, open_real, trail)
+        fn = getattr(self.deps.checkout, "session", None)
+        csession = fn(cart.session_id) if callable(fn) and cart.session_id else None
+        comps = [C.agent_browser(pick, cart, csession, cua)]
+        if cart.status == "awaiting_approval" and cart.approval_token:
+            comps.append(C.swipe_to_pay(pick, cart, csession, req.user_id, payment_method))
+        else:
+            comps.append(C.notice(f"Could not prepare the cart: {cart.detail}", "warn"))
+        comps.append(C.cost_breakdown(pick))
+        if s is not None:
+            s.cart_token = cart.approval_token if cart.status == "awaiting_approval" else None
+            s.payment_method = payment_method or s.payment_method
+        return cart, cua, comps
+
+    def _session(self, sid, user: str) -> tuple[C.ChatSession, list[dict]]:
+        now = time.time()
+        for k in [k for k, v in self.chats.items() if now - v.updated_at > SESSION_IDLE_S]:
+            self.chats.pop(k)
+        notes = []
+        if sid is not None and (not isinstance(sid, str) or len(sid) > 64):
+            raise _bad("session must be the string returned by an earlier /api/chat")
+        s = self.chats.get(sid) if sid else None
+        if s is not None and s.user != user:
+            raise ApiError(403, "forbidden", "this chat session belongs to another user")
+        if s is None:
+            if sid:
+                notes.append(C.notice("That chat session has expired; started a new one.", "info"))
+            s = C.ChatSession(id=C.new_session_id(), user=user)
+            self.chats[s.id] = s
+            while len(self.chats) > MAX_SESSIONS:
+                self.chats.popitem(last=False)
+        s.updated_at = now
+        self.chats.move_to_end(s.id)
+        return s, notes
+
+    @staticmethod
+    def _pm(body: dict):
+        try:
+            return C.parse_payment_method(body.get("payment_method"))
+        except ValueError as e:
+            raise _bad(str(e)) from None
+
+    def chat(self, body: dict) -> dict:
+        message = body.get("message")
+        if not isinstance(message, str):
+            raise _bad("message is required (string), e.g. \"list up Fujifilm X100V under $900\"")
+        if len(message) > 500:
+            raise _bad("message is too long (max 500 characters)")
+        user = _user(body)
+        pm = self._pm(body)
+        intent, args = C.parse_intent(message)
+        trail: list[str] = [f"intent: {intent} (rule-based)"]
+        with self.lock:
+            s, comps = self._session(body.get("session"), user)
+            if pm:
+                s.payment_method = pm
+            reply = self._chat_intent(s, intent, args, body, trail, comps)
+        return {"version": C.COMPONENT_VERSION, "session": s.id, "user": user, "intent": intent,
+                "reply": reply, "components": comps, "trail": trail}
+
+    def _chat_intent(self, s: C.ChatSession, intent: str, args: dict, body: dict,
+                     trail: list[str], comps: list[dict]) -> str:
+        examples = ("Try: \"list up Fujifilm X100V under $900\", \"sort by price\", "
+                    "\"sort by condition\", \"buy 1\" or \"buy <listing id>\".")
+        if intent == "help":
+            comps.append(C.notice(examples))
+            return "I search Japanese marketplaces and show landed prices. " + examples
+        if intent == "search":
+            prev = s.request
+            merged = {"query": args.get("query"), "user": s.user,
+                      "budget": args.get("budget", body.get("budget") or (prev.max_total_usd if prev else C.DEFAULT_BUDGET_USD)),
+                      "ship_to": args.get("ship_to") or body.get("ship_to") or (prev.ship_to if prev else "US-CA"),
+                      "condition_min": args.get("condition_min") or body.get("condition_min")}
+            req = parse_run(merged)
+            if "budget" not in args and body.get("budget") is None:
+                trail.append(f"budget not in message: using ${req.max_total_usd:g}"
+                             + (" (previous search)" if prev else " (default)"))
+            self._revoke(s.cart_token, "superseded by a new search")
+            s.cart_token = None
+            picks, t, _ = self._search(req)
+            trail.extend(t)
+            s.request, s.picks, s.sort = req, picks, ("relevance", "asc")
+            if not picks:
+                comps.append(C.notice(f"Nothing for \"{req.query}\" fits ${req.max_total_usd:,.0f} landed. "
+                                      "Try a higher budget or other words.", "warn"))
+                comps.append(C.listing_table(s))
+                return f"No listing for \"{req.query}\" fits ${req.max_total_usd:,.0f} landed to {req.ship_to}."
+            comps.append(C.listing_table(s))
+            return (f"Found {len(picks)} for \"{req.query}\" within ${req.max_total_usd:,.0f} landed to {req.ship_to}, "
+                    "best match first. Press Buy on a row, or say \"sort by price\".")
+        if not s.picks:
+            comps.append(C.notice("There is no list yet. " + examples, "info"))
+            return "Tell me what to look for first. " + examples
+        if intent == "list":
+            comps.append(C.listing_table(s))
+            return f"Here is the list again ({len(s.picks)} items, sorted by {s.sort[0]})."
+        if intent == "sort":
+            s.sort = (args["key"], args["dir"])
+            trail.append(f"sorted {len(s.picks)} rows by {args['key']} {args['dir']}")
+            comps.append(C.listing_table(s))
+            return f"Sorted by {args['key']} ({'low to high' if args['dir'] == 'asc' else 'high to low'})."
+        if intent == "bad_sort":
+            comps.append(C.notice(f"I can sort by price, condition or relevance, not \"{args['key']}\".", "warn"))
+            return "I can sort by price, condition or relevance."
+        if intent == "buy":
+            pick = self._resolve(s, args["target"])
+            if pick is None:
+                comps.append(C.notice(f"\"{args['target']}\" is not in the current list. "
+                                      "Use the row number or the listing id.", "warn"))
+                comps.append(C.listing_table(s))
+                return f"I could not find \"{args['target']}\" in the list."
+            cart, _, more = self._buy_pick(s, s.request, pick, bool(body.get("open_real")), s.payment_method, trail)
+            comps.extend(more)
+            if cart.status != "awaiting_approval":
+                return f"I could not prepare the cart for {pick.listing.title_en}: {cart.detail}"
+            return (f"Cart ready for {pick.listing.title_en} at ${pick.cost.total_usd:,.2f} landed. "
+                    "Nothing is paid yet: swipe to pay to confirm.")
+        if intent == "approve":
+            comps.append(C.notice("Approval only happens through the swipe-to-pay control (POST /api/approve); "
+                                  "typing in chat never pays.", "info"))
+            return "Please use the swipe-to-pay control to confirm. Typing cannot pay."
+        if intent == "reject":
+            self._revoke(s.cart_token, "declined in chat")
+            had = s.cart_token is not None
+            s.cart_token = None
+            comps.append(C.notice("Cart cancelled; nothing was paid." if had else "No pending cart to cancel.", "info"))
+            comps.append(C.listing_table(s))
+            return "OK, nothing was paid." if had else "There is no pending cart."
+        comps.append(C.notice(examples))
+        return examples
+
+    @staticmethod
+    def _resolve(s: C.ChatSession, target: str):
+        if target.isdigit():
+            rows = C.sorted_picks(s.picks, *s.sort)
+            i = int(target) - 1
+            return rows[i] if 0 <= i < len(rows) else None
+        t = target.lower()
+        for p in s.picks:
+            lid = p.listing.id.lower()
+            if lid == t or lid.split(":", 1)[-1] == t:
+                return p
+        return None
+
+    def buy(self, body: dict) -> dict:
+        listing_id = body.get("listing_id")
+        if not isinstance(listing_id, str) or not listing_id.strip():
+            raise _bad("listing_id is required (listing.id of a pick)")
+        target = listing_id.strip()
+        req = parse_run(body)
+        pm = self._pm(body)
+        sid = body.get("session")
+        trail: list[str] = []
+        with self.lock:
+            s = None
+            if sid:
+                s, _ = self._session(sid, req.user_id)
+                if not s.picks:
+                    s = None     # unknown / expired session: fall back to a fresh search
+            if s is not None and any(p.listing.id == target for p in s.picks):
+                picks, prefs = s.picks, asdict(self.deps.memory.recall(req.user_id))
+                req = s.request
+                trail.append(f"buy {target} from chat session {s.id}")
+            else:
+                picks, t, prefs = self._search(req)
+                trail.extend(t)
+            pick = next((p for p in picks if p.listing.id == target), None)
+            if pick is None:
+                raise ApiError(404, "not_found", f"listing {target} is not in the current results for "
+                                                 f"\"{req.query}\" within ${req.max_total_usd:g}; search again")
+            cart, cua, comps = self._buy_pick(s, req, pick, bool(body.get("open_real")),
+                                              pm or (s.payment_method if s else None), trail)
+        out = {"request": asdict(req), "preferences": prefs, "picks": [asdict(p) for p in picks],
+               "cart": asdict(cart), "trail": trail, "cua": cua, "components": comps}
+        for p, row in zip(picks, out["picks"]):
+            row["cost"]["total_usd"] = p.cost.total_usd
+        return out
+
     def memory(self, query: dict) -> dict:
         user = _user({"user": (query.get("user") or query.get("user_id") or [""])[0]})
         with self.lock:
@@ -175,7 +450,8 @@ class Service:
 def make_handler(service: Service, quiet: bool = False):
     gets = {"/health": lambda q: service.health(), "/api/health": lambda q: service.health(),
             "/api/memory": service.memory}
-    posts = {"/api/run": service.run, "/api/approve": service.approve, "/api/reject": service.reject}
+    posts = {"/api/run": service.run, "/api/approve": service.approve, "/api/reject": service.reject,
+             "/api/chat": service.chat, "/api/buy": service.buy}
 
     class Handler(BaseHTTPRequestHandler):
         server_version = "shopper-api/" + VERSION

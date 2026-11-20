@@ -110,12 +110,23 @@ class LiveBuyeeDriver:
 
 
 def default_driver():
-    """Live driver only with SHOPPER_LIVE=1 + BUYEE_STORAGE_STATE + playwright installed."""
+    """Offline: FakeChromeDriver (full checkout flow, stops at awaiting_swipe).
+    SHOPPER_LIVE=1: don-tacos dt-ax Chrome if installed and Accessibility-trusted, else the
+    Playwright Buyee cart if BUYEE_STORAGE_STATE exists, else the fake."""
     from ..config import live
+    from .chrome import FakeChromeDriver
+    if not live():
+        return FakeChromeDriver()
+    try:
+        from . import don_tacos_cua
+        if don_tacos_cua.probe().get("ok"):
+            return don_tacos_cua.DonTacosChromeDriver()
+    except Exception:
+        pass
     state = os.environ.get("BUYEE_STORAGE_STATE")
-    if live() and state and os.path.exists(state):
+    if state and os.path.exists(state):
         try:
             return LiveBuyeeDriver(state)
         except Exception:  # playwright missing or browser not installed -> offline
             pass
-    return SimBuyeeDriver()
+    return FakeChromeDriver()

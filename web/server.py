@@ -19,6 +19,7 @@ moved past (new search / rejected seller), because Checkout has no cancel().
 from __future__ import annotations
 
 import argparse
+import inspect
 import json
 import math
 import sys
@@ -33,6 +34,7 @@ if str(ROOT) not in sys.path:           # so `python3 web/server.py` works too
 
 from shopper import config  # noqa: E402
 from shopper.app import build_deps  # noqa: E402
+from shopper.checkout import don_tacos_cua  # noqa: E402
 from shopper.models import CartResult, Listing, ShoppingRequest  # noqa: E402
 from shopper.pipeline import Deps, run  # noqa: E402
 
@@ -80,18 +82,27 @@ class Session:
         self.active_token: str | None = None            # token of the cart currently on screen
         self.revoked: set[str] = set()                  # tokens of carts the user moved past
         self.in_cart: dict[str, tuple[str, Listing]] = {}   # token -> (user_id, listing)
+        self._last_picks: list = []                     # RankedPick objects from last _run
 
     def meta(self) -> dict:
         d = self.deps
         return {"live": config.live(),
+                "cua": don_tacos_cua.probe(),
                 "wiring": {k: type(getattr(d, k)).__name__ for k in ("memory", "source", "cost", "ranker", "checkout")}}
 
-    def _run(self, req: ShoppingRequest, lead: list[str] | None = None) -> dict:
-        if self.active_token:                           # a new cart replaces the one on screen
-            self.revoked.add(self.active_token)
-            self.in_cart.pop(self.active_token, None)
+    def _revoke_active(self, reason: str = "superseded") -> None:
+        if self.active_token:
+            tok = self.active_token
+            self.revoked.add(tok)
+            self.in_cart.pop(tok, None)
             self.active_token = None
+            if hasattr(self.deps.checkout, "reject"):
+                self.deps.checkout.reject(tok, reason=reason, reject_seller=False)
+
+    def _run(self, req: ShoppingRequest, lead: list[str] | None = None) -> dict:
+        self._revoke_active("new search")               # a new cart replaces the one on screen
         result = run(req, self.deps)
+        self._last_picks = list(result.picks)
         out = asdict(result)
         for pick, row in zip(result.picks, out["picks"]):
             row["cost"]["total_usd"] = pick.cost.total_usd
@@ -117,6 +128,50 @@ class Session:
         with self.lock:
             self.deps.memory.reject_seller(req.user_id, seller)
             return self._run(req, lead=[f"rejected seller {seller}: remembered for {req.user_id}, searching again"])
+
+    def buy(self, body: dict) -> dict:
+        listing_id = body.get("listing_id")
+        if not isinstance(listing_id, str) or not listing_id.strip():
+            raise BadRequest("listing_id is required")
+        target_id = listing_id.strip()
+        req = parse_request(body)
+        with self.lock:
+            out = self._run(req)
+            target_pick = next((p for p in self._last_picks if p.listing.id == target_id), None)
+            if target_pick is not None and (not out.get("cart") or out["cart"].get("listing_id") != target_id):
+                self._revoke_active(f"switched to {target_id}")
+                sig = inspect.signature(self.deps.checkout.fill_cart)
+                kw = {}
+                if "budget_usd" in sig.parameters:
+                    kw["budget_usd"] = req.max_total_usd
+                if "user_id" in sig.parameters:
+                    kw["user_id"] = req.user_id
+                cart = self.deps.checkout.fill_cart(target_pick, **kw)
+                out["cart"] = asdict(cart)
+                if cart.approval_token:
+                    self.active_token = cart.approval_token
+                    self.in_cart[cart.approval_token] = (req.user_id, target_pick.listing)
+                out["trail"].append(f"cart prepared for {target_pick.listing.id} (awaiting swipe approval)")
+            if target_pick is not None:
+                l_data = asdict(target_pick.listing)
+                cua_info = don_tacos_cua.probe()
+                open_real = bool(body.get("open_real"))
+                if (open_real or config.live()) and cua_info.get("ok"):
+                    try:
+                        drv = don_tacos_cua.DonTacosChromeDriver()
+                        sid = (out.get("cart") or {}).get("approval_token") or target_pick.listing.id
+                        opened_url = drv.open_listing(sid, l_data)
+                        cua_info["opened_url"] = opened_url
+                        cua_info["opened_in_chrome"] = True
+                        try:
+                            cua_info.update(drv.inspect_window(sid))
+                        except Exception:
+                            pass
+                        out["trail"].append(f"don-tacos dt-ax opened Chrome: {opened_url}")
+                    except Exception as e:
+                        cua_info["error"] = str(e)
+                out["cua"] = cua_info
+            return out
 
     def approve(self, body: dict) -> dict:
         token = body.get("token")
@@ -145,9 +200,9 @@ class Session:
 
 
 def make_handler(session: Session, allowed_hosts: tuple[str, ...] | None, quiet: bool = False):
-    static = {f"/static/{p.name}": p for p in STATIC.iterdir() if p.suffix in MIME}
+    static = {f"/static/{p.relative_to(STATIC).as_posix()}": p for p in STATIC.rglob("*") if p.is_file() and p.suffix in MIME}
     static["/"] = static["/index.html"] = STATIC / "index.html"
-    posts = {"/api/run": session.run, "/api/approve": session.approve, "/api/reject": session.reject}
+    posts = {"/api/run": session.run, "/api/buy": session.buy, "/api/approve": session.approve, "/api/reject": session.reject}
 
     class Handler(BaseHTTPRequestHandler):
         server_version = "shopper-web"

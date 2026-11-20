@@ -130,6 +130,7 @@ class BuyeeLiveSource:
     def __init__(self, fallback, fetch: Callable[[str], str] | None = None, max_per_market: int = 30,
                  verbose: bool = True):
         self.fallback = fallback
+        self.custom_fetch = fetch is not None
         self.fetch = fetch or http_fetch
         self.max_per_market = max_per_market
         self.verbose = verbose
@@ -145,19 +146,30 @@ class BuyeeLiveSource:
             out = self.fallback.search(req, prefs)
             self.last_status = getattr(self.fallback, "last_status", "fixtures")
             return out
+        if not self.custom_fetch:
+            # No browser fetcher plugged in: Buyee refuses plain HTTP (robots.txt 403, AWS WAF), so use the
+            # polite multi-channel live source (Yahoo! Auctions direct, Buyee / Off Mall only if robots allow).
+            from .live import LiveSource
+            src = LiveSource(self.fallback, verbose=self.verbose)
+            out = src.search(req, prefs)
+            self.last_status = src.last_status
+            return out
         plan = parse_query(req.query)
-        keyword = (plan.ja_keywords or [req.query])[0]
+        keywords = (plan.ja_keywords if plan.alternatives else plan.ja_keywords[:1]) or [req.query]
+        keywords = keywords[:2]                 # 'A or B' -> one search per option, at most 2 per market
+        keyword = " | ".join(keywords)
         found: list[Listing] = []
         notes: list[str] = []
-        for market, url, parse in (("mercari", mercari_search_url(keyword), parse_mercari_search),
-                                   ("yahoo", yahoo_search_url(keyword), parse_yahoo_search)):
+        jobs = [(m, u(k), f) for k in keywords for m, u, f in (("mercari", mercari_search_url, parse_mercari_search),
+                                                               ("yahoo", yahoo_search_url, parse_yahoo_search))]
+        for market, url, parse in jobs:
             try:
                 rows = parse(self.fetch(url))
                 if not rows:
                     raise BuyeeError("no listing cards parsed")
                 listings = [to_listing(r) for r in rows[: self.max_per_market]]
                 kept = [l for l in listings if relevance(plan, l).ok]
-                found += kept
+                found += [l for l in kept if l.id not in {x.id for x in found}]
                 notes.append(f"{market} {len(kept)}/{len(listings)} relevant")
             except Exception as e:      # any error -> this market contributes nothing
                 notes.append(f"{market} failed ({e})")

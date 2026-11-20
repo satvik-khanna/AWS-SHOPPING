@@ -2,11 +2,13 @@
 
     python3 -m firedrill.run [-n 200] [--seed 7] [--out firedrill/out]
 
-Each run builds a fresh BuyeeCheckout on the simulated Buyee driver, plays one scenario, then
+Each run builds a fresh BuyeeCheckout on the fake Chrome driver (one scenario on the cart-only
+simulated Buyee driver), plays one scenario, then
 checks the invariant from the outside (the driver's order book, not the checkout's own word):
 
-    an order exists  <=>  the scenario called approve() with the genuine, unused, unexpired
-                          token of that very session, and the pick was within budget.
+    an order exists  <=>  the owner swiped (approve) with the genuine, unused, unexpired token
+                          of that very session, the amount had not changed, the pick was within
+                          budget; and no password / card number / CVV was stored or typed.
 
 Writes <out>/report.md (human) and <out>/report.json (machine). Exit code 1 if any run broke it.
 """
@@ -26,7 +28,13 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from shopper.checkout import BuyeeCheckout, SimBuyeeDriver  # noqa: E402
+from shopper.checkout import BuyeeCheckout, FakeChromeDriver, SimBuyeeDriver  # noqa: E402
+from shopper.checkout import machine as M  # noqa: E402
+from shopper.models import PaymentMethodRef, ShippingAddress  # noqa: E402
+from shopper.vault import MemoryVault, VaultError, looks_like_card_number  # noqa: E402
+
+OWNER = "alice"
+TEST_CARD = "4242 4242 4242 4242"     # public test number; must never be stored or typed
 from shopper.cost import RulesCostEngine  # noqa: E402
 from shopper.listings import FixtureSource  # noqa: E402
 from shopper.models import Preferences, RankedPick, ShoppingRequest  # noqa: E402
@@ -55,8 +63,19 @@ class Run:
     def __init__(self, i: int, scenario: str, rng: random.Random, picks: list[RankedPick]):
         self.i, self.scenario, self.rng = i, scenario, rng
         self.t = [1_000_000.0]
-        self.driver = SimBuyeeDriver()
-        self.co = BuyeeCheckout(driver=self.driver, ttl=600, clock=lambda: self.t[0])
+        if scenario == "cart_only_flow":
+            self.driver = SimBuyeeDriver()
+        elif scenario == "needs_sign_in":
+            self.driver = FakeChromeDriver(signed_in_sites=set())
+        else:
+            self.driver = FakeChromeDriver()
+        self.vault = MemoryVault()
+        self.vault.set_address(OWNER, ShippingAddress(name="Firedrill Alice", line1="1 Test Way", city="Testville",
+                                                      postal_code="00000", country="US", region="CA"))
+        self.vault.add_payment_method(OWNER, PaymentMethodRef(token="pm_firedrill_visa", brand="visa",
+                                                              last4="4242", exp="12/30"))
+        self.co = BuyeeCheckout(driver=self.driver, ttl=600, clock=lambda: self.t[0], vault=self.vault,
+                                user_id=OWNER)
         self.picks = picks
         self.expect_orders = 0
         self.events: list[str] = []
@@ -72,9 +91,9 @@ class Run:
         self.events.append(f"fill_cart -> {r.status}")
         return r
 
-    def approve(self, tok):
-        r = self.co.approve(tok)
-        self.events.append(f"approve({_mask(tok)}) -> {r.status}")
+    def approve(self, tok, user_id=OWNER):
+        r = self.co.approve(tok, user_id=user_id)
+        self.events.append(f"approve({_mask(tok)}, user={user_id}) -> {r.status} {r.detail[-70:]}")
         return r
 
 
@@ -154,32 +173,89 @@ def play(run: Run) -> None:
             run.events.append("forged ApprovalGrant SUCCEEDED")
         except PermissionError:
             run.events.append("forged ApprovalGrant refused")
+    elif s == "other_user_token":
+        r = run.fill()
+        run.approve(r.approval_token, user_id="mallory")
+        run.approve(r.approval_token, user_id="")
+        run.approve(r.approval_token, user_id=OWNER)    # owner's token was not burned by the attempt
+        run.expect_orders = 1
+    elif s == "amount_changed_on_site":
+        r = run.fill()
+        sid = r.session_id
+        old = run.driver.tabs[sid]["price_jpy"]
+        run.driver.reprice(sid, old + run.rng.choice([1, 500, 20000]))
+        run.events.append(f"seller repriced ¥{old} -> ¥{run.driver.tabs[sid]['price_jpy']}")
+        run.approve(r.approval_token)
+    elif s == "amount_tampered_in_store":
+        r = run.fill()
+        sess = run.co.store.get(r.session_id)
+        sess.total_usd = round(sess.total_usd * run.rng.choice([0.5, 1.01, 2.0]), 2)
+        run.co.store.save(sess)
+        run.events.append(f"stored amount edited to ${sess.total_usd}")
+        run.approve(r.approval_token)
+    elif s == "needs_sign_in":
+        r = run.fill()
+        run.events.append(f"token issued: {bool(r.approval_token)}")
+        if r.approval_token:
+            run.approve(r.approval_token)
+    elif s == "secrets_never_stored":
+        for bad in (PaymentMethodRef(token=TEST_CARD.replace(" ", ""), brand="visa", last4="4242", exp="12/30"),
+                    PaymentMethodRef(token="pm_ok_123", brand="visa", last4="4242", exp="12/30", label=TEST_CARD)):
+            try:
+                run.vault.add_payment_method(OWNER, bad)
+                run.events.append("vault ACCEPTED a card number")
+            except VaultError:
+                run.events.append("vault refused a card number")
+        try:
+            run.vault.set_address(OWNER, ShippingAddress(name="x", line1=TEST_CARD, city="c", postal_code="1",
+                                                         country="US"))
+            run.events.append("vault ACCEPTED a card number in the address")
+        except VaultError:
+            run.events.append("vault refused a card number in the address")
+        r = run.fill(); run.approve(r.approval_token); run.expect_orders = 1
+    elif s == "cart_only_flow":
+        r = run.fill(); run.approve(r.approval_token); run.approve(r.approval_token); run.expect_orders = 1
     else:
         raise ValueError(s)
 
 
 SCENARIOS = ["honest_approve", "no_approval", "forged_token", "reused_token", "token_mutation",
              "cross_session_token", "prompt_injection", "over_budget", "expired_token",
-             "reject_then_approve", "race_double_approve", "driver_error", "direct_place_without_grant"]
+             "reject_then_approve", "race_double_approve", "driver_error", "direct_place_without_grant",
+             "other_user_token", "amount_changed_on_site", "amount_tampered_in_store", "needs_sign_in",
+             "secrets_never_stored", "cart_only_flow"]
 
 
 def check(run: Run) -> tuple[bool, str]:
     orders = len(run.driver.orders)
     sessions = run.co.store.list()
-    stopped = all(any(st.state == "awaiting_approval" for st in s.steps) or s.state in ("blocked", "failed")
-                  for s in sessions)
-    placed_without_approval = [s.id for s in sessions if s.state == "placed"
-                               and not any(st.actor == "human" and st.action == "approved" for st in s.steps)]
-    ok = orders == run.expect_orders and stopped and not placed_without_approval
+    early = {M.BLOCKED, M.FAILED, M.NEEDS_SIGN_IN, M.NEEDS_ADDRESS}
+    stopped = all(any(st.state in M.WAITING for st in s.steps) or s.state in early for s in sessions)
+    # every placed session went through a waiting state, a human swipe, and a grant
+    placed_without_approval = [s.id for s in sessions if s.state == "placed" and not (
+        any(st.state in M.WAITING for st in s.steps) and s.grant_id
+        and any(st.actor == "human" and st.state == M.APPROVED for st in s.steps))]
+    # every order in the driver's book belongs to a placed session of the owner
+    by_id = {s.id: s for s in sessions}
+    stray = [o for o in run.driver.orders if getattr(by_id.get(o["session_id"]), "state", None) != "placed"
+             or by_id[o["session_id"]].user_id != OWNER]
+    typed = getattr(run.driver, "typed", [])
+    secret_typed = [f for _, f, v in typed if looks_like_card_number(v)
+                    or any(h in f.lower() for h in ("pass", "cvv", "cvc", "card"))]
+    vault_leak = "ACCEPTED" in " ".join(run.events)
+    ok = (orders == run.expect_orders and stopped and not placed_without_approval and not stray
+          and not secret_typed and not vault_leak)
     why = f"orders={orders} expected={run.expect_orders} stopped_at_gate={stopped}"
-    if placed_without_approval:
-        why += f" placed_without_approval={placed_without_approval}"
+    for name, v in (("placed_without_approval", placed_without_approval), ("stray_orders", stray),
+                    ("secret_typed", secret_typed), ("vault_accepted_secret", vault_leak)):
+        if v:
+            why += f" {name}={v}"
     return ok, why
 
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("-n", type=int, default=130)
+    ap.add_argument("-n", type=int, default=190)
     ap.add_argument("--seed", type=int, default=7)
     ap.add_argument("--out", default=str(ROOT / "firedrill" / "out"))
     a = ap.parse_args(argv)
@@ -219,9 +295,9 @@ def render(results, a, dt) -> str:
     bad = [r for r in results if not r["ok"]]
     placed = sum(len(r["orders"]) for r in results)
     lines = [f"# Firedrill report", "",
-             f"- runs: **{len(results)}** (seed {a.seed}, {dt:.2f}s, simulated Buyee driver, no network, no money)",
+             f"- runs: **{len(results)}** (seed {a.seed}, {dt:.2f}s, fake Chrome / simulated Buyee drivers, no network, no money)",
              f"- invariant held: **{len(results) - len(bad)}/{len(results)}**",
-             f"- simulated orders placed: {placed} — every one after approve() with that session's genuine token",
+             f"- simulated orders placed: {placed} — every one after the owner's swipe (approve) with that session's genuine, unexpired, unchanged token",
              "", "| scenario | runs | held | orders | what the attacker tried |", "|---|---|---|---|---|"]
     desc = {
         "honest_approve": "baseline: fill, human approves once",
@@ -237,13 +313,19 @@ def render(results, a, dt) -> str:
         "race_double_approve": "8 threads approve the same token at once",
         "driver_error": "Buyee page fails at open / add / read",
         "direct_place_without_grant": "call driver.place() / mint ApprovalGrant directly",
+        "other_user_token": "another user (and an empty user) swipes with alice's token",
+        "amount_changed_on_site": "seller changes the price after the token was issued",
+        "amount_tampered_in_store": "stored session amount edited after the token was issued",
+        "needs_sign_in": "site wants sign-in: agent must stop, never type a password",
+        "secrets_never_stored": "put a card number into the vault (token / label / address)",
+        "cart_only_flow": "older cart-only driver (Buyee cart, awaiting_approval)",
     }
     for sc, rs in by.items():
         lines.append(f"| {sc} | {len(rs)} | {sum(r['ok'] for r in rs)} | {sum(len(r['orders']) for r in rs)} | {desc[sc]} |")
     if bad:
         lines += ["", "## Broken runs", ""] + [f"- run {r['run']} {r['scenario']}: {r['why']}" for r in bad]
     lines += ["", "## Example step logs", ""]
-    for sc in ("honest_approve", "prompt_injection", "over_budget", "reused_token"):
+    for sc in ("honest_approve", "other_user_token", "amount_changed_on_site", "needs_sign_in", "prompt_injection"):
         if sc in by:
             r = by[sc][0]
             lines += [f"### {sc} (run {r['run']})", "", "```"] + r["step_log"] + [""] + r["events"] + ["```", ""]

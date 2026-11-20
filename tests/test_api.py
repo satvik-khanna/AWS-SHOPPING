@@ -192,10 +192,25 @@ class ApiTest(unittest.TestCase):
         st, _, sess = self.call("GET", f"/api/sessions/{sid}")
         self.assertEqual(st, 200)
         self.assertEqual(sess["id"], sid)
-        self.assertEqual(sess["state"], "awaiting_approval")
+        self.assertIn(sess["state"], ("awaiting_approval", "awaiting_swipe"))   # checkout C1: chrome flow stops at awaiting_swipe
         self.assertGreaterEqual(len(sess["steps"]), 4)
         st404, _, err = self.call("GET", "/api/sessions/does-not-exist")
         self.assertEqual((st404, err["error"]["code"]), (404, "not_found"))
+
+    def test_reject_seller_updates_session_state_and_user_isolation(self):
+        _, _, run1 = self.call("POST", "/api/run", RUN)
+        sid = run1["cart"]["session_id"]
+        seller = run1["picks"][0]["listing"]["seller"]
+        self.call("POST", "/api/reject", {"user": "alice", "seller": seller})
+        st, _, sess = self.call("GET", f"/api/sessions/{sid}")
+        self.assertEqual((st, sess["state"]), (200, "rejected"))
+        # Approve for alice must never pollute default user memory
+        _, _, run2 = self.call("POST", "/api/run", RUN)
+        self.call("POST", "/api/approve", {"approval_token": run2["cart"]["approval_token"]})
+        _, _, def_mem = self.call("GET", "/api/memory?user=default")
+        _, _, alice_mem = self.call("GET", "/api/memory?user=alice")
+        self.assertEqual(def_mem["past_purchases"], [])
+        self.assertEqual(len(alice_mem["past_purchases"]), 1)
 
 
 if __name__ == "__main__":

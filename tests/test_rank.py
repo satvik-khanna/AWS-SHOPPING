@@ -6,7 +6,7 @@ from unittest import mock
 from shopper.cost import RulesCostEngine
 from shopper.listings import FixtureSource
 from shopper.models import Preferences, ShoppingRequest
-from shopper.rank import ClaudeRerank, SmartRanker, default_ranker
+from shopper.rank import ClaudeRerank, SIERerank, SmartRanker, default_ranker
 
 
 def run(query, budget=900.0, prefs=None, ranker=None, **kw):
@@ -25,18 +25,21 @@ class SmartRankerTest(unittest.TestCase):
     def test_real_camera_beats_cheap_box_and_junk(self):
         picks = run("Fujifilm X100V")
         top = picks[0].listing
-        self.assertNotEqual(top.fields.get("item_type"), "accessory")
         self.assertNotEqual(top.condition, "junk")
-        bottom_ids = [p.listing.id for p in picks[-3:]]
-        self.assertTrue(any(p.listing.fields.get("item_type") == "accessory" for p in picks[-4:]), bottom_ids)
+        self.assertFalse(any(p.listing.fields.get("item_type") == "accessory" for p in picks))  # box / case dropped
+        self.assertEqual(picks[-1].listing.condition, "junk")
+
+    def test_accessory_kept_when_asked(self):
+        picks = run("Fujifilm X100V leather case", budget=300)
+        self.assertTrue(any(p.listing.fields.get("item_type") == "accessory" for p in picks))
 
     def test_reason_is_human_readable(self):
-        p = run("Fujifilm X100V")[0]
+        picks = run("Fujifilm X100V")
+        p = picks[0]
         self.assertIn("landed", p.reason)
         self.assertIn("under budget", p.reason)
         self.assertIn("condition", p.reason)
-        box = next(x for x in run("Fujifilm X100V") if x.listing.fields.get("item_type") == "accessory")
-        self.assertIn("Watch out", box.reason)
+        self.assertIn("Watch out", picks[-1].reason)
 
     def test_condition_floor_drops(self):
         picks = run("Fujifilm X100V", condition_min="like_new")
@@ -102,6 +105,34 @@ class DemoQueryTest(unittest.TestCase):
         parts = [i for i, p in enumerate(picks) if p.listing.fields.get("junk_risk") == "parts only"]
         repair = [i for i, p in enumerate(picks) if p.listing.fields.get("junk_risk") == "repairable"]
         self.assertLess(max(repair), min(parts))
+
+
+class SIERerankTest(unittest.TestCase):
+    def test_offline_never_calls(self):
+        async def boom(q, docs):
+            raise AssertionError("called SIE offline")
+        with mock.patch.dict(os.environ, {"SHOPPER_LIVE": "", "SIE_API_KEY": "x"}):
+            self.assertTrue(run("Fujifilm X100V", ranker=SIERerank(SmartRanker(), score=boom)))
+
+    def test_live_blends_scores_and_falls_back(self):
+        offline = run("Fujifilm X100V")
+        last = offline[-1].listing.id
+
+        async def favour_last(q, docs):
+            return {i: (1.0 if i == last else 0.0) for i, _ in docs}, "sie:stub"
+        with mock.patch.dict(os.environ, {"SHOPPER_LIVE": "1", "SIE_API_KEY": "x"}):
+            r = SIERerank(SmartRanker(), score=favour_last)
+            picks = run("Fujifilm X100V", ranker=r)
+            self.assertIn("Superlinked SIE relevance 1.00", next(p for p in picks if p.listing.id == last).reason)
+            self.assertGreater([p.listing.id for p in offline].index(last), [p.listing.id for p in picks].index(last))
+            self.assertIn("sie:stub", r.last_status)
+
+            async def down(q, docs):
+                raise OSError("SIE unreachable")
+            r = SIERerank(SmartRanker(), score=down)
+            picks = run("Fujifilm X100V", ranker=r)
+        self.assertEqual([p.listing.id for p in picks], [p.listing.id for p in offline])
+        self.assertIn("unavailable", r.last_status)
 
 
 class ClaudeRerankTest(unittest.TestCase):

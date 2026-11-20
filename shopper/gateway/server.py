@@ -14,6 +14,15 @@ from .protocols import ACP_VERSION, MCP_PROTOCOL_VERSION, UCP_VERSION, UnifiedCo
 from .store import JsonStoreRegistry
 
 _STORE_PREFIX = re.compile(r"^/s/([a-z0-9-]+)(/.*)?$")
+MAX_BODY = 64 * 1024
+
+
+class _BodyTooLarge(ValueError):
+    pass
+
+
+class _BadJsonBody(ValueError):
+    pass
 
 
 class GatewayHTTPServer(ThreadingHTTPServer):
@@ -33,9 +42,30 @@ class _GatewayHandler(BaseHTTPRequestHandler):
         return f"http://{host}"
 
     def _read_json(self) -> dict[str, Any]:
-        length = int(self.headers.get("Content-Length", "0"))
+        try:
+            length = int(self.headers.get("Content-Length", "0"))
+        except ValueError:
+            raise _BadJsonBody("invalid Content-Length") from None
+        if length < 0:
+            raise _BadJsonBody("invalid Content-Length")
+        if length > MAX_BODY:
+            raise _BodyTooLarge(f"body exceeds {MAX_BODY} bytes")
         raw = self.rfile.read(length) if length > 0 else b"{}"
-        return json.loads(raw.decode("utf-8") or "{}")
+        try:
+            data = json.loads(raw.decode("utf-8") or "{}")
+        except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+            raise _BadJsonBody(f"invalid json: {exc}") from None
+        if not isinstance(data, dict):
+            raise _BadJsonBody("json body must be an object")
+        return data
+
+    def do_OPTIONS(self) -> None:
+        self.send_response(204)
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization, API-Version, UCP-Version, Idempotency-Key")
+        self.send_header("Content-Length", "0")
+        self.end_headers()
 
     def _send_json(self, code: int, body: dict[str, Any], extra_headers: dict[str, str] | None = None) -> None:
         data = json.dumps(body, ensure_ascii=False).encode("utf-8")
@@ -130,8 +160,10 @@ class _GatewayHandler(BaseHTTPRequestHandler):
         adapter = self.server.adapter
         try:
             payload = self._read_json()
-        except json.JSONDecodeError as exc:
-            return self._send_json(400, {"error": f"invalid json: {exc}"})
+        except _BodyTooLarge as exc:
+            return self._send_json(413, {"error": str(exc)})
+        except _BadJsonBody as exc:
+            return self._send_json(400, {"error": str(exc)})
 
         if path == "/api/stores":
             if not payload.get("name") or not payload.get("source_url"):

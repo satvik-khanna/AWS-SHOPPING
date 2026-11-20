@@ -2,3 +2,4 @@ relay_messages.jsonl
 .env*
 __pycache__/
 .shopper-data/
+.scratch/

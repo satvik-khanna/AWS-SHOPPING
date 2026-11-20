@@ -33,6 +33,10 @@ class InMemorySessionStore:
         with self._lock:
             self._tokens[token_hash] = session_id
 
+    def peek(self, token_hash: str) -> str | None:
+        """Session id for a pending token, without using it up."""
+        return self._tokens.get(token_hash)
+
     def claim(self, token_hash: str) -> str | None:
         with self._lock:
             return self._tokens.pop(token_hash, None)
@@ -69,6 +73,14 @@ class FileSessionStore:
 
     def register_token(self, token_hash: str, session_id: str) -> None:
         (self._dir("tokens") / token_hash).write_text(session_id, encoding="utf-8")
+
+    def peek(self, token_hash: str) -> str | None:
+        if not _HEX.match(token_hash or ""):
+            return None
+        try:
+            return (self._dir("tokens") / token_hash).read_text(encoding="utf-8").strip() or None
+        except FileNotFoundError:
+            return None
 
     def claim(self, token_hash: str) -> str | None:
         if not _HEX.match(token_hash or ""):

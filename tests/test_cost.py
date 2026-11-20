@@ -112,6 +112,20 @@ class Engine(unittest.TestCase):
         self.assertIn("lithium", c.blocked_reason)
         self.assertIsNone(self.e.landed_cost(L(fields={"lithium_batteries": "2"}), US).blocked_reason)
 
+    def test_invalid_inputs_blocked(self):
+        for bad_kw in (
+            {"price_jpy": 0},
+            {"price_jpy": -1000},
+            {"weight_kg": 0.0},
+            {"weight_kg": -2.0},
+            {"weight_kg": float("nan")},
+            {"fields": {"lithium_batteries": "abc"}},
+            {"fields": {"lithium_batteries": "-1"}},
+        ):
+            c = self.e.landed_cost(L(**bad_kw), US)
+            self.assertIsNotNone(c.blocked_reason, bad_kw)
+            self.assertEqual(c.lines, [], bad_kw)
+
     def test_seller_paid_domestic_and_customs_fee(self):
         c = self.e.landed_cost(L(fields={"shipping": "送料込み"}), US)
         self.assertEqual(next(l for l in c.lines if l.label.startswith("domestic")).amount_usd, 0)
