@@ -79,8 +79,10 @@
         }
         state.buyReady = true;
         renderAll();
+        chatMod.scrollBottom();
       });
     });
+    chatMod.scrollBottom();
   }
 
   function renderAll() {
@@ -218,6 +220,7 @@
   }
 
   // Init modules
+  var chatMod = root.JSA.chatUI.init();
   var vaultMod = root.JSA.vault.init(function (profile) {
     if (profile && profile.shipTo) ui.$("ship_to").value = profile.shipTo;
     renderAll();

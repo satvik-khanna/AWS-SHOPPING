@@ -159,6 +159,10 @@ a { color: inherit; text-decoration: none; }
   flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain;
   scrollbar-width: thin;
 }
+.chat-stream { display: flex; flex-direction: column; gap: 12px; padding-bottom: 10px; }
+.ai-comp { display: flex; flex-direction: column; gap: 6px; animation: enter 220ms var(--ease-out); }
+.agent-caption { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.dia-orb-sm { width: 10px; height: 10px; }
 
 /* User bubble & results bar */
 .msg-user { flex: none; display: flex; justify-content: flex-end; animation: bubbleIn 200ms var(--ease-out); }

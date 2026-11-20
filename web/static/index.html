@@ -89,69 +89,71 @@
 </aside>
 
 <main class="viewport">
-  <!-- Page 1: Shop (fixed 100dvh; ONLY #picks-scroll scrolls) -->
+  <!-- Page 1: Shop (fixed 100dvh; ONLY #chat-stream scrolls; AI renders UI components inside chat) -->
   <section id="page-shop" class="page">
-    <div id="user-turn" class="msg msg-user" hidden>
-      <div class="bubble" id="user-bubble"></div>
-    </div>
-
-    <!-- Compact live plan bar + Agent's browser (collapsible, never breaks list scroll) -->
-    <div id="agent-plan" class="agent-plan" hidden>
-      <div class="plan-top">
-        <span id="plan-dot" class="live-dot live">Live</span>
-        <ol id="plan-steps" class="plan-steps"></ol>
-        <span id="plan-elapsed" class="plan-elapsed">0s</span>
-        <button type="button" id="browser-toggle" class="btn btn-ghost btn-small active" title="Toggle Agent's browser">Browser</button>
-        <button type="button" id="plan-stop" class="btn btn-ghost btn-small">Stop</button>
-      </div>
-      <div id="agent-browser" class="ab-frame">
-        <div class="ab-chrome">
-          <span class="ab-dots"><i></i><i></i><i></i></span>
-          <span class="ab-url" id="ab-url">about:blank</span>
-          <span class="ab-caption" id="ab-caption"></span>
+    <div id="chat-stream" class="scroll-region chat-stream" aria-live="polite">
+      <div id="empty" class="empty">
+        <div class="examples" id="examples" aria-label="Quick searches">
+          <button type="button" class="example-chip" data-q="Fujifilm X100V" data-budget="900">List up Fujifilm X100V · $900</button>
+          <button type="button" class="example-chip" data-q="Seiko SARB033" data-budget="600">List up Seiko SARB033 · $600</button>
+          <button type="button" class="example-chip" data-q="Game Boy Micro" data-budget="250">List up Game Boy Micro · $250</button>
         </div>
-        <div class="ab-stage">
-          <div class="ab-screen" id="ab-screen"></div>
-          <div class="ab-cursor" id="ab-cursor" aria-hidden="true">
-            <svg viewBox="0 0 24 24" width="16" height="16"><path d="M3 2l7 19 2.5-7.5L20 11z" fill="#111" stroke="#fff" stroke-width="1.5"></path></svg>
+      </div>
+
+      <div id="user-turn" class="msg msg-user" hidden>
+        <div class="bubble" id="user-bubble"></div>
+      </div>
+
+      <div id="skeleton" class="skeleton" aria-busy="true" aria-label="Loading" hidden>
+        <div class="sk-row"></div>
+        <div class="sk-row"></div>
+        <div class="sk-row"></div>
+      </div>
+
+      <!-- AI Component 1: Sortable Product List + Buy buttons -->
+      <div id="results" class="ai-comp" hidden>
+        <div class="agent-caption">
+          <span class="dia-orb dia-orb-sm" aria-hidden="true"></span>
+          <span class="agent-lead" id="picks-sub"></span>
+          <div id="skipped" class="skipped" hidden></div>
+          <select id="sort-by" class="sort-select" aria-label="Sort products" title="Sort">
+            <option value="best">Best match</option>
+            <option value="price_asc">Price ↑</option>
+            <option value="price_desc">Price ↓</option>
+            <option value="cond">Condition</option>
+          </select>
+          <input id="quick-filter" class="quick-filter" type="search" placeholder="Filter…" aria-label="Filter results">
+        </div>
+        <div id="picks" class="picks"></div>
+      </div>
+
+      <!-- AI Component 2: Agent's Browser (don-tacos dt-ax Chrome Computer Use) -->
+      <div id="agent-plan" class="ai-comp agent-plan" hidden>
+        <div class="plan-top">
+          <span id="plan-dot" class="live-dot live">Chrome · Live</span>
+          <ol id="plan-steps" class="plan-steps"></ol>
+          <span id="plan-elapsed" class="plan-elapsed">0s</span>
+          <button type="button" id="browser-toggle" class="btn btn-ghost btn-small active" title="Toggle Agent's browser">Browser</button>
+          <button type="button" id="plan-stop" class="btn btn-ghost btn-small">Stop</button>
+        </div>
+        <div id="agent-browser" class="ab-frame">
+          <div class="ab-chrome">
+            <span class="ab-dots"><i></i><i></i><i></i></span>
+            <span class="ab-url" id="ab-url">about:blank</span>
+            <span class="ab-caption" id="ab-caption"></span>
+          </div>
+          <div class="ab-stage">
+            <div class="ab-screen" id="ab-screen"></div>
+            <div class="ab-cursor" id="ab-cursor" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="16" height="16"><path d="M3 2l7 19 2.5-7.5L20 11z" fill="#111" stroke="#fff" stroke-width="1.5"></path></svg>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <div id="empty" class="empty">
-      <div class="examples" id="examples" aria-label="Quick searches">
-        <button type="button" class="example-chip" data-q="Fujifilm X100V" data-budget="900">Fujifilm X100V · $900</button>
-        <button type="button" class="example-chip" data-q="Seiko SARB033" data-budget="600">Seiko SARB033 · $600</button>
-        <button type="button" class="example-chip" data-q="Game Boy Micro" data-budget="250">Game Boy Micro · $250</button>
-      </div>
+      <!-- AI Component 3: Swipe-to-Pay checkout component -->
+      <div id="gate" class="ai-comp gate" aria-live="polite" hidden></div>
     </div>
-
-    <div id="skeleton" class="skeleton" aria-busy="true" aria-label="Loading" hidden>
-      <div class="sk-row"></div>
-      <div class="sk-row"></div>
-      <div class="sk-row"></div>
-      <div class="sk-row"></div>
-    </div>
-
-    <div id="results" class="results-pane" hidden>
-      <div class="results-bar">
-        <span class="agent-lead" id="picks-sub"></span>
-        <div id="skipped" class="skipped" hidden></div>
-        <select id="sort-by" class="sort-select" aria-label="Sort products" title="Sort">
-          <option value="best">Best match</option>
-          <option value="price_asc">Price ↑</option>
-          <option value="price_desc">Price ↓</option>
-          <option value="cond">Condition</option>
-        </select>
-        <input id="quick-filter" class="quick-filter" type="search" placeholder="Filter…" aria-label="Filter results">
-      </div>
-      <div class="scroll-region" id="picks-scroll">
-        <div id="picks" class="picks"></div>
-      </div>
-    </div>
-
-    <div id="gate" class="gate" aria-live="polite"></div>
 
     <div class="composer-wrap">
       <p class="error" id="error" role="alert" hidden></p>
@@ -246,6 +248,7 @@
 <script src="/static/modules/commerce.js"></script>
 <script src="/static/modules/pages.js"></script>
 <script src="/static/modules/agent.js"></script>
+<script src="/static/modules/chat_ui.js"></script>
 <script src="/static/app.js"></script>
 </body>
 </html>
