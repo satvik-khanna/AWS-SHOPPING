@@ -21,7 +21,7 @@ from urllib.parse import parse_qs, urlsplit
 
 from .. import config
 from ..app import build_deps
-from ..models import Listing, ShoppingRequest
+from ..models import CartResult, Listing, ShoppingRequest
 from ..pipeline import Deps, run
 
 MAX_BODY = 64 * 1024
@@ -83,6 +83,7 @@ class Service:
         self.deps = deps or build_deps()
         self.lock = threading.Lock()
         self.carts: dict[str, tuple[str, Listing]] = {}   # approval_token -> (user, listing)
+        self.revoked: set[str] = set()   # carts whose seller the user rejected (Checkout has no cancel())
 
     def health(self) -> dict:
         d = self.deps
@@ -106,6 +107,15 @@ class Service:
         if not isinstance(token, str) or not token:
             raise _bad("approval_token is required (string from /api/run cart.approval_token)")
         with self.lock:
+            if token in self.revoked:
+                return asdict(CartResult(status="blocked", listing_id="",
+                                         detail="cart seller was rejected; run the search again"))
+            user, listing = self.carts.get(token, (None, None))
+            if listing is not None and listing.seller in self.deps.memory.recall(user).rejected_sellers:
+                self.revoked.add(token)
+                self.carts.pop(token, None)
+                return asdict(CartResult(status="blocked", listing_id=listing.id,
+                                         detail="cart seller was rejected; run the search again"))
             cart = self.deps.checkout.approve(token)
             out = asdict(cart)
             if cart.status == "placed":

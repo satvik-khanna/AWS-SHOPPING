@@ -129,6 +129,15 @@ class ApiTest(unittest.TestCase):
         self.assertEqual(self.call("POST", "/api/approve", {"approval_token": a["cart"]["approval_token"]})[2]["status"], "placed")
         self.assertEqual(self.call("POST", "/api/approve", {"approval_token": b["cart"]["approval_token"]})[2]["status"], "placed")
 
+    def test_cart_of_rejected_seller_cannot_be_placed(self):
+        _, _, run1 = self.call("POST", "/api/run", RUN)
+        token, seller = run1["cart"]["approval_token"], run1["picks"][0]["listing"]["seller"]
+        self.call("POST", "/api/reject", {"user": "alice", "seller": seller})
+        for _ in range(2):
+            st, _, cart = self.call("POST", "/api/approve", {"approval_token": token})
+            self.assertEqual((st, cart["status"]), (200, "blocked"))
+        self.assertEqual(self.call("GET", "/api/memory?user=alice")[2]["past_purchases"], [])
+
     def test_approve_missing_token_400(self):
         for body in ({}, {"approval_token": ""}, {"approval_token": 123}, {"token": "abc"}):
             st, _, b = self.call("POST", "/api/approve", body)
