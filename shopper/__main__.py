@@ -5,6 +5,7 @@ import argparse
 import json
 from dataclasses import asdict
 
+from . import cli_checkout  # noqa: F401  (routes buy/approve/reject/sessions/log/memory/firedrill)
 from .app import build_deps
 from .models import ShoppingRequest
 from .pipeline import run
