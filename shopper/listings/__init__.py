@@ -34,12 +34,16 @@ class FixtureSource:
         self.last_status = ""
 
     def all(self) -> list[Listing]:
-        return [to_listing(r) for r in json.loads(self.path.read_text(encoding="utf-8"))]
+        out = [to_listing(r) for r in json.loads(self.path.read_text(encoding="utf-8"))]
+        for l in out:                    # never pass a sample off as real
+            l.fields.setdefault("data_origin", "fixture")
+            l.fields.setdefault("data_note", "invented sample listing for the offline demo, not a real item")
+        return out
 
     def search(self, req: ShoppingRequest, prefs: Preferences) -> list[Listing]:
         plan = parse_query(req.query)
         out = [l for l in self.all() if relevance(plan, l).ok]
-        self.last_status = f"fixtures: {len(out)} listings for {plan.ja_keywords or [req.query]}"
+        self.last_status = f"FIXTURE samples (not real items): {len(out)} listings for {plan.ja_keywords or [req.query]}"
         return out
 
 

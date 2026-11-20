@@ -3,16 +3,18 @@
     PriceRanker     base: cheapest-first with condition bonus (kept for comparison / tests)
     SmartRanker     offline: relevance to the query + landed cost + condition + user preferences,
                     one human-readable reason per pick
-    default_ranker  what shopper/app.py wires in (SmartRanker, optionally reranked by Claude when
-                    SHOPPER_LIVE=1 and ANTHROPIC_API_KEY is set; any error -> offline order)
+    default_ranker  what shopper/app.py wires in: SmartRanker -> Superlinked SIE rerank (SHOPPER_LIVE=1 +
+                    SIE_API_KEY / SIE_BASE_URL) -> Claude rerank (SHOPPER_LIVE=1 + ANTHROPIC_API_KEY, paid);
+                    every live step falls back to the order before it on any error
 """
 from __future__ import annotations
 
 from ..models import LandedCost, Listing, Preferences, RankedPick, ShoppingRequest
 from .smart import CONDITION_ORDER, SmartRanker, score_parts
 from .llm import ClaudeRerank
+from .sie import SIERerank
 
-__all__ = ["PriceRanker", "SmartRanker", "ClaudeRerank", "default_ranker", "score_parts",
+__all__ = ["PriceRanker", "SmartRanker", "ClaudeRerank", "SIERerank", "default_ranker", "score_parts",
            "CONDITION_ORDER"]
 
 
@@ -33,4 +35,4 @@ class PriceRanker:
 
 
 def default_ranker():
-    return ClaudeRerank(base=SmartRanker())
+    return ClaudeRerank(base=SIERerank(SmartRanker()))

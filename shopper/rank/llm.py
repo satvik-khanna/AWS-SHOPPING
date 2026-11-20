@@ -42,7 +42,7 @@ class ClaudeRerank:
              candidates: list[tuple[Listing, LandedCost]]) -> list[RankedPick]:
         picks = self.base.rank(req, prefs, candidates)
         if not self.enabled() or len(picks) < 2:
-            self.last_status = "offline ranking"
+            self.last_status = getattr(self.base, "last_status", "") or "offline ranking"
             return picks
         try:
             reranked = self._rerank(req, prefs, picks)

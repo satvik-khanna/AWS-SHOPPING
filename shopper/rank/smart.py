@@ -125,6 +125,7 @@ def score_parts(req: ShoppingRequest, prefs: Preferences,
         if l.fields.get("item_type") == "accessory" and not wants_acc:
             p.adjust -= 0.6
             p.cons.append("accessory / box only, not the item itself")
+            p.drop = p.drop or "accessory / box only, the query asked for the item itself"
         if l.condition == "junk" and not plan.wants_junk:
             p.adjust -= 0.4
             p.cons.append("sold as junk / for parts")

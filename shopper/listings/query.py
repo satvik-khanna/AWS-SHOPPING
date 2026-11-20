@@ -32,8 +32,10 @@ def _pattern(form: str, loose_model: bool = False) -> re.Pattern:
     if has_japanese(f):
         return re.compile(r"\s*".join(re.escape(p) for p in f.split()))
     if loose_model:      # x100v also matches "x100 v" / "x-100v", but never "x100vi"
-        parts = re.findall(r"[a-z]+|\d+|[^a-z\d]+", f)
-        body = r"[\s\-]?".join(re.escape(p) for p in parts if p.strip())
+        parts = [p for p in re.findall(r"[a-z]+|\d+|[^a-z\d]+", f) if p.strip()]
+        body = re.escape(parts[0]) if parts else ""
+        for prev, p in zip(parts, parts[1:]):     # "x-100v" ok, "x 100v" (e.g. "ナノイーX 100V") is not
+            body += (r"\-?" if prev.isalpha() and p.isdigit() else r"[\s\-]?") + re.escape(p)
     else:
         body = r"[\s\-_.]*".join(re.escape(p) for p in re.split(r"[\s\-_.]+", f) if p)
     return re.compile(r"(?<![a-z0-9])" + body + r"(?![a-z0-9])")
@@ -203,9 +205,13 @@ def expand_query(query: str) -> list[str]:
     return parse_query(query).ja_keywords
 
 
+_NOT_CONTENT = {"fetched_from", "fetched_at", "data_origin", "data_note", "buyee_url", "condition_code",
+                "end_time", "seller_rating"}
+
+
 def listing_text(l: Listing) -> str:
     return norm(" ".join([l.title_ja, l.title_en, l.category or "", l.source,
-                          " ".join(str(v) for v in l.fields.values())]))
+                          " ".join(str(v) for k, v in l.fields.items() if k not in _NOT_CONTENT)]))
 
 
 @dataclass
