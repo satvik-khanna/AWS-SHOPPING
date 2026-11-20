@@ -1,10 +1,168 @@
 {
-  "_note": "PLACEHOLDER values for the offline base. The cost module must replace each with a researched value, real as_of and source url.",
-  "fx_jpy_per_usd":          {"value": 150.0, "as_of": "PLACEHOLDER", "url": null},
-  "proxy_service_fee_jpy":   {"value": 500,   "as_of": "PLACEHOLDER", "url": null},
-  "domestic_shipping_jpy":   {"value": 800,   "as_of": "PLACEHOLDER", "url": null},
-  "intl_shipping_jpy_per_kg":{"value": 3000,  "as_of": "PLACEHOLDER", "url": null},
-  "default_weight_kg":       {"value": 1.0,   "as_of": "PLACEHOLDER", "url": null},
-  "duty_rate_by_category":   {"value": {"camera": 0.0, "default": 0.05}, "as_of": "PLACEHOLDER", "url": null},
-  "banned_categories":       {"value": ["battery_loose", "knife"], "as_of": "PLACEHOLDER", "url": null}
+  "_note": "Japan -> US landed-cost rules for a Buyee proxy purchase. Every rule has value, as_of (the date we checked the source) and url. status=verified means the number was read on the url on as_of; status=estimate means it could not be confirmed and 'tried' says what we checked. Schema: see shopper/cost/rules.py.",
+
+  "fx_jpy_per_usd": {
+    "value": 159.93, "as_of": "2026-11-13", "checked": "2026-11-20", "status": "verified",
+    "url": "https://www.federalreserve.gov/releases/h10/current/",
+    "note": "Fed H.10 (release 2026-11-16), JAPAN YEN 159.9300 on Nov 13 2026, the latest noon buying rate published. Buyee settles at the market rate between 11:00 and 12:00 JST, so the real rate can differ slightly."
+  },
+
+  "buyee_service_fee_jpy": {
+    "value": 500, "as_of": "2026-11-20", "status": "verified",
+    "url": "https://buyee.jp/helpcenter/guide/fees",
+    "note": "Purchase fee: flat rate 500 JPY per order (auction / Mercari / Rakuma: per successful bid or purchase; shopping: per store order)."
+  },
+
+  "buyee_plan_fee_jpy": {
+    "value": {"lite": 0, "inspection": 300, "insured": 500, "standard": 500},
+    "default": "standard",
+    "as_of": "2026-11-20", "status": "verified",
+    "url": "https://buyee.jp/helpcenter/guide/fees",
+    "note": "Standard Plan 500 / Insured Delivery Plan 500 / Inspection Plan 300 / Lite Plan 0 JPY per item. Default is standard (inspection + insurance) because buyers of used items usually want both."
+  },
+
+  "payment_fee_jpy": {
+    "value": 0, "as_of": "2026-11-20", "status": "verified",
+    "url": "https://buyee.jp/helpcenter/guide/fees",
+    "note": "The Buyee usage-fee page lists no payment handling fee (checked 2026-11-20). Card issuer FX fees are outside this model."
+  },
+
+  "consolidation_fee_jpy": {
+    "value": 0, "as_of": "2026-11-20", "status": "verified",
+    "url": "https://buyee.jp/helpcenter/guide/consolidate",
+    "note": "Effective December 21, 2022 the consolidation fee is waived. Protective packaging that results in multiple packages is 1,500 JPY per package (not modeled)."
+  },
+
+  "customs_clearance_fee_jpy": {
+    "value": 2800, "threshold_jpy": 200000, "methods": ["ems", "airmail_small_packet", "surface_small_packet"],
+    "as_of": "2026-11-20", "status": "verified",
+    "url": "https://buyee.jp/helpcenter/guide/fees",
+    "note": "If you send item(s) valued over 200,000 yen with EMS, AIR, SAL or Japan Post Seamail, a customs clearance commission fee (2,800 yen) is charged."
+  },
+
+  "domestic_shipping_jpy": {
+    "value": [
+      {"max_kg": 2,  "jpy": 750,  "size": "60"},
+      {"max_kg": 5,  "jpy": 850,  "size": "80"},
+      {"max_kg": 10, "jpy": 1050, "size": "100"},
+      {"max_kg": 15, "jpy": 1200, "size": "120"}
+    ],
+    "as_of": "2026-11-20", "status": "verified",
+    "url": "https://help.jp.mercari.com/guide/articles/136/",
+    "note": "Rakuraku Mercari-bin Takkyubin: 60 size (up to 2kg) 750, 80 size 850, 100 size 1,050, 120 size 1,200 JPY. The 5/10/15kg limits of the 80/100/120 sizes are Yamato's standard size limits (estimate, not printed on this page). Used when the listing does not say the seller pays shipping; Buyee says domestic shipping generally ranges 150-1,500 JPY."
+  },
+
+  "domestic_shipping_seller_paid": {
+    "value": 0, "as_of": "2026-11-20", "status": "verified",
+    "url": "https://help.jp.mercari.com/guide/articles/136/",
+    "note": "Applied when listing.fields['shipping'] is 'seller_paid' / 'included' / 送料込み."
+  },
+
+  "default_weight_kg": {
+    "value": 1.0, "as_of": "2026-11-20", "status": "estimate",
+    "url": null,
+    "tried": "No source gives a typical weight; 1.0 kg is our assumption when a listing has no weight. Packaging adds weight, see packaging_kg.",
+    "note": "Fallback package weight when listing.weight_kg is missing."
+  },
+
+  "packaging_kg": {
+    "value": 0.2, "as_of": "2026-11-20", "status": "estimate",
+    "url": null,
+    "tried": "Buyee does not publish a packaging weight; 0.2 kg is our assumption for a box and padding.",
+    "note": "Added to listing weight before choosing a shipping band."
+  },
+
+  "intl_shipping_us": {
+    "value": {
+      "ems": {
+        "label": "Japan Post EMS", "tracked": true, "days": "4-8", "max_kg": 30,
+        "url": "https://www.post.japanpost.jp/send/oversea/charge/list-ems/all_en.html",
+        "bands": [[0.5, 3900], [0.6, 4180], [0.7, 4460], [0.8, 4740], [0.9, 5020], [1.0, 5300],
+                  [1.25, 5990], [1.5, 6600], [1.75, 7290], [2.0, 7900], [2.5, 9100], [3.0, 10300],
+                  [4.0, 12700], [5.0, 15100]],
+        "forbids": []
+      },
+      "airmail_small_packet": {
+        "label": "Japan Post AIR Small Packet", "tracked": false, "days": "6-12", "max_kg": 2,
+        "url": "https://www.post.japanpost.jp/send/oversea/charge/list-normal/zone4_en.html",
+        "bands": [[0.1, 830], [0.2, 1040], [0.3, 1250], [0.5, 1670], [1.0, 2720], [1.5, 3770], [2.0, 4820]],
+        "forbids": []
+      },
+      "surface_small_packet": {
+        "label": "Japan Post Seamail Small Packet", "tracked": false, "days": "30-90", "max_kg": 2,
+        "url": "https://www.post.japanpost.jp/send/oversea/charge/list-normal/zone4_en.html",
+        "bands": [[0.1, 480], [0.5, 800], [1.0, 1300], [2.0, 2200]],
+        "forbids": []
+      }
+    },
+    "as_of": "2026-11-20", "status": "verified",
+    "url": "https://www.post.japanpost.jp/send/oversea/charge/list-ems/all_en.html",
+    "note": "US = Japan Post Fourth Zone (incl. Guam and US territories); EMS page says tentative extra charges are included for zones 3 and 4. Small-packet bands are only the weights we read (100g, 200g, 300g, 500g, 1kg, 1.5kg, 2kg airmail; 100g, 500g, 1kg, 2kg surface), so in-between weights round up to the next listed band (may overstate slightly). Buyee Air Delivery (FedEx/DHL/UPS) and ECMS are offered to the US but Buyee publishes no fixed rate table (estimator is JavaScript), so they are not modeled. Buyee lists SAL as suspended."
+  },
+
+  "shipping_method_policy": {
+    "value": "cheapest_tracked", "as_of": "2026-11-20", "status": "verified",
+    "url": "https://buyee.jp/helpcenter/guide/shipping-method",
+    "note": "cheapest_tracked (default, Buyee recommends EMS) | cheapest (allows untracked small packets) | fastest. Buyee shipping-method page: EMS 4-8 days Recommended; AIR 6-12 days; Seamail 1-3 months."
+  },
+
+  "us_de_minimis": {
+    "value": {"suspended": true, "threshold_usd": 800},
+    "as_of": "2026-11-20", "status": "verified",
+    "url": "https://www.cbp.gov/trade/basic-import-export/e-commerce/faqs",
+    "note": "CBP e-commerce FAQ (last modified Nov 06, 2026): indefinite suspension of the de minimis exemption applies to merchandise valued at $800 or less arriving via all modes, including the international postal network (EO 14324 as amended by EO 14388). So every item pays duty regardless of value."
+  },
+
+  "us_duty_mfn_by_category": {
+    "value": {
+      "camera":        {"rate": 0.0,   "hts": "8525.89.40.00", "desc": "Digital still image video cameras: Free"},
+      "lens":          {"rate": 0.0,   "hts": "9002.11",       "desc": "Objective lenses for cameras (estimate, not read on 2026-11-20)", "status": "estimate"},
+      "apparel":       {"rate": 0.165, "hts": "6110.20.20",    "desc": "Sweaters/sweatshirts of cotton, other: 16.5%"},
+      "trading_cards": {"rate": 0.0,   "hts": "9504.40.00.00", "desc": "Playing cards: Free (classification of TCG under 9504.40 vs 9504.90 not confirmed)"},
+      "toy":           {"rate": 0.0,   "hts": "9503.00.00",    "desc": "Toys: Free"},
+      "figure":        {"rate": 0.0,   "hts": "9503.00.00",    "desc": "Toys (figures): Free"},
+      "book":          {"rate": 0.0,   "hts": "4901.99.00",    "desc": "Books, other: Free"},
+      "vinyl":         {"rate": 0.0,   "hts": "8523.80.10.00", "desc": "Phonograph records: Free"},
+      "watch":         {"rate": 0.0,   "hts": "9102.11.25",    "desc": "40c each + 8.5% on the case + 14% on the strap + 5.3% on the battery", "per_unit_usd": 0.40, "approx_rate": 0.085, "status": "estimate"},
+      "default":       {"rate": 0.05,  "hts": null,            "desc": "Fallback when the category is unknown (estimate)", "status": "estimate"}
+    },
+    "as_of": "2026-11-20", "status": "verified",
+    "url": "https://hts.usitc.gov/",
+    "note": "General (Column 1) rates read from the USITC HTS search API on 2026-11-20. Watch is a compound rate; we use 40c + 8.5% of the item value (treating the whole value as the case) and mark it estimate. Unknown categories use the 5% default (estimate)."
+  },
+
+  "us_additional_duty_japan": {
+    "value": 0.10, "as_of": "2026-11-20", "status": "estimate",
+    "url": "https://hts.usitc.gov/",
+    "tried": "HTS API shows heading 9903.03.01: 'The duty provided in the applicable subheading + 10%' for articles of any country. Supreme Court struck IEEPA tariffs on 2026-02-20 (Learning Resources v. Trump, https://www.supremecourt.gov/opinions/slipopinion/25) and CBP is refunding IEEPA duties (https://www.cbp.gov/trade/programs-administration/trade-remedies/ieepa-duty-refunds). We could not confirm the legal authority or end date of 9903.03.01, so it is applied as a conservative estimate.",
+    "note": "Extra ad-valorem duty on Japanese goods on top of the MFN rate. Set to 0 to drop it."
+  },
+
+  "prohibited": {
+    "value": {
+      "battery_loose":  {"reason": "standalone lithium batteries cannot be shipped overseas via any shipping method", "url": "https://buyee.jp/helpcenter/guide/lithium-battery"},
+      "power_bank":     {"reason": "power banks are standalone lithium batteries and cannot be shipped overseas", "url": "https://buyee.jp/helpcenter/guide/lithium-battery"},
+      "perfume":        {"reason": "perfume is a flammable liquid (Buyee prohibited items)", "url": "https://buyee.jp/helpcenter/guide/prohibited"},
+      "alcohol":        {"reason": "alcohol is a flammable liquid (Buyee prohibited items)", "url": "https://buyee.jp/helpcenter/guide/prohibited"},
+      "nail_polish":    {"reason": "nail polish is a flammable liquid (Buyee prohibited items)", "url": "https://buyee.jp/helpcenter/guide/prohibited"},
+      "aerosol":        {"reason": "aerosol spray cans are dangerous goods that cannot be shipped out", "url": "https://buyee.jp/helpcenter/guide/prohibited"},
+      "lighter":        {"reason": "lighters and lighter fuel are prohibited", "url": "https://buyee.jp/helpcenter/guide/prohibited"},
+      "fireworks":      {"reason": "fireworks / explosives are prohibited", "url": "https://buyee.jp/helpcenter/guide/prohibited"},
+      "airgun":         {"reason": "airguns and gas guns are prohibited", "url": "https://buyee.jp/helpcenter/guide/prohibited"},
+      "sword_replica":  {"reason": "sword replicas are prohibited", "url": "https://buyee.jp/helpcenter/guide/prohibited"},
+      "lead_acid_battery": {"reason": "lead-acid batteries are corrosive and prohibited", "url": "https://buyee.jp/helpcenter/guide/prohibited"},
+      "coins":          {"reason": "coins and paper money are prohibited", "url": "https://buyee.jp/helpcenter/guide/prohibited"},
+      "jewelry":        {"reason": "precious metals and jewelry are prohibited", "url": "https://buyee.jp/helpcenter/guide/prohibited"},
+      "tickets":        {"reason": "tickets are prohibited", "url": "https://buyee.jp/helpcenter/guide/prohibited"}
+    },
+    "as_of": "2026-11-20", "status": "verified",
+    "url": "https://buyee.jp/helpcenter/guide/prohibited",
+    "note": "Categories Buyee will not ship internationally at all. Knives / weapons / tableware are restricted per carrier (FedEx, Buyee Air Delivery, ECMS) but not on the all-countries list, so they still ship via Japan Post and are not blocked here."
+  },
+
+  "lithium_installed_max": {
+    "value": 2, "as_of": "2026-11-20", "status": "verified",
+    "url": "https://buyee.jp/helpcenter/guide/lithium-battery",
+    "note": "Items with installed / built-in lithium batteries: max 2 per package, shippable via Japan Post EMS/AIR/Sea Mail and DHL/FedEx. listing.fields['lithium_batteries'] > 2 is blocked."
+  }
 }
