@@ -109,7 +109,7 @@
     renderAll();
     renderMeta(result.meta);
     var count = (result.picks && result.picks.length) || 0;
-    agentMod.finish(count ? (count + " matches ready · nothing paid") : "No matches within budget");
+    agentMod.finish(result, count ? (count + " matches ready · nothing paid") : "No matches within budget");
     if (openItem) routerMod.go("item");
     else if (!stayOnPage) routerMod.go("shop");
   }
@@ -129,7 +129,7 @@
     ui.$("user-bubble").textContent = body.query + " · $" + body.budget;
     if (!stayOnPage) routerMod.go("shop");
     setBusy(true);
-    agentMod.start();
+    agentMod.start(body.query);
     api("/api/run", body).then(function (res) { show(res, stayOnPage); }, function (e) { agentMod.stop(); showError(e.message); }).then(function () { setBusy(false); });
   }
 
@@ -140,7 +140,7 @@
     body.seller = seller;
     routerMod.go("shop");
     setBusy(true);
-    agentMod.start();
+    agentMod.start(body.query);
     api("/api/reject", body).then(function (res) { show(res, false); }, function (e) { agentMod.stop(); showError(e.message); }).then(function () { setBusy(false); });
   }
 
@@ -155,6 +155,7 @@
       state.cart = r.cart;
       state.result.trail = state.result.trail.concat(r.trail || []);
       renderAll();
+      agentMod.updateCart(state.result);
       if (r.cart.status === "placed") agentMod.notify("Order placed");
     }, function (e) { showError(e.message); btn.disabled = false; });
   }
