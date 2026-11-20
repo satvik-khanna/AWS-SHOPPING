@@ -3,19 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Japan Shopping Agent</title>
+<title>Shopping Agent</title>
 <style>
-/* Japan Shopping Agent — assistant-ui + Commerce UI + AI Elements layout
-   with Shibubu Design Tokens + GitHub Primer Octicons v19.42.0 (MIT). Zero external assets. */
+/* Japan Shopping Agent — minimal continuous-surface UI (no card clutter, icon-first, hamburger drawer).
+   Shibubu Design Tokens + GitHub Primer Octicons v19.42.0 (MIT). Zero external assets. */
 
 :root {
-  --bg-app: #f6f7f8;
+  --bg-app: #ffffff;
   --surface-1: #ffffff;
-  --surface-2: #f3f5f7;
+  --surface-2: #f6f7f8;
   --surface-3: #eaedf1;
   --surface-press: #dfe4ea;
-  --border: #e2e6ea;
-  --border-strong: #b9c1cb;
+  --border: #e5e8ec;
+  --border-strong: #c2c9d2;
   --text-primary: #202731;
   --text-secondary: #515d6b;
   --text-tertiary: #6c7682;
@@ -30,607 +30,240 @@
   --warning-soft: #fdf3dc;
   --success: #17633a;
   --success-soft: #e6f4ec;
-  --working: #2359ce;
   --focus-ring: #202731;
+  --scrim: rgba(17, 21, 27, 0.36);
 
-  --seg-0: #202731;
-  --seg-1: #515d6b;
-  --seg-2: #8a5700;
-  --seg-3: #17633a;
-  --seg-4: #8c959f;
-  --seg-5: #b9c1cb;
-
-  --sp-1: 4px;
-  --sp-2: 8px;
-  --sp-3: 12px;
-  --sp-4: 16px;
-  --sp-5: 20px;
+  --seg-0: #202731; --seg-1: #515d6b; --seg-2: #8a5700;
+  --seg-3: #17633a; --seg-4: #8c959f; --seg-5: #b9c1cb;
 
   --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 14px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
   --hairline: 1px;
-  --shadow-popup: 0 4px 16px rgba(32, 39, 49, 0.08);
-
-  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
-  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
-
-  --dur-hover: 100ms;
-  --dur-enter: 180ms;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Noto Sans JP", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
   --ease-out: cubic-bezier(0.33, 1, 0.68, 1);
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg-app: #11151b;
-    --surface-1: #191e25;
-    --surface-2: #232a33;
-    --surface-3: #2c3540;
-    --surface-press: #36414f;
-    --border: #39424d;
-    --border-strong: #5d6a78;
-    --text-primary: #f1f5f9;
-    --text-secondary: #c1cbd5;
-    --text-tertiary: #a2afbc;
-    --ink-fill: #f1f5f9;
-    --ink-fill-hover: #dde5ee;
-    --on-ink: #11151b;
-    --danger: #ff9d94;
-    --danger-soft: #3a1f21;
-    --warning: #e7bd70;
-    --warning-soft: #352915;
-    --success: #7ddaa5;
-    --success-soft: #173024;
-    --working: #91b5ff;
-    --focus-ring: #f1f5f9;
-    --seg-0: #e2e8f0;
-    --seg-1: #94a3b8;
-    --seg-2: #e7bd70;
-    --seg-3: #7ddaa5;
-    --seg-4: #64748b;
-    --seg-5: #475569;
-    --shadow-popup: 0 6px 20px rgba(0, 0, 0, 0.36);
+    --bg-app: #11151b; --surface-1: #11151b; --surface-2: #191e25; --surface-3: #232a33; --surface-press: #2c3540;
+    --border: #2a313c; --border-strong: #444f5e;
+    --text-primary: #f1f5f9; --text-secondary: #b8c2ce; --text-tertiary: #8c97a6;
+    --ink-fill: #f1f5f9; --ink-fill-hover: #dce4ee; --on-ink: #11151b;
+    --danger: #ff9d94; --danger-soft: #3a1f21;
+    --warning: #e7bd70; --warning-soft: #352915;
+    --success: #7ddaa5; --success-soft: #173024;
+    --focus-ring: #f1f5f9; --scrim: rgba(0, 0, 0, 0.55);
+    --seg-0: #e2e8f0; --seg-1: #94a3b8; --seg-2: #e7bd70; --seg-3: #7ddaa5; --seg-4: #64748b; --seg-5: #475569;
   }
 }
-
 :root[data-theme="dark"] {
-  --bg-app: #11151b;
-  --surface-1: #191e25;
-  --surface-2: #232a33;
-  --surface-3: #2c3540;
-  --surface-press: #36414f;
-  --border: #39424d;
-  --border-strong: #5d6a78;
-  --text-primary: #f1f5f9;
-  --text-secondary: #c1cbd5;
-  --text-tertiary: #a2afbc;
-  --ink-fill: #f1f5f9;
-  --ink-fill-hover: #dde5ee;
-  --on-ink: #11151b;
-  --danger: #ff9d94;
-  --danger-soft: #3a1f21;
-  --warning: #e7bd70;
-  --warning-soft: #352915;
-  --success: #7ddaa5;
-  --success-soft: #173024;
-  --working: #91b5ff;
-  --focus-ring: #f1f5f9;
-  --seg-0: #e2e8f0;
-  --seg-1: #94a3b8;
-  --seg-2: #e7bd70;
-  --seg-3: #7ddaa5;
-  --seg-4: #64748b;
-  --seg-5: #475569;
-  --shadow-popup: 0 6px 20px rgba(0, 0, 0, 0.36);
+  --bg-app: #11151b; --surface-1: #11151b; --surface-2: #191e25; --surface-3: #232a33; --surface-press: #2c3540;
+  --border: #2a313c; --border-strong: #444f5e;
+  --text-primary: #f1f5f9; --text-secondary: #b8c2ce; --text-tertiary: #8c97a6;
+  --ink-fill: #f1f5f9; --ink-fill-hover: #dce4ee; --on-ink: #11151b;
+  --danger: #ff9d94; --danger-soft: #3a1f21;
+  --warning: #e7bd70; --warning-soft: #352915;
+  --success: #7ddaa5; --success-soft: #173024;
+  --focus-ring: #f1f5f9; --scrim: rgba(0, 0, 0, 0.55);
+  --seg-0: #e2e8f0; --seg-1: #94a3b8; --seg-2: #e7bd70; --seg-3: #7ddaa5; --seg-4: #64748b; --seg-5: #475569;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
 html { background: var(--bg-app); color-scheme: light dark; }
 body {
-  margin: 0;
-  color: var(--text-primary);
-  font-family: var(--font-sans);
-  font-size: 13px;
-  line-height: 19px;
-  -webkit-font-smoothing: antialiased;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  margin: 0; color: var(--text-primary); font-family: var(--font-sans);
+  font-size: 13px; line-height: 18px; -webkit-font-smoothing: antialiased;
+  min-height: 100vh; display: flex; flex-direction: column;
 }
 [hidden] { display: none !important; }
-.sr-only {
-  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
-  overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
-}
-a {
-  color: var(--text-primary);
-  text-decoration: underline;
-  text-decoration-color: var(--border-strong);
-  text-underline-offset: 2px;
-}
-a:hover { text-decoration-color: var(--text-primary); }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
+a { color: inherit; text-decoration: none; }
 :focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 .octicon { display: inline-block; vertical-align: text-bottom; fill: currentColor; flex: none; }
 
-/* Header (compact 44px) */
-.top {
-  background: var(--surface-1);
-  border-bottom: var(--hairline) solid var(--border);
-  position: sticky;
-  top: 0;
-  z-index: 20;
-}
-.top-inner {
-  max-width: 820px;
-  margin: 0 auto;
-  height: 44px;
-  padding: 0 var(--sp-4);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--sp-3);
-}
-.brand { display: flex; align-items: center; gap: var(--sp-2); }
+/* Header (44px) */
+.top { position: sticky; top: 0; z-index: 20; background: var(--bg-app); border-bottom: var(--hairline) solid var(--border); }
+.top-inner { max-width: 720px; margin: 0 auto; height: 44px; padding: 0 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.brand { display: flex; align-items: center; gap: 6px; }
 .top h1 { margin: 0; font-size: 14px; font-weight: 600; letter-spacing: -0.01em; }
-.top-actions { display: flex; align-items: center; gap: var(--sp-2); }
-.mode {
-  display: inline-flex; align-items: center; gap: 5px;
-  height: 22px; padding: 0 8px; border-radius: 999px;
-  border: var(--hairline) solid var(--border);
-  background: var(--surface-2); color: var(--text-secondary);
-  font-size: 12px; font-weight: 500; white-space: nowrap;
-}
-.mode.live { border-color: var(--danger); background: var(--danger-soft); color: var(--danger); }
+.top-actions { display: flex; align-items: center; gap: 4px; }
+.mode { display: inline-flex; align-items: center; gap: 4px; height: 22px; padding: 0 7px; border-radius: 999px; background: var(--surface-2); color: var(--text-secondary); font-size: 12px; font-weight: 500; }
+.mode.live { background: var(--danger-soft); color: var(--danger); }
 
-/* Chat shell (assistant-ui single centered column) */
-.chat-shell {
-  width: 100%;
-  max-width: 820px;
-  margin: 0 auto;
-  padding: var(--sp-4) var(--sp-4) 0;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
+/* Hamburger slide-over drawer */
+.scrim { position: fixed; inset: 0; z-index: 30; background: var(--scrim); animation: fadeIn 150ms var(--ease-out); }
+.drawer {
+  position: fixed; top: 0; left: 0; bottom: 0; width: 276px; max-width: 85vw; z-index: 40;
+  background: var(--bg-app); border-right: var(--hairline) solid var(--border);
+  transform: translateX(-100%); transition: transform 180ms var(--ease-out);
+  display: flex; flex-direction: column; overflow-y: auto; padding: 0 12px 20px;
 }
-.thread {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-3);
-  padding-bottom: var(--sp-4);
-}
+.drawer.open { transform: translateX(0); }
+.drawer-head { height: 44px; display: flex; align-items: center; justify-content: space-between; font-weight: 600; border-bottom: var(--hairline) solid var(--border); }
+.drawer-section { padding: 12px 0; border-bottom: var(--hairline) solid var(--border); }
+.drawer-section:last-child { border-bottom: 0; }
+.drawer-section h3 { margin: 0 0 8px; font-size: 12px; font-weight: 600; color: var(--text-tertiary); display: flex; align-items: center; gap: 6px; }
+.count-pill { font-family: var(--font-mono); font-size: 12px; padding: 0 5px; border-radius: 999px; background: var(--surface-2); color: var(--text-secondary); }
+.jump-form { display: flex; gap: 6px; margin-bottom: 8px; }
+.jump-form input { flex: 1; min-width: 0; height: 28px; padding: 0 8px; border-radius: var(--radius-sm); border: var(--hairline) solid var(--border-strong); background: var(--surface-2); color: var(--text-primary); font-size: 12px; }
+.store-links, .drawer-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+.drawer-item { width: 100%; display: flex; align-items: center; gap: 6px; height: 28px; padding: 0 8px; border: 0; border-radius: var(--radius-sm); background: transparent; color: var(--text-secondary); font-family: var(--font-sans); font-size: 12px; cursor: pointer; text-align: left; }
+.drawer-item:hover { background: var(--surface-3); color: var(--text-primary); }
+.drawer-item-text { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.drawer-item-meta { font-family: var(--font-mono); color: var(--text-tertiary); }
+.drawer-empty { font-size: 12px; color: var(--text-tertiary); padding: 2px 0; }
 
-/* User message bubble */
-.msg-user { display: flex; justify-content: flex-end; animation: bubbleIn 220ms cubic-bezier(0.22, 1, 0.36, 1); }
-.bubble {
-  max-width: 85%;
-  padding: 8px 12px;
-  border-radius: var(--radius-lg);
-  border-bottom-right-radius: 4px;
-  background: var(--surface-3);
-  color: var(--text-primary);
-  font-size: 13px;
-  font-weight: 500;
-}
+/* Main continuous surface (no nested card boxes) */
+.chat-shell { width: 100%; max-width: 720px; margin: 0 auto; padding: 12px 12px 0; flex: 1; display: flex; flex-direction: column; }
+.thread { flex: 1; display: flex; flex-direction: column; gap: 12px; padding-bottom: 16px; }
+.msg-user { display: flex; justify-content: flex-end; animation: bubbleIn 200ms var(--ease-out); }
+.bubble { padding: 6px 10px; border-radius: var(--radius-lg); border-bottom-right-radius: 4px; background: var(--surface-3); font-size: 13px; font-weight: 500; }
+.msg-agent { display: flex; flex-direction: column; gap: 10px; animation: enter 200ms var(--ease-out); }
 
-/* Agent turn */
-.msg-agent {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-3);
-  animation: enter 220ms var(--ease-out);
-}
-.agent-lead {
-  margin: 0;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-.stale { opacity: 0.5; pointer-events: none; }
+.results-bar { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.agent-lead { font-size: 12px; font-weight: 600; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+.quick-filter { width: 140px; height: 26px; padding: 0 8px; border-radius: var(--radius-sm); border: var(--hairline) solid var(--border); background: var(--surface-2); color: var(--text-primary); font-size: 12px; }
 
-/* AI Elements: collapsible agent steps */
-.ai-steps {
-  background: var(--surface-1);
-  border: var(--hairline) solid var(--border);
-  border-radius: var(--radius-md);
-  overflow: hidden;
+/* Flat hairline product rows */
+.picks { display: flex; flex-direction: column; border-top: var(--hairline) solid var(--border); }
+.pick-row {
+  display: grid; grid-template-columns: 24px 1fr auto auto; align-items: center; gap: 8px;
+  padding: 8px 6px; border-bottom: var(--hairline) solid var(--border); cursor: pointer;
+  animation: rowIn 200ms var(--ease-out) both; animation-delay: calc(var(--i, 0) * 35ms);
+  transition: background 100ms var(--ease-out), transform 100ms var(--ease-out);
 }
-.ai-steps-head {
-  list-style: none;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 7px 10px;
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--text-secondary);
-  user-select: none;
-}
-.ai-steps-head::-webkit-details-marker { display: none; }
-.ai-steps-head:hover { background: var(--surface-2); color: var(--text-primary); }
-.ai-steps-body {
-  border-top: var(--hairline) solid var(--border);
-  padding: 8px 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
+.pick-row:hover { background: var(--surface-2); }
+.pick-row.selected { background: var(--surface-2); box-shadow: inset 2px 0 0 var(--text-primary); }
+.rank { font-family: var(--font-mono); font-size: 12px; color: var(--text-tertiary); }
+.row-main { min-width: 0; }
+.row-title { display: flex; align-items: center; gap: 6px; font-weight: 600; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.row-title > span:first-child { overflow: hidden; text-overflow: ellipsis; }
+.row-meta { display: flex; align-items: center; gap: 6px; margin-top: 2px; font-size: 12px; color: var(--text-tertiary); }
+.row-price { font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.row-actions { display: inline-flex; align-items: center; gap: 2px; }
+.tag-cart { display: inline-flex; align-items: center; color: var(--warning); }
+.tag-cart.placed { color: var(--success); }
 
-/* Preferences inside AI steps */
-.prefs { display: flex; flex-wrap: wrap; gap: 6px 12px; }
-.pref { display: inline-flex; align-items: center; gap: 6px; margin: 0; }
-.pref dt { font-size: 12px; color: var(--text-tertiary); }
-.pref dd { margin: 0; display: inline-flex; flex-wrap: wrap; gap: 4px; font-size: 12px; font-weight: 500; }
-.prefs-empty { font-size: 12px; color: var(--text-tertiary); }
-
-/* Commerce UI: compact selectable product cards */
-.picks {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: var(--sp-2);
-}
-.pick {
-  background: var(--surface-1);
-  border: var(--hairline) solid var(--border);
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  cursor: pointer;
-  animation: cardIn 240ms var(--ease-out) both;
-  animation-delay: calc(var(--i, 0) * 45ms);
-  transition: transform 140ms var(--ease-out), border-color 140ms var(--ease-out), box-shadow 140ms var(--ease-out);
-}
-.pick:hover {
-  border-color: var(--border-strong);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-popup);
-}
-.pick:active { transform: translateY(0) scale(0.99); }
-.pick.selected {
-  border-color: var(--text-primary);
-  box-shadow: 0 0 0 1px var(--text-primary), var(--shadow-popup);
-}
-.pick-media {
-  height: 112px;
-  background: var(--surface-2);
-  border-bottom: var(--hairline) solid var(--border);
-  display: grid;
-  place-items: center;
-  position: relative;
-  overflow: hidden;
-}
-.pick .thumb { width: 100%; height: 100%; object-fit: cover; display: block; }
-.pick-placeholder { color: var(--text-tertiary); display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 12px; }
-.pick-badges {
-  position: absolute;
-  top: 6px; left: 6px; right: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 4px;
-}
-.rank {
-  font-family: var(--font-mono);
-  font-size: 12px; font-weight: 600;
-  padding: 1px 6px; border-radius: 4px;
-  background: var(--surface-1); color: var(--text-primary);
-  border: var(--hairline) solid var(--border);
-}
-.tag-cart {
-  display: inline-flex; align-items: center; gap: 4px;
-  height: 20px; padding: 0 7px; border-radius: 999px;
-  background: var(--warning-soft); color: var(--warning);
-  font-size: 12px; font-weight: 600;
-}
-.tag-cart.placed { background: var(--success-soft); color: var(--success); }
-
-.pick-body { padding: 10px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
-.pick h3 {
-  margin: 0; font-size: 13px; line-height: 18px; font-weight: 600;
-  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-}
-.pick-price-row {
-  display: flex; align-items: baseline; justify-content: space-between; gap: 6px; margin-top: 2px;
-}
-.pick-price { font-size: 18px; line-height: 22px; font-weight: 700; font-variant-numeric: tabular-nums; }
-.pick-source { font-size: 12px; color: var(--text-secondary); }
-.pick-meta { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
-.pick-foot {
-  display: flex; align-items: center; justify-content: space-between; gap: 6px;
-  padding: 6px 10px;
-  border-top: var(--hairline) solid var(--border);
-  background: var(--surface-2);
-  font-size: 12px;
-}
-.pick-links { display: inline-flex; align-items: center; gap: 10px; }
-.ext-link { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 500; }
-
-/* Selected item Landed Cost breakdown panel */
-.cost-panel {
-  background: var(--surface-1);
-  border: var(--hairline) solid var(--border);
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  animation: enter 200ms var(--ease-out);
-}
-.cost-head {
-  display: flex; align-items: center; justify-content: space-between; gap: 8px;
-  padding: 10px 12px;
-  background: var(--surface-2);
-  border-bottom: var(--hairline) solid var(--border);
-}
-.cost-title { font-size: 13px; font-weight: 600; }
-.cost-sub { font-size: 12px; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+/* Flat hairline landed-cost breakdown */
+.cost-panel { padding-top: 6px; animation: enter 180ms var(--ease-out); }
+.cost-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; padding-bottom: 6px; border-bottom: var(--hairline) solid var(--border); }
+.cost-title { font-size: 12px; font-weight: 600; color: var(--text-secondary); }
+.cost-sub { font-size: 12px; color: var(--text-tertiary); font-variant-numeric: tabular-nums; margin-left: auto; }
 .cost-sub .under { color: var(--success); font-weight: 600; }
 .cost-sub .over { color: var(--danger); font-weight: 600; }
-
-.lines { list-style: none; margin: 0; padding: 4px 12px; }
+.cost-total-num { font-size: 16px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.lines { list-style: none; margin: 0; padding: 0; }
 .line {
-  display: grid; grid-template-columns: 7px 1fr auto; column-gap: 8px; align-items: baseline;
-  padding: 6px 0; border-bottom: var(--hairline) solid var(--border);
-  animation: rowIn 200ms var(--ease-out) both;
-  animation-delay: calc(var(--i, 0) * 28ms);
+  display: grid; grid-template-columns: 6px 1fr auto auto; align-items: center; gap: 8px;
+  padding: 5px 0; border-bottom: var(--hairline) solid var(--border);
+  animation: rowIn 180ms var(--ease-out) both; animation-delay: calc(var(--i, 0) * 24ms);
 }
 .line:last-child { border-bottom: 0; }
-.line .dot { width: 7px; height: 7px; border-radius: 2px; align-self: center; }
-.line .label { font-size: 12px; font-weight: 500; text-transform: capitalize; }
+.line .dot { width: 6px; height: 6px; border-radius: 2px; }
+.line .label { font-size: 12px; text-transform: capitalize; }
 .line .label small { margin-left: 4px; font-family: var(--font-mono); color: var(--text-tertiary); text-transform: none; }
 .line .amt { font-family: var(--font-mono); font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; }
-.line .cite {
-  grid-column: 2 / 4; display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
-  margin-top: 1px; font-family: var(--font-mono); font-size: 12px; color: var(--text-tertiary);
-}
-.cite a { color: var(--text-secondary); }
-.asof { font-size: 12px; padding: 0 5px; border-radius: 4px; background: var(--surface-2); color: var(--text-secondary); }
-.asof.warn { background: var(--warning-soft); color: var(--warning); }
-
-.cost-total-row {
-  display: flex; align-items: baseline; justify-content: space-between;
-  padding: 9px 12px;
-  border-top: var(--hairline) solid var(--border);
-  background: var(--surface-2);
-}
-.cost-total-label { font-size: 13px; font-weight: 600; }
-.cost-total-num { font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; }
-.cost-why {
-  margin: 0; padding: 6px 12px;
-  border-top: var(--hairline) solid var(--border);
-  font-size: 12px; color: var(--text-secondary);
-}
+.asof { font-family: var(--font-mono); font-size: 12px; color: var(--text-tertiary); }
+.asof:hover { color: var(--text-primary); }
 .s0 { background: var(--seg-0); } .s1 { background: var(--seg-1); } .s2 { background: var(--seg-2); }
 .s3 { background: var(--seg-3); } .s4 { background: var(--seg-4); } .s5 { background: var(--seg-5); }
 
-/* Chips */
-.chip {
-  display: inline-flex; align-items: center; gap: 4px;
-  height: 20px; padding: 0 7px; border-radius: 999px;
-  border: var(--hairline) solid var(--border);
-  background: var(--surface-2); color: var(--text-secondary);
-  font-size: 12px; font-weight: 500; white-space: nowrap;
-}
-.chip.c-ink { background: var(--surface-3); border-color: var(--border-strong); color: var(--text-primary); }
-.chip.c-red { background: var(--danger-soft); border-color: transparent; color: var(--danger); }
-.chip.c-green { background: var(--success-soft); border-color: transparent; color: var(--success); }
-.chip.c-amber { background: var(--warning-soft); border-color: transparent; color: var(--warning); }
-.chip.struck { text-decoration: line-through; }
-
-.none-found {
-  grid-column: 1 / -1;
-  background: var(--surface-1);
-  border: var(--hairline) dashed var(--border-strong);
-  border-radius: var(--radius-md);
-  padding: var(--sp-4);
-  text-align: center;
-  color: var(--text-secondary);
-}
-.none-found strong { display: block; color: var(--text-primary); margin-bottom: 4px; }
-
-.skipped {
-  background: var(--surface-1);
-  border: var(--hairline) solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 8px 10px;
-}
-.skipped h3 { margin: 0 0 6px; font-size: 12px; font-weight: 600; color: var(--text-secondary); }
-.skipped ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 12px; }
-.skipped li { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-secondary); }
-.skipped code { font-family: var(--font-mono); color: var(--text-primary); }
-
-/* Approval gate card inside chat turn */
-.gate {
-  border-radius: var(--radius-md);
-  border: var(--hairline) solid var(--border-strong);
-  background: var(--surface-1);
-  overflow: hidden;
-  transition: border-color 220ms var(--ease-out), background 220ms var(--ease-out);
-  animation: enter 240ms var(--ease-out);
-}
-.gate.placed .gate-icon { animation: popIn 280ms cubic-bezier(0.22, 1, 0.36, 1); }
-.gate-body {
-  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
-  gap: 10px; padding: 10px 12px;
-}
-.gate-state { display: flex; align-items: center; gap: 8px; }
-.gate-icon {
-  width: 28px; height: 28px; border-radius: var(--radius-sm);
-  display: grid; place-items: center; flex: none;
-  background: var(--surface-2); color: var(--text-primary);
-}
+/* Slim approval strip */
+.gate { border-top: var(--hairline) solid var(--border); border-bottom: var(--hairline) solid var(--border); padding: 8px 0; transition: border-color 200ms var(--ease-out); }
+.gate-body { display: flex; align-items: center; gap: 8px; }
+.gate-icon { width: 26px; height: 26px; border-radius: var(--radius-sm); display: grid; place-items: center; flex: none; background: var(--surface-2); }
+.gate-item { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .gate-kicker { font-size: 13px; font-weight: 600; }
-.gate-note { font-size: 12px; color: var(--text-secondary); }
-.gate-item { flex: 1 1 200px; min-width: 0; }
-.gate-item .t { font-size: 13px; font-weight: 600; }
-.gate-item .d { font-size: 12px; color: var(--text-secondary); }
-.tok-row { display: inline-flex; align-items: center; gap: 6px; margin-top: 2px; }
-.tok { font-family: var(--font-mono); font-size: 12px; color: var(--text-tertiary); }
-.gate-item .ev { margin-top: 2px; font-size: 12px; font-weight: 600; color: var(--danger); }
-.gate-actions { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-
-.gate.awaiting { border-color: var(--warning); border-left: 3px solid var(--warning); }
+.gate-sub { font-size: 12px; color: var(--text-secondary); }
+.gate-item .ev { font-size: 12px; color: var(--danger); }
+.gate-actions { display: inline-flex; align-items: center; gap: 4px; flex: none; }
 .gate.awaiting .gate-icon { background: var(--warning-soft); color: var(--warning); }
 .gate.awaiting .gate-kicker { color: var(--warning); }
-.gate.placed { border-color: var(--success); border-left: 3px solid var(--success); }
-.gate.placed .gate-icon { background: var(--success-soft); color: var(--success); }
+.gate.placed .gate-icon { background: var(--success-soft); color: var(--success); animation: popIn 260ms var(--ease-out); }
 .gate.placed .gate-kicker { color: var(--success); }
-.gate.stopped { border-color: var(--danger); border-left: 3px solid var(--danger); }
 .gate.stopped .gate-icon { background: var(--danger-soft); color: var(--danger); }
-.gate.stopped .gate-kicker { color: var(--danger); }
-.gate.idle { border-style: dashed; border-color: var(--border); }
 
-/* Trail inside AI steps */
-.trail { list-style: none; margin: 0; padding: 0; counter-reset: t; }
-.trail li {
-  counter-increment: t;
-  display: grid; grid-template-columns: 20px 64px 1fr; gap: 6px; align-items: baseline;
-  padding: 4px 0; border-bottom: var(--hairline) solid var(--border);
-  font-family: var(--font-mono); font-size: 12px; line-height: 16px; overflow-wrap: anywhere;
-}
-.trail li:last-child { border-bottom: 0; }
-.trail li::before { content: counter(t); color: var(--text-tertiary); text-align: right; }
-.trail .k {
-  font-family: var(--font-sans); font-size: 12px; font-weight: 500;
-  text-align: center; padding: 1px 5px; border-radius: 4px;
-  background: var(--surface-2); color: var(--text-secondary);
-}
+.skipped { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; font-size: 12px; color: var(--text-tertiary); }
+.none-found { padding: 16px 0; text-align: center; color: var(--text-tertiary); }
+
+/* Chips, prefs, trail */
+.chip { display: inline-flex; align-items: center; height: 18px; padding: 0 6px; border-radius: 999px; background: var(--surface-2); color: var(--text-secondary); font-size: 12px; }
+.chip.c-ink { background: var(--surface-3); color: var(--text-primary); }
+.chip.c-red { background: var(--danger-soft); color: var(--danger); }
+.chip.c-green { background: var(--success-soft); color: var(--success); }
+.chip.c-amber { background: var(--warning-soft); color: var(--warning); }
+.chip.struck { text-decoration: line-through; }
+.prefs { display: flex; flex-direction: column; gap: 6px; }
+.pref { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin: 0; }
+.pref dt { font-size: 12px; color: var(--text-tertiary); }
+.pref dd { margin: 0; display: flex; flex-wrap: wrap; gap: 4px; }
+.trail { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.trail li { display: grid; grid-template-columns: 54px 1fr; gap: 6px; font-family: var(--font-mono); font-size: 12px; line-height: 15px; overflow-wrap: anywhere; }
+.trail .k { font-family: var(--font-sans); text-align: center; padding: 1px 4px; border-radius: 4px; background: var(--surface-2); color: var(--text-secondary); }
 .trail .k-skip, .trail .k-refused, .trail .k-reject { background: var(--danger-soft); color: var(--danger); }
-.trail .k-pick { background: var(--surface-3); color: var(--text-primary); font-weight: 600; }
 .trail .k-cart { background: var(--warning-soft); color: var(--warning); }
 .trail .k-approved, .trail .k-memory { background: var(--success-soft); color: var(--success); }
 
-/* Buttons */
-.btn {
-  display: inline-flex; align-items: center; justify-content: center; gap: 5px;
-  height: 30px; padding: 0 10px;
-  border-radius: var(--radius-sm);
-  border: var(--hairline) solid var(--border);
-  background: var(--surface-1); color: var(--text-primary);
-  font-family: var(--font-sans); font-size: 12px; font-weight: 500;
-  cursor: pointer; white-space: nowrap;
-  transition: background var(--dur-hover) var(--ease-out), transform var(--dur-hover) var(--ease-out);
-}
-.btn:hover:not(:disabled) { background: var(--surface-3); border-color: var(--border-strong); transform: scale(1.015); }
-.btn:active:not(:disabled) { background: var(--surface-press); transform: scale(0.985); }
-.btn:disabled { opacity: 0.55; cursor: not-allowed; }
-.btn-primary { background: var(--ink-fill); border-color: var(--ink-fill); color: var(--on-ink); font-weight: 600; }
-.btn-primary:hover:not(:disabled) { background: var(--ink-fill-hover); border-color: var(--ink-fill-hover); }
-.btn-ghost { border-color: transparent; background: transparent; color: var(--text-secondary); }
-.btn-ghost:hover:not(:disabled) { background: var(--surface-3); border-color: transparent; color: var(--text-primary); }
+/* Buttons (Shibubu §5: borderless ghost, compact 28px) */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 5px; height: 28px; padding: 0 10px; border-radius: var(--radius-sm); border: 0; background: var(--surface-2); color: var(--text-primary); font-family: var(--font-sans); font-size: 12px; font-weight: 500; cursor: pointer; white-space: nowrap; transition: background 100ms var(--ease-out), transform 100ms var(--ease-out); }
+.btn:hover:not(:disabled) { background: var(--surface-3); transform: scale(1.02); }
+.btn:active:not(:disabled) { background: var(--surface-press); transform: scale(0.97); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-primary { background: var(--ink-fill); color: var(--on-ink); font-weight: 600; }
+.btn-primary:hover:not(:disabled) { background: var(--ink-fill-hover); }
+.btn-ghost { background: transparent; color: var(--text-secondary); }
+.btn-ghost:hover:not(:disabled) { background: var(--surface-3); color: var(--text-primary); }
 .btn-icon { width: 28px; height: 28px; padding: 0; }
 .btn-small { height: 24px; padding: 0 8px; }
-.btn-copy { height: 20px; padding: 0 6px; }
-.btn-danger { border-color: transparent; background: transparent; color: var(--danger); }
-.btn-danger:hover:not(:disabled) { background: var(--danger-soft); border-color: transparent; }
+.btn-danger { color: var(--danger); }
+.btn-danger:hover:not(:disabled) { background: var(--danger-soft); color: var(--danger); }
 
-/* Empty state */
-.empty {
-  margin: auto 0;
-  padding: 36px 16px;
-  text-align: center;
-  color: var(--text-secondary);
-}
-.empty-icon { color: var(--text-tertiary); margin-bottom: 8px; }
-.empty-lead { margin: 0 0 12px; font-size: 14px; font-weight: 500; color: var(--text-primary); }
+/* Empty & Skeleton */
+.empty { margin: auto 0; padding: 48px 0; text-align: center; }
 .examples { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
-.example-chip {
-  height: 28px; padding: 0 10px; border-radius: 999px;
-  border: var(--hairline) solid var(--border);
-  background: var(--surface-1); color: var(--text-secondary);
-  font-family: var(--font-sans); font-size: 12px; font-weight: 500; cursor: pointer;
-}
-.example-chip:hover { background: var(--surface-3); border-color: var(--border-strong); color: var(--text-primary); }
+.example-chip { height: 28px; padding: 0 10px; border-radius: 999px; border: var(--hairline) solid var(--border); background: transparent; color: var(--text-secondary); font-family: var(--font-sans); font-size: 12px; cursor: pointer; transition: background 100ms var(--ease-out); }
+.example-chip:hover { background: var(--surface-2); color: var(--text-primary); }
 
-/* Skeleton */
-.sk-line, .sk-block {
+.skeleton { display: flex; flex-direction: column; gap: 8px; padding-top: 8px; }
+.sk-row, .sk-block {
   border-radius: var(--radius-sm);
   background: linear-gradient(90deg, var(--surface-2) 25%, var(--surface-3) 50%, var(--surface-2) 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.2s ease-in-out infinite;
+  background-size: 200% 100%; animation: shimmer 1.1s ease-in-out infinite;
 }
-.sk-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px; }
-.sk-card { background: var(--surface-1); border: var(--hairline) solid var(--border); border-radius: var(--radius-md); padding: 10px; display: flex; flex-direction: column; gap: 8px; }
-.sk-line { height: 12px; }
-.sk-block { height: 84px; }
-.sk-w40 { width: 40%; } .sk-w60 { width: 60%; } .sk-w80 { width: 80%; } .sk-w90 { width: 90%; }
+.sk-row { height: 46px; }
+.sk-block { height: 110px; margin-top: 6px; }
+
+/* Bottom single-line composer */
+.composer-wrap { position: sticky; bottom: 0; padding: 8px 0 12px; background: var(--bg-app); }
+.error { margin: 0 0 6px; padding: 6px 10px; border-radius: var(--radius-sm); background: var(--danger-soft); color: var(--danger); font-size: 12px; }
+.composer { border: var(--hairline) solid var(--border-strong); border-radius: var(--radius-lg); padding: 4px 6px 4px 10px; background: var(--bg-app); }
+.composer-row { display: flex; align-items: center; gap: 6px; }
+.composer-row > input { flex: 1; min-width: 0; height: 30px; border: 0; background: transparent; color: var(--text-primary); font-family: var(--font-sans); font-size: 13px; }
+.composer-row > input:focus { outline: none; }
+.ctrl { display: inline-flex; align-items: center; gap: 2px; font-size: 12px; color: var(--text-tertiary); }
+.ctrl input, .ctrl select { height: 24px; padding: 0 5px; border-radius: 4px; border: 0; background: var(--surface-2); color: var(--text-primary); font-family: var(--font-sans); font-size: 12px; }
+.ctrl input[type="number"] { width: 54px; font-variant-numeric: tabular-nums; }
+.ctrl input[type="text"] { width: 54px; }
+
+.toast { position: fixed; bottom: 64px; left: 50%; transform: translateX(-50%); padding: 6px 12px; border-radius: 999px; background: var(--ink-fill); color: var(--on-ink); font-size: 12px; font-weight: 500; z-index: 50; animation: bubbleIn 160ms var(--ease-out); }
+
 @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-@keyframes enter { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes bubbleIn { from { opacity: 0; transform: translateY(6px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
-@keyframes cardIn { from { opacity: 0; transform: translateY(10px) scale(0.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
-@keyframes rowIn { from { opacity: 0; transform: translateX(-4px); } to { opacity: 1; transform: translateX(0); } }
-@keyframes popIn { 0% { transform: scale(0.75); opacity: 0; } 60% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(1); } }
-.ai-steps[open] .ai-steps-body { animation: enter 180ms var(--ease-out); }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes enter { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes bubbleIn { from { opacity: 0; transform: translateY(6px) scale(0.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes rowIn { from { opacity: 0; transform: translateX(-5px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes popIn { 0% { transform: scale(0.75); } 60% { transform: scale(1.12); } 100% { transform: scale(1); } }
 
-/* Sticky bottom assistant-ui composer */
-.composer-wrap {
-  position: sticky;
-  bottom: 0;
-  padding: 8px 0 12px;
-  background: var(--bg-app);
-}
-.error {
-  margin: 0 0 8px;
-  padding: 8px 10px;
-  border-radius: var(--radius-sm);
-  border: var(--hairline) solid var(--danger);
-  background: var(--danger-soft);
-  color: var(--danger);
-  font-size: 12px;
-  font-weight: 500;
-}
-.composer {
-  background: var(--surface-1);
-  border: var(--hairline) solid var(--border-strong);
-  border-radius: var(--radius-lg);
-  padding: 8px 10px;
-  box-shadow: var(--shadow-popup);
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-.composer-row { display: flex; align-items: center; gap: 8px; }
-.composer-row input {
-  flex: 1; min-width: 0; height: 30px; padding: 0 4px;
-  border: 0; background: transparent; color: var(--text-primary);
-  font-family: var(--font-sans); font-size: 13px;
-}
-.composer-row input:focus { outline: none; }
-.composer-controls {
-  display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
-  padding-top: 6px;
-  border-top: var(--hairline) solid var(--border);
-}
-.ctrl {
-  display: inline-flex; align-items: center; gap: 4px;
-  font-size: 12px; color: var(--text-tertiary);
-}
-.ctrl input, .ctrl select {
-  height: 24px; padding: 0 6px;
-  border-radius: 4px; border: var(--hairline) solid var(--border);
-  background: var(--surface-2); color: var(--text-primary);
-  font-family: var(--font-sans); font-size: 12px;
-}
-.ctrl input[type="number"] { width: 68px; font-variant-numeric: tabular-nums; }
-.ctrl input[type="text"] { width: 64px; }
-.foot-inline {
-  margin-left: auto;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--text-tertiary);
-}
-
-@media (max-width: 640px) {
-  .top-inner, .chat-shell { padding-left: 12px; padding-right: 12px; }
-  .picks { grid-template-columns: 1fr; }
-  .foot-inline { display: none; }
+@media (max-width: 600px) {
+  .pick-row { grid-template-columns: 20px 1fr auto; }
+  .row-actions { grid-column: 2 / 4; justify-content: flex-end; }
+  .composer-row { flex-wrap: wrap; }
+  .composer-row > input { flex: 1 0 100%; }
 }
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 120ms !important;
-    transform: none !important;
-  }
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 100ms !important; transform: none !important; }
 }
 
 </style>
@@ -639,29 +272,81 @@ a:hover { text-decoration-color: var(--text-primary); }
 <header class="top">
   <div class="top-inner">
     <div class="brand">
-      <svg class="octicon brand-icon" viewBox="0 0 16 16" width="18" height="18" aria-hidden="true">
-        <path d="m8.878.392 5.25 3.045c.54.314.872.89.872 1.514v6.098a1.75 1.75 0 0 1-.872 1.514l-5.25 3.045a1.75 1.75 0 0 1-1.756 0l-5.25-3.045A1.75 1.75 0 0 1 1 11.049V4.951c0-.624.332-1.201.872-1.514L7.122.392a1.75 1.75 0 0 1 1.756 0ZM7.875 1.69l-4.63 2.685L8 7.133l4.755-2.758-4.63-2.685a.248.248 0 0 0-.25 0ZM2.5 5.677v5.372c0 .09.047.171.125.216l4.625 2.683V8.432Zm6.25 8.271 4.625-2.683a.25.25 0 0 0 .125-.216V5.677L8.75 8.432Z"></path>
-      </svg>
+      <button type="button" id="menu-open" class="btn btn-ghost btn-icon" aria-label="Menu" aria-expanded="false" title="Menu">
+        <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+          <path d="M1 2.75A.75.75 0 0 1 1.75 2h12.5a.75.75 0 0 1 0 1.5H1.75A.75.75 0 0 1 1 2.75Zm0 5A.75.75 0 0 1 1.75 7h12.5a.75.75 0 0 1 0 1.5H1.75A.75.75 0 0 1 1 7.75ZM1.75 12h12.5a.75.75 0 0 1 0 1.5H1.75a.75.75 0 0 1 0-1.5Z"></path>
+        </svg>
+      </button>
       <h1>Shopping Agent</h1>
     </div>
     <div class="top-actions">
+      <button type="button" id="search-focus" class="btn btn-ghost btn-icon" aria-label="Search" title="Search (/)">
+        <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+          <path d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z"></path>
+        </svg>
+      </button>
+      <button type="button" id="share-link" class="btn btn-ghost btn-icon" aria-label="Copy link" title="Copy deep link">
+        <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+          <path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path>
+        </svg>
+      </button>
       <div class="mode" id="mode" hidden></div>
-      <button type="button" id="theme-toggle" class="btn btn-ghost btn-icon" aria-label="Toggle color theme" title="Toggle light/dark theme"></button>
+      <button type="button" id="theme-toggle" class="btn btn-ghost btn-icon" aria-label="Theme" title="Toggle theme"></button>
     </div>
   </div>
 </header>
 
+<div id="scrim" class="scrim" hidden></div>
+<aside id="drawer" class="drawer" aria-hidden="true" aria-label="Navigation menu">
+  <div class="drawer-head">
+    <span>Menu</span>
+    <button type="button" id="menu-close" class="btn btn-ghost btn-icon" aria-label="Close">
+      <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+        <path d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l3.22 3.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-3.22 3.22a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06Z"></path>
+      </svg>
+    </button>
+  </div>
+
+  <div class="drawer-section">
+    <h3>Jump from link</h3>
+    <form id="link-jump-form" class="jump-form" autocomplete="off">
+      <input id="link-jump-input" type="text" placeholder="URL or store slug…" aria-label="Store URL or slug">
+      <button type="submit" class="btn btn-primary btn-icon" aria-label="Jump" title="Open">
+        <svg class="octicon" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+          <path d="M8.22 2.97a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042l2.97-2.97H3.75a.75.75 0 0 1 0-1.5h7.44L8.22 4.03a.75.75 0 0 1 0-1.06Z"></path>
+        </svg>
+      </button>
+    </form>
+    <div class="store-links">
+      <button type="button" class="drawer-item" data-store-slug="tokyo-camera">/s/tokyo-camera</button>
+      <button type="button" class="drawer-item" data-store-slug="seiko-vintage">/s/seiko-vintage</button>
+      <button type="button" class="drawer-item" data-store-slug="retro-handheld">/s/retro-handheld</button>
+    </div>
+  </div>
+
+  <div class="drawer-section">
+    <h3>Recent</h3>
+    <ul id="history-list" class="drawer-list"></ul>
+  </div>
+
+  <div class="drawer-section">
+    <h3>Memory</h3>
+    <div id="prefs" class="prefs"></div>
+  </div>
+
+  <div class="drawer-section">
+    <h3>Trace <span id="steps-count" class="count-pill">0</span></h3>
+    <ol id="trail" class="trail"></ol>
+  </div>
+</aside>
+
 <main class="chat-shell">
   <div id="thread" class="thread" aria-live="polite">
     <div id="empty" class="empty">
-      <svg class="octicon empty-icon" viewBox="0 0 16 16" width="20" height="20" aria-hidden="true">
-        <path d="M7.53 1.282a.5.5 0 0 1 .94 0l.478 1.306a7.492 7.492 0 0 0 4.464 4.464l1.305.478a.5.5 0 0 1 0 .94l-1.305.478a7.492 7.492 0 0 0-4.464 4.464l-.478 1.305a.5.5 0 0 1-.94 0l-.478-1.305a7.492 7.492 0 0 0-4.464-4.464L1.282 8.47a.5.5 0 0 1 0-.94l1.306-.478a7.492 7.492 0 0 0 4.464-4.464Z"></path>
-      </svg>
-      <p class="empty-lead">Ask for a Japanese marketplace item.</p>
-      <div class="examples" id="examples" aria-label="Example prompts">
-        <button type="button" class="example-chip" data-q="Fujifilm X100V" data-budget="900">Fujifilm X100V under $900</button>
-        <button type="button" class="example-chip" data-q="Seiko SARB033" data-budget="600">Seiko SARB033 under $600</button>
-        <button type="button" class="example-chip" data-q="Game Boy Micro" data-budget="250">Game Boy Micro under $250</button>
+      <div class="examples" id="examples" aria-label="Quick searches">
+        <button type="button" class="example-chip" data-q="Fujifilm X100V" data-budget="900">Fujifilm X100V · $900</button>
+        <button type="button" class="example-chip" data-q="Seiko SARB033" data-budget="600">Seiko SARB033 · $600</button>
+        <button type="button" class="example-chip" data-q="Game Boy Micro" data-budget="250">Game Boy Micro · $250</button>
       </div>
     </div>
 
@@ -669,89 +354,64 @@ a:hover { text-decoration-color: var(--text-primary); }
       <div class="bubble" id="user-bubble"></div>
     </div>
 
-    <div id="skeleton" class="msg msg-agent skeleton" aria-busy="true" aria-label="Loading search results" hidden>
-      <div class="sk-line sk-w40"></div>
-      <div class="sk-cards">
-        <div class="sk-card"><div class="sk-block"></div><div class="sk-line sk-w80"></div><div class="sk-line sk-w40"></div></div>
-        <div class="sk-card"><div class="sk-block"></div><div class="sk-line sk-w80"></div><div class="sk-line sk-w40"></div></div>
-      </div>
-      <div class="sk-card"><div class="sk-line sk-w60"></div><div class="sk-line sk-w90"></div></div>
+    <div id="skeleton" class="msg msg-agent skeleton" aria-busy="true" aria-label="Loading" hidden>
+      <div class="sk-row"></div>
+      <div class="sk-row"></div>
+      <div class="sk-row"></div>
+      <div class="sk-block"></div>
     </div>
 
     <div id="results" class="msg msg-agent" hidden>
-      <!-- AI Elements: tool-call / reasoning steps accordion -->
-      <details class="ai-steps" id="ai-steps">
-        <summary class="ai-steps-head">
-          <svg class="octicon" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
-            <path d="M5 8.25a.75.75 0 0 1 .75-.75h4a.75.75 0 0 1 0 1.5h-4A.75.75 0 0 1 5 8.25ZM4 10.5A.75.75 0 0 0 4 12h4a.75.75 0 0 0 0-1.5H4Z"></path>
-            <path d="M13-.005c1.654 0 3 1.328 3 3 0 .982-.338 1.933-.783 2.818-.443.879-1.028 1.758-1.582 2.588l-.011.017c-.568.853-1.104 1.659-1.501 2.446-.398.789-.623 1.494-.623 2.136a1.5 1.5 0 1 0 2.333-1.248.75.75 0 0 1 .834-1.246A3 3 0 0 1 13 16H3a3 3 0 0 1-3-3c0-1.582.891-3.135 1.777-4.506.209-.322.418-.637.623-.946.473-.709.923-1.386 1.287-2.048H2.51c-.576 0-1.381-.133-1.907-.783A2.68 2.68 0 0 1 0 2.995a3 3 0 0 1 3-3Zm0 1.5a1.5 1.5 0 0 0-1.5 1.5c0 .476.223.834.667 1.132A.75.75 0 0 1 11.75 5.5H5.368c-.467 1.003-1.141 2.015-1.773 2.963-.192.289-.381.571-.558.845C2.13 10.711 1.5 11.916 1.5 13A1.5 1.5 0 0 0 3 14.5h7.401A2.989 2.989 0 0 1 10 13c0-.979.338-1.928.784-2.812.441-.874 1.023-1.748 1.575-2.576l.017-.026c.568-.853 1.103-1.658 1.501-2.448.398-.79.623-1.497.623-2.143 0-.838-.669-1.5-1.5-1.5Zm-10 0a1.5 1.5 0 0 0-1.5 1.5c0 .321.1.569.27.778.097.12.325.227.74.227h7.674A2.737 2.737 0 0 1 10 2.995c0-.546.146-1.059.401-1.5Z"></path>
-          </svg>
-          <span id="steps-summary">Agent steps</span>
-        </summary>
-        <div class="ai-steps-body">
-          <div id="prefs" class="prefs"></div>
-          <ol id="trail" class="trail"></ol>
-        </div>
-      </details>
+      <div class="results-bar">
+        <span class="agent-lead" id="picks-sub"></span>
+        <input id="quick-filter" class="quick-filter" type="search" placeholder="Filter…" aria-label="Filter results">
+      </div>
 
-      <!-- Assistant reply summary -->
-      <p class="agent-lead" id="picks-sub"></p>
-
-      <!-- Commerce UI: Product cards row -->
       <div id="picks" class="picks"></div>
       <div id="skipped" class="skipped" hidden></div>
-
-      <!-- Selected product Landed Cost breakdown -->
-      <section class="cost-panel" id="cost-panel" aria-label="Landed cost breakdown" hidden></section>
-
-      <!-- Approval Gate -->
+      <section class="cost-panel" id="cost-panel" aria-label="Landed cost" hidden></section>
       <div id="gate" class="gate" aria-live="polite"></div>
     </div>
   </div>
 
-  <!-- assistant-ui sticky bottom composer -->
   <div class="composer-wrap">
     <p class="error" id="error" role="alert" hidden></p>
     <form id="form" class="composer" autocomplete="off">
       <div class="composer-row">
-        <label class="sr-only" for="query">Item or request</label>
-        <input id="query" name="query" type="text" value="Fujifilm X100V" maxlength="300" placeholder="Ask for an item (e.g. Fujifilm X100V under $900)…" required>
-        <button id="go" type="submit" class="btn btn-primary">
-          <svg class="octicon" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
-            <path d="M8.22 2.97a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042l2.97-2.97H3.75a.75.75 0 0 1 0-1.5h7.44L8.22 4.03a.75.75 0 0 1 0-1.06Z"></path>
-          </svg>
-          <span id="go-label">Send</span>
-        </button>
-      </div>
-      <div class="composer-controls">
-        <label class="ctrl">
-          <span>Max $</span>
+        <label class="sr-only" for="query">Search</label>
+        <input id="query" name="query" type="text" value="Fujifilm X100V" maxlength="300" placeholder="Search item… (e.g. Fujifilm X100V $900)" required>
+        <label class="ctrl" title="Max budget USD">
+          <span>$</span>
           <input id="budget" name="budget" type="number" value="900" min="1" step="1" required>
         </label>
-        <label class="ctrl">
-          <span>Ship to</span>
+        <label class="ctrl" title="Ship to">
           <input id="ship_to" name="ship_to" type="text" value="US-CA" maxlength="40" required>
         </label>
-        <label class="ctrl">
-          <span>Condition</span>
+        <label class="ctrl" title="Min condition">
           <select id="condition_min" name="condition_min">
             <option value="">Any</option>
             <option value="fair">Fair+</option>
             <option value="good">Good+</option>
-            <option value="like_new">Like new+</option>
+            <option value="like_new">Like new</option>
             <option value="new">New</option>
           </select>
         </label>
-        <span class="foot-inline" id="foot"></span>
+        <button id="go" type="submit" class="btn btn-primary btn-icon" aria-label="Search" title="Send">
+          <svg class="octicon" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+            <path d="M8.22 2.97a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042l2.97-2.97H3.75a.75.75 0 0 1 0-1.5h7.44L8.22 4.03a.75.75 0 0 1 0-1.06Z"></path>
+          </svg>
+        </button>
       </div>
     </form>
   </div>
 </main>
 
+<div id="toast" class="toast" role="status" hidden></div>
+
 
 <script>
 (function(){
-  var SAMPLES = {"fujifilm x100v": {"request": {"query": "Fujifilm X100V", "max_total_usd": 900, "ship_to": "US-CA", "user_id": "default", "condition_min": null}, "preferences": {"user_id": "default", "sizes": {}, "condition_min": null, "rejected_sellers": ["camera_taro"], "past_purchases": ["mercari:m007", "mercari:m005", "mercari:m009", "yahoo_auctions:y002"], "notes": ["bought mercari:m007: genuine leather case LC-X100V black for X100V from parts_jp", "bought mercari:m005: FUJIFILM X100V black good condition with original box shutter count 8500 from fuji_fan_osaka", "bought mercari:m009: FUJIFILM X100V silver some scratches slight lens haze from cam_recycle_55", "bought yahoo_auctions:y002: FUJIFILM X100V black scratches from kanto_resale"]}, "picks": [{"listing": {"id": "mercari:m005", "source": "mercari", "url": "https://jp.mercari.com/item/m005", "title_ja": "FUJIFILM X100V ブラック 良品 元箱付き シャッター数8500", "title_en": "FUJIFILM X100V black good condition with original box shutter count 8500", "price_jpy": 109800, "condition": "good", "seller": "fuji_fan_osaka", "ships_abroad": false, "weight_kg": 0.8, "category": "camera", "fields": {"color": "black", "shutter_count": "8500", "box": "yes", "year": "2021", "tested": "working", "domestic_shipping": "seller pays", "condition_ja": "目立った傷や汚れなし", "buyee_url": "https://buyee.jp/mercari/item/m005"}, "photos": []}, "cost": {"listing_id": "mercari:m005", "lines": [{"label": "item price (JPY 109,800 @ 159.93)", "amount_usd": 686.55, "citation": {"source": "fixtures/rules.json#fx_jpy_per_usd", "as_of": "2026-11-13", "url": "https://www.federalreserve.gov/releases/h10/current/"}}, {"label": "Buyee service fee", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_service_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "Buyee standard plan", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_plan_fee_jpy.standard", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "payment fee", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#payment_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "domestic shipping (JP)", "amount_usd": 4.69, "citation": {"source": "fixtures/rules.json#domestic_shipping_jpy", "as_of": "2026-11-20", "url": "https://help.jp.mercari.com/guide/articles/136/"}}, {"label": "international shipping Japan Post EMS 1.00 kg (4-8 days)", "amount_usd": 33.14, "citation": {"source": "fixtures/rules.json#intl_shipping_us.ems", "as_of": "2026-11-20", "url": "https://www.post.japanpost.jp/send/oversea/charge/list-ems/all_en.html"}}, {"label": "US duty MFN camera HTS 8525.89.40.00 (de minimis suspended)", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#us_duty_mfn_by_category.camera", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/"}}, {"label": "US Japan 12.5% floor top-up (HTS 9903.05.49)", "amount_usd": 85.82, "citation": {"source": "fixtures/rules.json#us_japan_floor_rate", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/reststop/search?keyword=9903.05.49"}}], "fx_jpy_per_usd": 159.93, "blocked_reason": null, "total_usd": 816.46}, "score": 0.4089, "reason": "matches Fujifilm, x100v; $816 landed, $84 under budget; condition good (no notable marks) (seller grade: 目立った傷や汚れなし); box included (as you prefer); tested working. Watch out: you already bought this one"}, {"listing": {"id": "yahoo_auctions:y002", "source": "yahoo_auctions", "url": "https://page.auctions.yahoo.co.jp/jp/auction/y002", "title_ja": "FUJIFILM X100V ブラック 傷あり", "title_en": "FUJIFILM X100V black scratches", "price_jpy": 98000, "condition": "fair", "seller": "kanto_resale", "ships_abroad": false, "weight_kg": 0.8, "category": "camera", "fields": {"color": "black", "box": "no", "domestic_shipping": "buyer pays", "flaws": "scuffs, scratches", "condition_ja": "傷や汚れあり", "buyee_url": "https://buyee.jp/item/jdirectitems/auction/y002"}, "photos": []}, "cost": {"listing_id": "yahoo_auctions:y002", "lines": [{"label": "item price (JPY 98,000 @ 159.93)", "amount_usd": 612.77, "citation": {"source": "fixtures/rules.json#fx_jpy_per_usd", "as_of": "2026-11-13", "url": "https://www.federalreserve.gov/releases/h10/current/"}}, {"label": "Buyee service fee", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_service_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "Buyee standard plan", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_plan_fee_jpy.standard", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "payment fee", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#payment_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "domestic shipping (JP)", "amount_usd": 4.69, "citation": {"source": "fixtures/rules.json#domestic_shipping_jpy", "as_of": "2026-11-20", "url": "https://help.jp.mercari.com/guide/articles/136/"}}, {"label": "international shipping Japan Post EMS 1.00 kg (4-8 days)", "amount_usd": 33.14, "citation": {"source": "fixtures/rules.json#intl_shipping_us.ems", "as_of": "2026-11-20", "url": "https://www.post.japanpost.jp/send/oversea/charge/list-ems/all_en.html"}}, {"label": "US duty MFN camera HTS 8525.89.40.00 (de minimis suspended)", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#us_duty_mfn_by_category.camera", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/"}}, {"label": "US Japan 12.5% floor top-up (HTS 9903.05.49)", "amount_usd": 76.6, "citation": {"source": "fixtures/rules.json#us_japan_floor_rate", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/reststop/search?keyword=9903.05.49"}}], "fx_jpy_per_usd": 159.93, "blocked_reason": null, "total_usd": 733.46}, "score": 0.3748, "reason": "matches Fujifilm, x100v; $733 landed, $167 under budget; condition fair (some wear) (seller grade: 傷や汚れあり). Watch out: flaws noted: scuffs, scratches; you already bought this one"}, {"listing": {"id": "mercari:m009", "source": "mercari", "url": "https://jp.mercari.com/item/m009", "title_ja": "FUJIFILM X100V シルバー やや傷あり レンズに薄クモリ", "title_en": "FUJIFILM X100V silver some scratches slight lens haze", "price_jpy": 95000, "condition": "fair", "seller": "cam_recycle_55", "ships_abroad": false, "weight_kg": 0.8, "category": "camera", "fields": {"color": "silver", "box": "no", "flaws": "haze, scratches", "condition_ja": "やや傷や汚れあり", "buyee_url": "https://buyee.jp/mercari/item/m009"}, "photos": []}, "cost": {"listing_id": "mercari:m009", "lines": [{"label": "item price (JPY 95,000 @ 159.93)", "amount_usd": 594.01, "citation": {"source": "fixtures/rules.json#fx_jpy_per_usd", "as_of": "2026-11-13", "url": "https://www.federalreserve.gov/releases/h10/current/"}}, {"label": "Buyee service fee", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_service_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "Buyee standard plan", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_plan_fee_jpy.standard", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "payment fee", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#payment_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "domestic shipping (JP)", "amount_usd": 4.69, "citation": {"source": "fixtures/rules.json#domestic_shipping_jpy", "as_of": "2026-11-20", "url": "https://help.jp.mercari.com/guide/articles/136/"}}, {"label": "international shipping Japan Post EMS 1.00 kg (4-8 days)", "amount_usd": 33.14, "citation": {"source": "fixtures/rules.json#intl_shipping_us.ems", "as_of": "2026-11-20", "url": "https://www.post.japanpost.jp/send/oversea/charge/list-ems/all_en.html"}}, {"label": "US duty MFN camera HTS 8525.89.40.00 (de minimis suspended)", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#us_duty_mfn_by_category.camera", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/"}}, {"label": "US Japan 12.5% floor top-up (HTS 9903.05.49)", "amount_usd": 74.25, "citation": {"source": "fixtures/rules.json#us_japan_floor_rate", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/reststop/search?keyword=9903.05.49"}}], "fx_jpy_per_usd": 159.93, "blocked_reason": null, "total_usd": 712.35}, "score": 0.3188, "reason": "matches Fujifilm, x100v; $712 landed, $188 under budget; condition fair (some wear) (seller grade: やや傷や汚れあり). Watch out: flaws noted: haze, scratches; you already bought this one"}], "cart": {"status": "awaiting_approval", "listing_id": "mercari:m005", "approval_token": "demo-token-001", "cart_url": "https://buyee.jp/cart#sim-53758e74", "detail": "[session 53758e74a8e7a35f] cart filled on sim-buyee; nothing paid. approve(token) to place", "session_id": "53758e74a8e7a35f"}, "trail": ["recalled preferences for default: 4 past purchases, 1 rejected sellers", "source: fixtures: 10 listings for ['X100V', '富士フイルム X100V']", "found 9 listings", "skip mercari:m003: landed $1543.11 > budget $900", "skip mercari:m004: banned: battery_loose: standalone lithium batteries cannot be shipped overseas via any shipping method (https://buyee.jp/helpcenter/guide/lithium-battery)", "skip other:hardoff-3012: landed $944.48 > budget $900", "ranker: offline ranking", "pick mercari:m005 $816.46 score=0.41: matches Fujifilm, x100v; $816 landed, $84 under budget; condition good (no notable marks) (seller grade: 目立った傷や汚れなし); box included (as you prefer); tested working. Watch out: you already bought this one", "pick yahoo_auctions:y002 $733.46 score=0.37: matches Fujifilm, x100v; $733 landed, $167 under budget; condition fair (some wear) (seller grade: 傷や汚れあり). Watch out: flaws noted: scuffs, scratches; you already bought this one", "pick mercari:m009 $712.35 score=0.32: matches Fujifilm, x100v; $712 landed, $188 under budget; condition fair (some wear) (seller grade: やや傷や汚れあり). Watch out: flaws noted: haze, scratches; you already bought this one", "cart awaiting_approval for mercari:m005"], "meta": {"live": false, "wiring": {"mode": "standalone-preview"}}}, "seiko sarb033": {"request": {"query": "Seiko SARB033", "max_total_usd": 600, "ship_to": "US-CA", "user_id": "default", "condition_min": null}, "preferences": {"user_id": "default", "sizes": {}, "condition_min": null, "rejected_sellers": ["camera_taro"], "past_purchases": ["mercari:m007", "mercari:m005", "mercari:m009", "yahoo_auctions:y002"], "notes": ["bought mercari:m007: genuine leather case LC-X100V black for X100V from parts_jp", "bought mercari:m005: FUJIFILM X100V black good condition with original box shutter count 8500 from fuji_fan_osaka", "bought mercari:m009: FUJIFILM X100V silver some scratches slight lens haze from cam_recycle_55", "bought yahoo_auctions:y002: FUJIFILM X100V black scratches from kanto_resale"]}, "picks": [], "cart": null, "trail": ["recalled preferences for default: 4 past purchases, 1 rejected sellers", "source: fixtures: 0 listings for ['SARB033', 'seiko SARB033']", "found 0 listings", "ranker: offline ranking", "no candidate within budget"], "meta": {"live": false, "wiring": {"mode": "standalone-preview"}}}, "game boy micro": {"request": {"query": "Game Boy Micro", "max_total_usd": 250, "ship_to": "US-CA", "user_id": "default", "condition_min": null}, "preferences": {"user_id": "default", "sizes": {}, "condition_min": null, "rejected_sellers": ["camera_taro"], "past_purchases": ["mercari:m007", "mercari:m005", "mercari:m009", "yahoo_auctions:y002"], "notes": ["bought mercari:m007: genuine leather case LC-X100V black for X100V from parts_jp", "bought mercari:m005: FUJIFILM X100V black good condition with original box shutter count 8500 from fuji_fan_osaka", "bought mercari:m009: FUJIFILM X100V silver some scratches slight lens haze from cam_recycle_55", "bought yahoo_auctions:y002: FUJIFILM X100V black scratches from kanto_resale"]}, "picks": [{"listing": {"id": "other:hardoff-3006", "source": "other", "url": "https://netmall.hardoff.co.jp/product/3006/", "title_ja": "任天堂 ゲームボーイ 初代 箱説付き 動作確認済み", "title_en": "Nintendo Game Boy 初代 with box and manual tested working", "price_jpy": 12800, "condition": "good", "seller": "ホビーオフ 福岡店", "ships_abroad": false, "weight_kg": 0.6, "category": "electronics", "fields": {"tested": "working", "flaws": "scratches", "rank": "B", "marketplace": "Off Mall (Hard Off Net Mall)", "store_name": "ホビーオフ 福岡店", "hardoff_brand": "HOBBY OFF"}, "photos": []}, "cost": {"listing_id": "other:hardoff-3006", "lines": [{"label": "item price (JPY 12,800 @ 159.93)", "amount_usd": 80.04, "citation": {"source": "fixtures/rules.json#fx_jpy_per_usd", "as_of": "2026-11-13", "url": "https://www.federalreserve.gov/releases/h10/current/"}}, {"label": "Buyee service fee", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_service_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "Buyee standard plan", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_plan_fee_jpy.standard", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "payment fee", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#payment_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "domestic shipping (JP)", "amount_usd": 4.69, "citation": {"source": "fixtures/rules.json#domestic_shipping_jpy", "as_of": "2026-11-20", "url": "https://help.jp.mercari.com/guide/articles/136/"}}, {"label": "international shipping Japan Post EMS 0.80 kg (4-8 days)", "amount_usd": 29.64, "citation": {"source": "fixtures/rules.json#intl_shipping_us.ems", "as_of": "2026-11-20", "url": "https://www.post.japanpost.jp/send/oversea/charge/list-ems/all_en.html"}}, {"label": "US duty MFN default HTS - (de minimis suspended)", "amount_usd": 4.0, "citation": {"source": "fixtures/rules.json#us_duty_mfn_by_category.default", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/"}}, {"label": "US Japan 12.5% floor top-up (HTS 9903.05.49)", "amount_usd": 6.0, "citation": {"source": "fixtures/rules.json#us_japan_floor_rate", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/reststop/search?keyword=9903.05.49"}}], "fx_jpy_per_usd": 159.93, "blocked_reason": null, "total_usd": 130.63}, "score": 0.4866, "reason": "matches Game Boy; $131 landed, $119 under budget; condition good (no notable marks); HOBBY OFF store via Off Mall (ホビーオフ 福岡店), rank B; tested working. Watch out: not described as micro; flaws noted: scratches"}, {"listing": {"id": "other:hardoff-3004", "source": "other", "url": "https://netmall.hardoff.co.jp/product/3004/", "title_ja": "Nintendo 任天堂 初代 ゲームボーイ DMG-01 本体のみ ジャンク 通電確認のみ", "title_en": "Nintendo Nintendo 初代 Game Boy DMG-01 body only junk power-on checked only", "price_jpy": 1650, "condition": "junk", "seller": "ホビーオフ 町田店", "ships_abroad": false, "weight_kg": 0.4, "category": "electronics_junk", "fields": {"junk_risk": "repairable", "junk_reason": "通電確認のみ", "condition_source": "from title wording", "rank": "J", "returns": "none (junk rank J: no returns or warranty, even via Buyee)", "marketplace": "Off Mall (Hard Off Net Mall)", "store_name": "ホビーオフ 町田店", "hardoff_brand": "HOBBY OFF"}, "photos": []}, "cost": {"listing_id": "other:hardoff-3004", "lines": [{"label": "item price (JPY 1,650 @ 159.93)", "amount_usd": 10.32, "citation": {"source": "fixtures/rules.json#fx_jpy_per_usd", "as_of": "2026-11-13", "url": "https://www.federalreserve.gov/releases/h10/current/"}}, {"label": "Buyee service fee", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_service_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "Buyee standard plan", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_plan_fee_jpy.standard", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "payment fee", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#payment_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "domestic shipping (JP)", "amount_usd": 4.69, "citation": {"source": "fixtures/rules.json#domestic_shipping_jpy", "as_of": "2026-11-20", "url": "https://help.jp.mercari.com/guide/articles/136/"}}, {"label": "international shipping Japan Post EMS 0.60 kg (4-8 days)", "amount_usd": 26.14, "citation": {"source": "fixtures/rules.json#intl_shipping_us.ems", "as_of": "2026-11-20", "url": "https://www.post.japanpost.jp/send/oversea/charge/list-ems/all_en.html"}}, {"label": "US duty MFN default HTS - (de minimis suspended)", "amount_usd": 0.52, "citation": {"source": "fixtures/rules.json#us_duty_mfn_by_category.default", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/"}}, {"label": "US Japan 12.5% floor top-up (HTS 9903.05.49)", "amount_usd": 0.77, "citation": {"source": "fixtures/rules.json#us_japan_floor_rate", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/reststop/search?keyword=9903.05.49"}}], "fx_jpy_per_usd": 159.93, "blocked_reason": null, "total_usd": 48.7}, "score": 0.0708, "reason": "matches Game Boy; $49 landed, $201 under budget; condition junk / for parts; HOBBY OFF store via Off Mall (ホビーオフ 町田店), rank J. Watch out: not described as micro; sold as junk / for parts; no returns or warranty on junk, even via Buyee"}, {"listing": {"id": "other:hardoff-3005", "source": "other", "url": "https://netmall.hardoff.co.jp/product/3005/", "title_ja": "任天堂 ゲームボーイポケット ジャンク 通電不可", "title_en": "Nintendo Game Boy ポケット junk does not power on", "price_jpy": 880, "condition": "junk", "seller": "ホビーオフ 仙台店", "ships_abroad": false, "weight_kg": 0.3, "category": "electronics_junk", "fields": {"junk_risk": "parts only", "junk_reason": "通電不可、液漏れ、部品取り", "flaws": "battery corrosion", "condition_source": "from title wording", "rank": "J", "returns": "none (junk rank J: no returns or warranty, even via Buyee)", "marketplace": "Off Mall (Hard Off Net Mall)", "store_name": "ホビーオフ 仙台店", "hardoff_brand": "HOBBY OFF"}, "photos": []}, "cost": {"listing_id": "other:hardoff-3005", "lines": [{"label": "item price (JPY 880 @ 159.93)", "amount_usd": 5.5, "citation": {"source": "fixtures/rules.json#fx_jpy_per_usd", "as_of": "2026-11-13", "url": "https://www.federalreserve.gov/releases/h10/current/"}}, {"label": "Buyee service fee", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_service_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "Buyee standard plan", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_plan_fee_jpy.standard", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "payment fee", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#payment_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "domestic shipping (JP)", "amount_usd": 4.69, "citation": {"source": "fixtures/rules.json#domestic_shipping_jpy", "as_of": "2026-11-20", "url": "https://help.jp.mercari.com/guide/articles/136/"}}, {"label": "international shipping Japan Post EMS 0.50 kg (4-8 days)", "amount_usd": 24.39, "citation": {"source": "fixtures/rules.json#intl_shipping_us.ems", "as_of": "2026-11-20", "url": "https://www.post.japanpost.jp/send/oversea/charge/list-ems/all_en.html"}}, {"label": "US duty MFN default HTS - (de minimis suspended)", "amount_usd": 0.28, "citation": {"source": "fixtures/rules.json#us_duty_mfn_by_category.default", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/"}}, {"label": "US Japan 12.5% floor top-up (HTS 9903.05.49)", "amount_usd": 0.41, "citation": {"source": "fixtures/rules.json#us_japan_floor_rate", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/reststop/search?keyword=9903.05.49"}}], "fx_jpy_per_usd": 159.93, "blocked_reason": null, "total_usd": 41.53}, "score": -0.0449, "reason": "matches Game Boy; $42 landed, $208 under budget; condition junk / for parts; HOBBY OFF store via Off Mall (ホビーオフ 仙台店), rank J. Watch out: not described as micro; sold as junk / for parts; no returns or warranty on junk, even via Buyee; flaws noted: battery corrosion"}], "cart": {"status": "awaiting_approval", "listing_id": "other:hardoff-3006", "approval_token": "demo-token-001", "cart_url": "https://buyee.jp/cart#sim-f3de76c7", "detail": "[session f3de76c7e7c030e1] cart filled on sim-buyee; nothing paid. approve(token) to place; 1 warning(s) in listing text", "session_id": "f3de76c7e7c030e1"}, "trail": ["recalled preferences for default: 4 past purchases, 1 rejected sellers", "source: fixtures: 3 listings for ['ゲームボーイ', 'micro ゲームボーイ']", "found 3 listings", "ranker: offline ranking", "pick other:hardoff-3006 $130.63 score=0.49: matches Game Boy; $131 landed, $119 under budget; condition good (no notable marks); HOBBY OFF store via Off Mall (ホビーオフ 福岡店), rank B; tested working. Watch out: not described as micro; flaws noted: scratches", "pick other:hardoff-3004 $48.7 score=0.07: matches Game Boy; $49 landed, $201 under budget; condition junk / for parts; HOBBY OFF store via Off Mall (ホビーオフ 町田店), rank J. Watch out: not described as micro; sold as junk / for parts; no returns or warranty on junk, even via Buyee", "pick other:hardoff-3005 $41.53 score=-0.04: matches Game Boy; $42 landed, $208 under budget; condition junk / for parts; HOBBY OFF store via Off Mall (ホビーオフ 仙台店), rank J. Watch out: not described as micro; sold as junk / for parts; no returns or warranty on junk, even via Buyee; flaws noted: battery corrosion", "cart awaiting_approval for other:hardoff-3006"], "meta": {"live": false, "wiring": {"mode": "standalone-preview"}}}};
+  var SAMPLES = {"fujifilm x100v": {"request": {"query": "Fujifilm X100V", "max_total_usd": 900, "ship_to": "US-CA", "user_id": "default", "condition_min": null}, "preferences": {"user_id": "default", "sizes": {}, "condition_min": null, "rejected_sellers": ["camera_taro"], "past_purchases": ["mercari:m007", "mercari:m005", "mercari:m009", "yahoo_auctions:y002"], "notes": ["bought mercari:m007: genuine leather case LC-X100V black for X100V from parts_jp", "bought mercari:m005: FUJIFILM X100V black good condition with original box shutter count 8500 from fuji_fan_osaka", "bought mercari:m009: FUJIFILM X100V silver some scratches slight lens haze from cam_recycle_55", "bought yahoo_auctions:y002: FUJIFILM X100V black scratches from kanto_resale"]}, "picks": [{"listing": {"id": "mercari:m005", "source": "mercari", "url": "https://jp.mercari.com/item/m005", "title_ja": "FUJIFILM X100V ブラック 良品 元箱付き シャッター数8500", "title_en": "FUJIFILM X100V black good condition with original box shutter count 8500", "price_jpy": 109800, "condition": "good", "seller": "fuji_fan_osaka", "ships_abroad": false, "weight_kg": 0.8, "category": "camera", "fields": {"color": "black", "shutter_count": "8500", "box": "yes", "year": "2021", "tested": "working", "domestic_shipping": "seller pays", "condition_ja": "目立った傷や汚れなし", "buyee_url": "https://buyee.jp/mercari/item/m005"}, "photos": []}, "cost": {"listing_id": "mercari:m005", "lines": [{"label": "item price (JPY 109,800 @ 159.93)", "amount_usd": 686.55, "citation": {"source": "fixtures/rules.json#fx_jpy_per_usd", "as_of": "2026-11-13", "url": "https://www.federalreserve.gov/releases/h10/current/"}}, {"label": "Buyee service fee", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_service_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "Buyee standard plan", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_plan_fee_jpy.standard", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "payment fee", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#payment_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "domestic shipping (JP)", "amount_usd": 4.69, "citation": {"source": "fixtures/rules.json#domestic_shipping_jpy", "as_of": "2026-11-20", "url": "https://help.jp.mercari.com/guide/articles/136/"}}, {"label": "international shipping Japan Post EMS 1.00 kg (4-8 days)", "amount_usd": 33.14, "citation": {"source": "fixtures/rules.json#intl_shipping_us.ems", "as_of": "2026-11-20", "url": "https://www.post.japanpost.jp/send/oversea/charge/list-ems/all_en.html"}}, {"label": "US duty MFN camera HTS 8525.89.40.00 (de minimis suspended)", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#us_duty_mfn_by_category.camera", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/"}}, {"label": "US Japan 12.5% floor top-up (HTS 9903.05.49)", "amount_usd": 85.82, "citation": {"source": "fixtures/rules.json#us_japan_floor_rate", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/reststop/search?keyword=9903.05.49"}}], "fx_jpy_per_usd": 159.93, "blocked_reason": null, "total_usd": 816.46}, "score": 0.4089, "reason": "matches Fujifilm, x100v; $816 landed, $84 under budget; condition good (no notable marks) (seller grade: 目立った傷や汚れなし); box included (as you prefer); tested working. Watch out: you already bought this one"}, {"listing": {"id": "yahoo_auctions:y002", "source": "yahoo_auctions", "url": "https://page.auctions.yahoo.co.jp/jp/auction/y002", "title_ja": "FUJIFILM X100V ブラック 傷あり", "title_en": "FUJIFILM X100V black scratches", "price_jpy": 98000, "condition": "fair", "seller": "kanto_resale", "ships_abroad": false, "weight_kg": 0.8, "category": "camera", "fields": {"color": "black", "box": "no", "domestic_shipping": "buyer pays", "flaws": "scuffs, scratches", "condition_ja": "傷や汚れあり", "buyee_url": "https://buyee.jp/item/jdirectitems/auction/y002"}, "photos": []}, "cost": {"listing_id": "yahoo_auctions:y002", "lines": [{"label": "item price (JPY 98,000 @ 159.93)", "amount_usd": 612.77, "citation": {"source": "fixtures/rules.json#fx_jpy_per_usd", "as_of": "2026-11-13", "url": "https://www.federalreserve.gov/releases/h10/current/"}}, {"label": "Buyee service fee", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_service_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "Buyee standard plan", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_plan_fee_jpy.standard", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "payment fee", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#payment_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "domestic shipping (JP)", "amount_usd": 4.69, "citation": {"source": "fixtures/rules.json#domestic_shipping_jpy", "as_of": "2026-11-20", "url": "https://help.jp.mercari.com/guide/articles/136/"}}, {"label": "international shipping Japan Post EMS 1.00 kg (4-8 days)", "amount_usd": 33.14, "citation": {"source": "fixtures/rules.json#intl_shipping_us.ems", "as_of": "2026-11-20", "url": "https://www.post.japanpost.jp/send/oversea/charge/list-ems/all_en.html"}}, {"label": "US duty MFN camera HTS 8525.89.40.00 (de minimis suspended)", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#us_duty_mfn_by_category.camera", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/"}}, {"label": "US Japan 12.5% floor top-up (HTS 9903.05.49)", "amount_usd": 76.6, "citation": {"source": "fixtures/rules.json#us_japan_floor_rate", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/reststop/search?keyword=9903.05.49"}}], "fx_jpy_per_usd": 159.93, "blocked_reason": null, "total_usd": 733.46}, "score": 0.3748, "reason": "matches Fujifilm, x100v; $733 landed, $167 under budget; condition fair (some wear) (seller grade: 傷や汚れあり). Watch out: flaws noted: scuffs, scratches; you already bought this one"}, {"listing": {"id": "mercari:m009", "source": "mercari", "url": "https://jp.mercari.com/item/m009", "title_ja": "FUJIFILM X100V シルバー やや傷あり レンズに薄クモリ", "title_en": "FUJIFILM X100V silver some scratches slight lens haze", "price_jpy": 95000, "condition": "fair", "seller": "cam_recycle_55", "ships_abroad": false, "weight_kg": 0.8, "category": "camera", "fields": {"color": "silver", "box": "no", "flaws": "haze, scratches", "condition_ja": "やや傷や汚れあり", "buyee_url": "https://buyee.jp/mercari/item/m009"}, "photos": []}, "cost": {"listing_id": "mercari:m009", "lines": [{"label": "item price (JPY 95,000 @ 159.93)", "amount_usd": 594.01, "citation": {"source": "fixtures/rules.json#fx_jpy_per_usd", "as_of": "2026-11-13", "url": "https://www.federalreserve.gov/releases/h10/current/"}}, {"label": "Buyee service fee", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_service_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "Buyee standard plan", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_plan_fee_jpy.standard", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "payment fee", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#payment_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "domestic shipping (JP)", "amount_usd": 4.69, "citation": {"source": "fixtures/rules.json#domestic_shipping_jpy", "as_of": "2026-11-20", "url": "https://help.jp.mercari.com/guide/articles/136/"}}, {"label": "international shipping Japan Post EMS 1.00 kg (4-8 days)", "amount_usd": 33.14, "citation": {"source": "fixtures/rules.json#intl_shipping_us.ems", "as_of": "2026-11-20", "url": "https://www.post.japanpost.jp/send/oversea/charge/list-ems/all_en.html"}}, {"label": "US duty MFN camera HTS 8525.89.40.00 (de minimis suspended)", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#us_duty_mfn_by_category.camera", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/"}}, {"label": "US Japan 12.5% floor top-up (HTS 9903.05.49)", "amount_usd": 74.25, "citation": {"source": "fixtures/rules.json#us_japan_floor_rate", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/reststop/search?keyword=9903.05.49"}}], "fx_jpy_per_usd": 159.93, "blocked_reason": null, "total_usd": 712.35}, "score": 0.3188, "reason": "matches Fujifilm, x100v; $712 landed, $188 under budget; condition fair (some wear) (seller grade: やや傷や汚れあり). Watch out: flaws noted: haze, scratches; you already bought this one"}], "cart": {"status": "awaiting_approval", "listing_id": "mercari:m005", "approval_token": "demo-token-001", "cart_url": "https://buyee.jp/cart#sim-083139b6", "detail": "[session 083139b64099467d] cart filled on sim-buyee; nothing paid. approve(token) to place", "session_id": "083139b64099467d"}, "trail": ["recalled preferences for default: 4 past purchases, 1 rejected sellers", "source: fixtures: 10 listings for ['X100V', '富士フイルム X100V']", "found 9 listings", "skip mercari:m003: landed $1543.11 > budget $900", "skip mercari:m004: banned: battery_loose: standalone lithium batteries cannot be shipped overseas via any shipping method (https://buyee.jp/helpcenter/guide/lithium-battery)", "skip other:hardoff-3012: landed $944.48 > budget $900", "ranker: offline ranking", "pick mercari:m005 $816.46 score=0.41: matches Fujifilm, x100v; $816 landed, $84 under budget; condition good (no notable marks) (seller grade: 目立った傷や汚れなし); box included (as you prefer); tested working. Watch out: you already bought this one", "pick yahoo_auctions:y002 $733.46 score=0.37: matches Fujifilm, x100v; $733 landed, $167 under budget; condition fair (some wear) (seller grade: 傷や汚れあり). Watch out: flaws noted: scuffs, scratches; you already bought this one", "pick mercari:m009 $712.35 score=0.32: matches Fujifilm, x100v; $712 landed, $188 under budget; condition fair (some wear) (seller grade: やや傷や汚れあり). Watch out: flaws noted: haze, scratches; you already bought this one", "cart awaiting_approval for mercari:m005"], "meta": {"live": false, "wiring": {"mode": "standalone-preview"}}}, "seiko sarb033": {"request": {"query": "Seiko SARB033", "max_total_usd": 600, "ship_to": "US-CA", "user_id": "default", "condition_min": null}, "preferences": {"user_id": "default", "sizes": {}, "condition_min": null, "rejected_sellers": ["camera_taro"], "past_purchases": ["mercari:m007", "mercari:m005", "mercari:m009", "yahoo_auctions:y002"], "notes": ["bought mercari:m007: genuine leather case LC-X100V black for X100V from parts_jp", "bought mercari:m005: FUJIFILM X100V black good condition with original box shutter count 8500 from fuji_fan_osaka", "bought mercari:m009: FUJIFILM X100V silver some scratches slight lens haze from cam_recycle_55", "bought yahoo_auctions:y002: FUJIFILM X100V black scratches from kanto_resale"]}, "picks": [], "cart": null, "trail": ["recalled preferences for default: 4 past purchases, 1 rejected sellers", "source: fixtures: 0 listings for ['SARB033', 'seiko SARB033']", "found 0 listings", "ranker: offline ranking", "no candidate within budget"], "meta": {"live": false, "wiring": {"mode": "standalone-preview"}}}, "game boy micro": {"request": {"query": "Game Boy Micro", "max_total_usd": 250, "ship_to": "US-CA", "user_id": "default", "condition_min": null}, "preferences": {"user_id": "default", "sizes": {}, "condition_min": null, "rejected_sellers": ["camera_taro"], "past_purchases": ["mercari:m007", "mercari:m005", "mercari:m009", "yahoo_auctions:y002"], "notes": ["bought mercari:m007: genuine leather case LC-X100V black for X100V from parts_jp", "bought mercari:m005: FUJIFILM X100V black good condition with original box shutter count 8500 from fuji_fan_osaka", "bought mercari:m009: FUJIFILM X100V silver some scratches slight lens haze from cam_recycle_55", "bought yahoo_auctions:y002: FUJIFILM X100V black scratches from kanto_resale"]}, "picks": [{"listing": {"id": "other:hardoff-3006", "source": "other", "url": "https://netmall.hardoff.co.jp/product/3006/", "title_ja": "任天堂 ゲームボーイ 初代 箱説付き 動作確認済み", "title_en": "Nintendo Game Boy 初代 with box and manual tested working", "price_jpy": 12800, "condition": "good", "seller": "ホビーオフ 福岡店", "ships_abroad": false, "weight_kg": 0.6, "category": "electronics", "fields": {"tested": "working", "flaws": "scratches", "rank": "B", "marketplace": "Off Mall (Hard Off Net Mall)", "store_name": "ホビーオフ 福岡店", "hardoff_brand": "HOBBY OFF"}, "photos": []}, "cost": {"listing_id": "other:hardoff-3006", "lines": [{"label": "item price (JPY 12,800 @ 159.93)", "amount_usd": 80.04, "citation": {"source": "fixtures/rules.json#fx_jpy_per_usd", "as_of": "2026-11-13", "url": "https://www.federalreserve.gov/releases/h10/current/"}}, {"label": "Buyee service fee", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_service_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "Buyee standard plan", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_plan_fee_jpy.standard", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "payment fee", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#payment_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "domestic shipping (JP)", "amount_usd": 4.69, "citation": {"source": "fixtures/rules.json#domestic_shipping_jpy", "as_of": "2026-11-20", "url": "https://help.jp.mercari.com/guide/articles/136/"}}, {"label": "international shipping Japan Post EMS 0.80 kg (4-8 days)", "amount_usd": 29.64, "citation": {"source": "fixtures/rules.json#intl_shipping_us.ems", "as_of": "2026-11-20", "url": "https://www.post.japanpost.jp/send/oversea/charge/list-ems/all_en.html"}}, {"label": "US duty MFN default HTS - (de minimis suspended)", "amount_usd": 4.0, "citation": {"source": "fixtures/rules.json#us_duty_mfn_by_category.default", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/"}}, {"label": "US Japan 12.5% floor top-up (HTS 9903.05.49)", "amount_usd": 6.0, "citation": {"source": "fixtures/rules.json#us_japan_floor_rate", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/reststop/search?keyword=9903.05.49"}}], "fx_jpy_per_usd": 159.93, "blocked_reason": null, "total_usd": 130.63}, "score": 0.4866, "reason": "matches Game Boy; $131 landed, $119 under budget; condition good (no notable marks); HOBBY OFF store via Off Mall (ホビーオフ 福岡店), rank B; tested working. Watch out: not described as micro; flaws noted: scratches"}, {"listing": {"id": "other:hardoff-3004", "source": "other", "url": "https://netmall.hardoff.co.jp/product/3004/", "title_ja": "Nintendo 任天堂 初代 ゲームボーイ DMG-01 本体のみ ジャンク 通電確認のみ", "title_en": "Nintendo Nintendo 初代 Game Boy DMG-01 body only junk power-on checked only", "price_jpy": 1650, "condition": "junk", "seller": "ホビーオフ 町田店", "ships_abroad": false, "weight_kg": 0.4, "category": "electronics_junk", "fields": {"junk_risk": "repairable", "junk_reason": "通電確認のみ", "condition_source": "from title wording", "rank": "J", "returns": "none (junk rank J: no returns or warranty, even via Buyee)", "marketplace": "Off Mall (Hard Off Net Mall)", "store_name": "ホビーオフ 町田店", "hardoff_brand": "HOBBY OFF"}, "photos": []}, "cost": {"listing_id": "other:hardoff-3004", "lines": [{"label": "item price (JPY 1,650 @ 159.93)", "amount_usd": 10.32, "citation": {"source": "fixtures/rules.json#fx_jpy_per_usd", "as_of": "2026-11-13", "url": "https://www.federalreserve.gov/releases/h10/current/"}}, {"label": "Buyee service fee", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_service_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "Buyee standard plan", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_plan_fee_jpy.standard", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "payment fee", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#payment_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "domestic shipping (JP)", "amount_usd": 4.69, "citation": {"source": "fixtures/rules.json#domestic_shipping_jpy", "as_of": "2026-11-20", "url": "https://help.jp.mercari.com/guide/articles/136/"}}, {"label": "international shipping Japan Post EMS 0.60 kg (4-8 days)", "amount_usd": 26.14, "citation": {"source": "fixtures/rules.json#intl_shipping_us.ems", "as_of": "2026-11-20", "url": "https://www.post.japanpost.jp/send/oversea/charge/list-ems/all_en.html"}}, {"label": "US duty MFN default HTS - (de minimis suspended)", "amount_usd": 0.52, "citation": {"source": "fixtures/rules.json#us_duty_mfn_by_category.default", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/"}}, {"label": "US Japan 12.5% floor top-up (HTS 9903.05.49)", "amount_usd": 0.77, "citation": {"source": "fixtures/rules.json#us_japan_floor_rate", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/reststop/search?keyword=9903.05.49"}}], "fx_jpy_per_usd": 159.93, "blocked_reason": null, "total_usd": 48.7}, "score": 0.0708, "reason": "matches Game Boy; $49 landed, $201 under budget; condition junk / for parts; HOBBY OFF store via Off Mall (ホビーオフ 町田店), rank J. Watch out: not described as micro; sold as junk / for parts; no returns or warranty on junk, even via Buyee"}, {"listing": {"id": "other:hardoff-3005", "source": "other", "url": "https://netmall.hardoff.co.jp/product/3005/", "title_ja": "任天堂 ゲームボーイポケット ジャンク 通電不可", "title_en": "Nintendo Game Boy ポケット junk does not power on", "price_jpy": 880, "condition": "junk", "seller": "ホビーオフ 仙台店", "ships_abroad": false, "weight_kg": 0.3, "category": "electronics_junk", "fields": {"junk_risk": "parts only", "junk_reason": "通電不可、液漏れ、部品取り", "flaws": "battery corrosion", "condition_source": "from title wording", "rank": "J", "returns": "none (junk rank J: no returns or warranty, even via Buyee)", "marketplace": "Off Mall (Hard Off Net Mall)", "store_name": "ホビーオフ 仙台店", "hardoff_brand": "HOBBY OFF"}, "photos": []}, "cost": {"listing_id": "other:hardoff-3005", "lines": [{"label": "item price (JPY 880 @ 159.93)", "amount_usd": 5.5, "citation": {"source": "fixtures/rules.json#fx_jpy_per_usd", "as_of": "2026-11-13", "url": "https://www.federalreserve.gov/releases/h10/current/"}}, {"label": "Buyee service fee", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_service_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "Buyee standard plan", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_plan_fee_jpy.standard", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "payment fee", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#payment_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "domestic shipping (JP)", "amount_usd": 4.69, "citation": {"source": "fixtures/rules.json#domestic_shipping_jpy", "as_of": "2026-11-20", "url": "https://help.jp.mercari.com/guide/articles/136/"}}, {"label": "international shipping Japan Post EMS 0.50 kg (4-8 days)", "amount_usd": 24.39, "citation": {"source": "fixtures/rules.json#intl_shipping_us.ems", "as_of": "2026-11-20", "url": "https://www.post.japanpost.jp/send/oversea/charge/list-ems/all_en.html"}}, {"label": "US duty MFN default HTS - (de minimis suspended)", "amount_usd": 0.28, "citation": {"source": "fixtures/rules.json#us_duty_mfn_by_category.default", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/"}}, {"label": "US Japan 12.5% floor top-up (HTS 9903.05.49)", "amount_usd": 0.41, "citation": {"source": "fixtures/rules.json#us_japan_floor_rate", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/reststop/search?keyword=9903.05.49"}}], "fx_jpy_per_usd": 159.93, "blocked_reason": null, "total_usd": 41.53}, "score": -0.0449, "reason": "matches Game Boy; $42 landed, $208 under budget; condition junk / for parts; HOBBY OFF store via Off Mall (ホビーオフ 仙台店), rank J. Watch out: not described as micro; sold as junk / for parts; no returns or warranty on junk, even via Buyee; flaws noted: battery corrosion"}], "cart": {"status": "awaiting_approval", "listing_id": "other:hardoff-3006", "approval_token": "demo-token-001", "cart_url": "https://buyee.jp/cart#sim-2164ab5a", "detail": "[session 2164ab5a90b21a0e] cart filled on sim-buyee; nothing paid. approve(token) to place; 1 warning(s) in listing text", "session_id": "2164ab5a90b21a0e"}, "trail": ["recalled preferences for default: 4 past purchases, 1 rejected sellers", "source: fixtures: 3 listings for ['ゲームボーイ', 'micro ゲームボーイ']", "found 3 listings", "ranker: offline ranking", "pick other:hardoff-3006 $130.63 score=0.49: matches Game Boy; $131 landed, $119 under budget; condition good (no notable marks); HOBBY OFF store via Off Mall (ホビーオフ 福岡店), rank B; tested working. Watch out: not described as micro; flaws noted: scratches", "pick other:hardoff-3004 $48.7 score=0.07: matches Game Boy; $49 landed, $201 under budget; condition junk / for parts; HOBBY OFF store via Off Mall (ホビーオフ 町田店), rank J. Watch out: not described as micro; sold as junk / for parts; no returns or warranty on junk, even via Buyee", "pick other:hardoff-3005 $41.53 score=-0.04: matches Game Boy; $42 landed, $208 under budget; condition junk / for parts; HOBBY OFF store via Off Mall (ホビーオフ 仙台店), rank J. Watch out: not described as micro; sold as junk / for parts; no returns or warranty on junk, even via Buyee; flaws noted: battery corrosion", "cart awaiting_approval for other:hardoff-3006"], "meta": {"live": false, "wiring": {"mode": "standalone-preview"}}}};
   var DEFAULT_KEY = "fujifilm x100v";
   var origFetch = window.fetch;
   window.fetch = function(path, opts) {
@@ -771,14 +431,14 @@ a:hover { text-decoration-color: var(--text-primary); }
       return new Promise(function(resolve){
         setTimeout(function(){
           resolve(new Response(JSON.stringify(data), {status:200, headers:{"Content-Type":"application/json"}}));
-        }, 450);
+        }, 420);
       });
     }
     if (path === "/api/approve") {
       return new Promise(function(resolve){
         setTimeout(function(){
-          resolve(new Response(JSON.stringify({cart:{status:"placed", detail:"Approved in standalone preview"}, trail:["approval accepted (standalone preview)"]}), {status:200, headers:{"Content-Type":"application/json"}}));
-        }, 260);
+          resolve(new Response(JSON.stringify({cart:{status:"placed", detail:"Approved"}, trail:["approval accepted"]}), {status:200, headers:{"Content-Type":"application/json"}}));
+        }, 240);
       });
     }
     return origFetch.apply(this, arguments);
@@ -786,33 +446,33 @@ a:hover { text-decoration-color: var(--text-primary); }
 })();
 </script>
 <script>
-/* Japan Shopping Agent — assistant-ui + Commerce UI + AI Elements frontend.
-   Icons: GitHub Primer Octicons v19.42.0 (MIT License), 16px SVG paths.
-   All listing / memory text is untrusted: it only ever goes through textContent. */
-(function () {
+/* Module: icons & DOM helpers — GitHub Primer Octicons v19.42.0 (MIT License), 16px SVG paths. */
+(function (root) {
   "use strict";
 
-  var $ = function (id) { return document.getElementById(id); };
-  var state = { result: null, cart: null, usedToken: null, gateEvent: null, busy: false, selectedIdx: 0 };
-
-  var CONDITION = { "new": "New", like_new: "Like new", good: "Good", fair: "Fair", junk: "Junk" };
-  var SOURCE = { mercari: "Mercari Japan", yahoo_auctions: "Yahoo Auctions", other: "Independent shop" };
-
   var OCTICONS = {
+    "three-bars": ["M1 2.75A.75.75 0 0 1 1.75 2h12.5a.75.75 0 0 1 0 1.5H1.75A.75.75 0 0 1 1 2.75Zm0 5A.75.75 0 0 1 1.75 7h12.5a.75.75 0 0 1 0 1.5H1.75A.75.75 0 0 1 1 7.75ZM1.75 12h12.5a.75.75 0 0 1 0 1.5H1.75a.75.75 0 0 1 0-1.5Z"],
+    "search": ["M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z"],
+    "link": ["m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"],
+    "link-external": ["M3.75 2h3.5a.75.75 0 0 1 0 1.5h-3.5a.25.25 0 0 0-.25.25v8.5c0 .138.112.25.25.25h8.5a.25.25 0 0 0 .25-.25v-3.5a.75.75 0 0 1 1.5 0v3.5A1.75 1.75 0 0 1 12.25 14h-8.5A1.75 1.75 0 0 1 2 12.25v-8.5C2 2.784 2.784 2 3.75 2Zm6.854-1h4.146a.25.25 0 0 1 .25.25v4.146a.25.25 0 0 1-.427.177L13.03 4.03 9.28 7.78a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042l3.75-3.75-1.543-1.543A.25.25 0 0 1 10.604 1Z"],
+    "package": ["m8.878.392 5.25 3.045c.54.314.872.89.872 1.514v6.098a1.75 1.75 0 0 1-.872 1.514l-5.25 3.045a1.75 1.75 0 0 1-1.756 0l-5.25-3.045A1.75 1.75 0 0 1 1 11.049V4.951c0-.624.332-1.201.872-1.514L7.122.392a1.75 1.75 0 0 1 1.756 0ZM7.875 1.69l-4.63 2.685L8 7.133l4.755-2.758-4.63-2.685a.248.248 0 0 0-.25 0ZM2.5 5.677v5.372c0 .09.047.171.125.216l4.625 2.683V8.432Zm6.25 8.271 4.625-2.683a.25.25 0 0 0 .125-.216V5.677L8.75 8.432Z"],
     "shield-check": ["m8.533.133 5.25 1.68A1.75 1.75 0 0 1 15 3.48V7c0 1.566-.32 3.182-1.303 4.682-.983 1.498-2.585 2.813-5.032 3.855a1.697 1.697 0 0 1-1.33 0c-2.447-1.042-4.049-2.357-5.032-3.855C1.32 10.182 1 8.566 1 7V3.48a1.75 1.75 0 0 1 1.217-1.667l5.25-1.68a1.748 1.748 0 0 1 1.066 0Zm-.61 1.429.001.001-5.25 1.68a.251.251 0 0 0-.174.237V7c0 1.36.275 2.666 1.057 3.859.784 1.194 2.121 2.342 4.366 3.298a.196.196 0 0 0 .154 0c2.245-.957 3.582-2.103 4.366-3.297C13.225 9.666 13.5 8.358 13.5 7V3.48a.25.25 0 0 0-.174-.238l-5.25-1.68a.25.25 0 0 0-.153 0ZM11.28 6.28l-3.5 3.5a.75.75 0 0 1-1.06 0l-1.5-1.5a.749.749 0 0 1 .326-1.275.749.749 0 0 1 .734.215l.97.97 2.97-2.97a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042Z"],
     "shield-lock": ["m8.533.133 5.25 1.68A1.75 1.75 0 0 1 15 3.48V7c0 1.566-.32 3.182-1.303 4.682-.983 1.498-2.585 2.813-5.032 3.855a1.697 1.697 0 0 1-1.33 0c-2.447-1.042-4.049-2.357-5.032-3.855C1.32 10.182 1 8.566 1 7V3.48a1.75 1.75 0 0 1 1.217-1.667l5.25-1.68a1.748 1.748 0 0 1 1.066 0Zm-.61 1.429.001.001-5.25 1.68a.251.251 0 0 0-.174.237V7c0 1.36.275 2.666 1.057 3.859.784 1.194 2.121 2.342 4.366 3.298a.196.196 0 0 0 .154 0c2.245-.957 3.582-2.103 4.366-3.297C13.225 9.666 13.5 8.358 13.5 7V3.48a.25.25 0 0 0-.174-.238l-5.25-1.68a.25.25 0 0 0-.153 0ZM9.5 6.5c0 .536-.286 1.032-.75 1.3v2.45a.75.75 0 0 1-1.5 0V7.8A1.5 1.5 0 1 1 9.5 6.5Z"],
     "check-circle": ["M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm1.5 0a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Zm10.28-1.72-4.5 4.5a.75.75 0 0 1-1.06 0l-2-2a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l1.47 1.47 3.97-3.97a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042Z"],
     "x-circle": ["M2.344 2.343h-.001a8 8 0 0 1 11.314 11.314A8.002 8.002 0 0 1 .234 10.089a8 8 0 0 1 2.11-7.746Zm1.06 10.253a6.5 6.5 0 1 0 9.108-9.275 6.5 6.5 0 0 0-9.108 9.275ZM6.03 4.97 8 6.94l1.97-1.97a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l1.97 1.97a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-1.97 1.97a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734L6.94 8 4.97 6.03a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018Z"],
-    "link-external": ["M3.75 2h3.5a.75.75 0 0 1 0 1.5h-3.5a.25.25 0 0 0-.25.25v8.5c0 .138.112.25.25.25h8.5a.25.25 0 0 0 .25-.25v-3.5a.75.75 0 0 1 1.5 0v3.5A1.75 1.75 0 0 1 12.25 14h-8.5A1.75 1.75 0 0 1 2 12.25v-8.5C2 2.784 2.784 2 3.75 2Zm6.854-1h4.146a.25.25 0 0 1 .25.25v4.146a.25.25 0 0 1-.427.177L13.03 4.03 9.28 7.78a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042l3.75-3.75-1.543-1.543A.25.25 0 0 1 10.604 1Z"],
     "blocked": ["M4.467.22a.749.749 0 0 1 .53-.22h6.006c.199 0 .389.079.53.22l4.247 4.247c.141.14.22.331.22.53v6.006a.749.749 0 0 1-.22.53l-4.247 4.247a.749.749 0 0 1-.53.22H4.997a.749.749 0 0 1-.53-.22L.22 11.533a.749.749 0 0 1-.22-.53V4.997c0-.199.079-.389.22-.53Zm.84 1.28L1.5 5.308v5.384L5.308 14.5h5.384l3.808-3.808V5.308L10.692 1.5ZM4 7.75A.75.75 0 0 1 4.75 7h6.5a.75.75 0 0 1 0 1.5h-6.5A.75.75 0 0 1 4 7.75Z"],
     "check": ["M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"],
+    "x": ["M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l3.22 3.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-3.22 3.22a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06Z"],
     "globe": ["M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM5.78 8.75a9.64 9.64 0 0 0 1.363 4.177c.255.426.542.832.857 1.215.245-.296.551-.705.857-1.215A9.64 9.64 0 0 0 10.22 8.75Zm4.44-1.5a9.64 9.64 0 0 0-1.363-4.177c-.307-.51-.612-.919-.857-1.215a9.927 9.927 0 0 0-.857 1.215A9.64 9.64 0 0 0 5.78 7.25Zm-5.944 1.5H1.543a6.507 6.507 0 0 0 4.666 5.5c-.123-.181-.24-.365-.352-.552-.715-1.192-1.437-2.874-1.581-4.948Zm-2.733-1.5h2.733c.144-2.074.866-3.756 1.58-4.948.12-.197.237-.381.353-.552a6.507 6.507 0 0 0-4.666 5.5Zm10.181 1.5c-.144 2.074-.866 3.756-1.58 4.948-.12.197-.237.381-.353.552a6.507 6.507 0 0 0 4.666-5.5Zm2.733-1.5a6.507 6.507 0 0 0-4.666-5.5c.123.181.24.365.353.552.714 1.192 1.436 2.874 1.58 4.948Z"],
     "inbox": ["M2.8 2.06A1.75 1.75 0 0 1 4.41 1h7.18c.7 0 1.333.417 1.61 1.06l2.74 6.395c.04.093.06.194.06.295v4.5A1.75 1.75 0 0 1 14.25 15H1.75A1.75 1.75 0 0 1 0 13.25v-4.5c0-.101.02-.202.06-.295Zm1.61.44a.25.25 0 0 0-.23.152L1.887 8H4.75a.75.75 0 0 1 .6.3L6.625 10h2.75l1.275-1.7a.75.75 0 0 1 .6-.3h2.863L11.82 2.652a.25.25 0 0 0-.23-.152Zm10.09 7h-2.875l-1.275 1.7a.75.75 0 0 1-.6.3h-3.5a.75.75 0 0 1-.6-.3L4.375 9.5H1.5v3.75c0 .138.112.25.25.25h12.5a.25.25 0 0 0 .25-.25Z"],
     "sync": ["M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z"],
-    "package": ["m8.878.392 5.25 3.045c.54.314.872.89.872 1.514v6.098a1.75 1.75 0 0 1-.872 1.514l-5.25 3.045a1.75 1.75 0 0 1-1.756 0l-5.25-3.045A1.75 1.75 0 0 1 1 11.049V4.951c0-.624.332-1.201.872-1.514L7.122.392a1.75 1.75 0 0 1 1.756 0ZM7.875 1.69l-4.63 2.685L8 7.133l4.755-2.758-4.63-2.685a.248.248 0 0 0-.25 0ZM2.5 5.677v5.372c0 .09.047.171.125.216l4.625 2.683V8.432Zm6.25 8.271 4.625-2.683a.25.25 0 0 0 .125-.216V5.677L8.75 8.432Z"],
     "sun": ["M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm0-1.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Zm5.657-8.157a.75.75 0 0 1 0 1.061l-1.061 1.06a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734l1.06-1.06a.75.75 0 0 1 1.06 0Zm-9.193 9.193a.75.75 0 0 1 0 1.06l-1.06 1.061a.75.75 0 1 1-1.061-1.06l1.06-1.061a.75.75 0 0 1 1.061 0ZM8 0a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0V.75A.75.75 0 0 1 8 0ZM3 8a.75.75 0 0 1-.75.75H.75a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 3 8Zm13 0a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 16 8Zm-8 5a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 8 13Zm3.536-1.464a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 0 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061ZM2.343 2.343a.75.75 0 0 1 1.061 0l1.06 1.061a.751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018l-1.06-1.06a.75.75 0 0 1 0-1.06Z"],
     "moon": ["M9.598 1.591a.749.749 0 0 1 .785-.175 7.001 7.001 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Zm1.616 1.945a7 7 0 0 1-7.678 7.678 5.499 5.499 0 1 0 7.678-7.678Z"],
-    "copy": ["M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z", "M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"]
+    "copy": ["M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z", "M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"],
+    "history": ["m.427 1.927 1.215 1.215a8.002 8.002 0 1 1-1.6 5.685.75.75 0 1 1 1.493-.154 6.5 6.5 0 1 0 1.18-4.458l1.358 1.358A.25.25 0 0 1 3.896 6H.25A.25.25 0 0 1 0 5.75V2.104a.25.25 0 0 1 .427-.177ZM7.75 4a.75.75 0 0 1 .75.75v2.992l2.028.812a.75.75 0 0 1-.557 1.392l-2.5-1A.751.751 0 0 1 7 8.25v-3.5A.75.75 0 0 1 7.75 4Z"],
+    "arrow-right": ["M8.22 2.97a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042l2.97-2.97H3.75a.75.75 0 0 1 0-1.5h7.44L8.22 4.03a.75.75 0 0 1 0-1.06Z"],
+    "chevron-right": ["M6.22 3.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042L9.94 8 6.22 4.28a.75.75 0 0 1 0-1.06Z"],
+    "sliders": ["M15 2.75a.75.75 0 0 1-.75.75h-4a.75.75 0 0 1 0-1.5h4a.75.75 0 0 1 .75.75Zm-8.5.75v1.25a.75.75 0 0 0 1.5 0v-4a.75.75 0 0 0-1.5 0V2H1.75a.75.75 0 0 0 0 1.5H6.5Zm1.25 5.25a.75.75 0 0 0 0-1.5h-6a.75.75 0 0 0 0 1.5h6ZM15 8a.75.75 0 0 1-.75.75H11.5V10a.75.75 0 1 1-1.5 0V6a.75.75 0 0 1 1.5 0v1.25h2.75A.75.75 0 0 1 15 8Zm-9 5.25v-2a.75.75 0 0 0-1.5 0v1.25H1.75a.75.75 0 0 0 0 1.5H4.5v1.25a.75.75 0 0 0 1.5 0v-2Zm9 0a.75.75 0 0 1-.75.75h-6a.75.75 0 0 1 0-1.5h6a.75.75 0 0 1 .75.75Z"]
   };
 
   function icon(name, size) {
@@ -831,6 +491,12 @@ a:hover { text-decoration-color: var(--text-primary); }
     return svg;
   }
 
+  function append(el, c) {
+    if (c === null || c === undefined || c === false) return;
+    if (Array.isArray(c)) { c.forEach(function (x) { append(el, x); }); return; }
+    el.appendChild(c.nodeType ? c : document.createTextNode(String(c)));
+  }
+
   function h(tag, attrs) {
     var el = document.createElement(tag);
     for (var k in attrs || {}) {
@@ -843,75 +509,550 @@ a:hover { text-decoration-color: var(--text-primary); }
     for (var i = 2; i < arguments.length; i++) append(el, arguments[i]);
     return el;
   }
-  function append(el, c) {
-    if (c === null || c === undefined || c === false) return;
-    if (Array.isArray(c)) { c.forEach(function (x) { append(el, x); }); return; }
-    el.appendChild(c.nodeType ? c : document.createTextNode(String(c)));
-  }
-  function clear(el) { while (el.firstChild) el.removeChild(el.firstChild); return el; }
 
+  function clear(el) { while (el.firstChild) el.removeChild(el.firstChild); return el; }
+  function $(id) { return document.getElementById(id); }
   function usd(n) { return "$" + Number(n).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
   function usd0(n) { return "$" + Number(n).toLocaleString("en-US", { maximumFractionDigits: 2 }); }
   function yen(n) { return "\u00a5" + Number(n).toLocaleString("en-US"); }
   function safeUrl(u) {
-    try {
-      var x = new URL(u);
-      return (x.protocol === "https:" || x.protocol === "http:") ? x.href : null;
-    } catch (e) { return null; }
+    try { var x = new URL(u); return (x.protocol === "https:" || x.protocol === "http:") ? x.href : null; }
+    catch (e) { return null; }
   }
   function totalOf(cost) {
     if (typeof cost.total_usd === "number") return cost.total_usd;
     return Math.round(cost.lines.reduce(function (s, l) { return s + l.amount_usd; }, 0) * 100) / 100;
   }
 
+  function tweenUsd(el, target) {
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      el.textContent = usd(target); return;
+    }
+    var start = performance.now(), dur = 260;
+    function tick(now) {
+      var t = Math.min(1, (now - start) / dur);
+      el.textContent = usd(target * (1 - Math.pow(1 - t, 3)));
+      if (t < 1) requestAnimationFrame(tick);
+      else el.textContent = usd(target);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  function toast(msg) {
+    var t = $("toast");
+    if (!t) return;
+    t.textContent = msg;
+    t.hidden = false;
+    t.classList.add("show");
+    clearTimeout(t._timer);
+    t._timer = setTimeout(function () { t.classList.remove("show"); t.hidden = true; }, 1800);
+  }
+
+  root.JSA = root.JSA || {};
+  root.JSA.ui = { icon: icon, h: h, append: append, clear: clear, $: $, usd: usd, usd0: usd0, yen: yen, safeUrl: safeUrl, totalOf: totalOf, tweenUsd: tweenUsd, toast: toast };
+})(window);
+
+/* Module: hamburger drawer menu & theme switcher */
+(function (root) {
+  "use strict";
+
+  function initMenu(opts) {
+    var ui = root.JSA.ui;
+    var drawer = ui.$("drawer");
+    var scrim = ui.$("scrim");
+    var openBtn = ui.$("menu-open");
+    var closeBtn = ui.$("menu-close");
+
+    function setOpen(on) {
+      drawer.classList.toggle("open", on);
+      scrim.hidden = !on;
+      drawer.setAttribute("aria-hidden", on ? "false" : "true");
+      if (openBtn) openBtn.setAttribute("aria-expanded", on ? "true" : "false");
+    }
+
+    if (openBtn) openBtn.addEventListener("click", function () { setOpen(!drawer.classList.contains("open")); });
+    if (closeBtn) closeBtn.addEventListener("click", function () { setOpen(false); });
+    if (scrim) scrim.addEventListener("click", function () { setOpen(false); });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape") setOpen(false); });
+
+    // Theme toggle
+    function currentTheme() {
+      var saved = null;
+      try { saved = localStorage.getItem("jsa-theme"); } catch (e) {}
+      if (saved === "light" || saved === "dark") return saved;
+      return (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
+    }
+    function applyTheme(theme) {
+      document.documentElement.setAttribute("data-theme", theme);
+      var btn = ui.$("theme-toggle");
+      if (btn) {
+        ui.clear(btn);
+        btn.appendChild(ui.icon(theme === "dark" ? "sun" : "moon", 16));
+        btn.setAttribute("title", theme === "dark" ? "Light theme" : "Dark theme");
+      }
+    }
+    applyTheme(currentTheme());
+    var themeBtn = ui.$("theme-toggle");
+    if (themeBtn) {
+      themeBtn.addEventListener("click", function () {
+        var next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+        try { localStorage.setItem("jsa-theme", next); } catch (e) {}
+        applyTheme(next);
+      });
+    }
+
+    return { open: function () { setOpen(true); }, close: function () { setOpen(false); } };
+  }
+
+  root.JSA = root.JSA || {};
+  root.JSA.menu = { init: initMenu };
+})(window);
+
+/* Module: search bar, instant filter, natural-language query parser, and recent history */
+(function (root) {
+  "use strict";
+
+  var HISTORY_KEY = "jsa-search-history";
+
+  function loadHistory() {
+    try { return JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]").slice(0, 6); }
+    catch (e) { return []; }
+  }
+  function saveHistory(entry) {
+    var list = loadHistory().filter(function (x) { return x.q !== entry.q || String(x.budget) !== String(entry.budget); });
+    list.unshift(entry);
+    try { localStorage.setItem(HISTORY_KEY, JSON.stringify(list.slice(0, 6))); } catch (e) {}
+    return list.slice(0, 6);
+  }
+
+  function parseQuery(rawQuery, fallbackBudget) {
+    var q = String(rawQuery || "").trim();
+    var budget = fallbackBudget;
+    var m = q.match(/\$\s*(\d+(?:\.\d+)?)/);
+    if (m) budget = m[1];
+    return { query: q, budget: budget };
+  }
+
+  function initSearch(onSubmit) {
+    var ui = root.JSA.ui;
+    var filterInput = ui.$("quick-filter");
+
+    function renderHistory() {
+      var box = ui.$("history-list");
+      if (!box) return;
+      ui.clear(box);
+      var items = loadHistory();
+      if (!items.length) {
+        box.appendChild(ui.h("li", { class: "drawer-empty" }, "No searches yet"));
+        return;
+      }
+      items.forEach(function (it) {
+        box.appendChild(ui.h("li", null,
+          ui.h("button", {
+            type: "button", class: "drawer-item",
+            onclick: function () {
+              ui.$("query").value = it.q;
+              ui.$("budget").value = it.budget;
+              if (it.ship_to) ui.$("ship_to").value = it.ship_to;
+              onSubmit();
+            }
+          }, ui.icon("history", 14), ui.h("span", { class: "drawer-item-text" }, it.q), ui.h("span", { class: "drawer-item-meta" }, "$" + it.budget))));
+      });
+    }
+
+    // Header search icon focuses input; `/` or Cmd/Ctrl+K focuses search
+    var focusBtn = ui.$("search-focus");
+    if (focusBtn) {
+      focusBtn.addEventListener("click", function () { ui.$("query").focus(); ui.$("query").select(); });
+    }
+    document.addEventListener("keydown", function (e) {
+      var modK = (e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k";
+      var slash = e.key === "/" && !e.metaKey && !e.ctrlKey && !e.altKey;
+      if (modK || slash) {
+        var tag = (document.activeElement && document.activeElement.tagName) || "";
+        if (modK || (tag !== "INPUT" && tag !== "TEXTAREA" && tag !== "SELECT")) {
+          e.preventDefault();
+          ui.$("query").focus();
+          ui.$("query").select();
+        }
+      }
+    });
+
+    renderHistory();
+
+    return {
+      parseQuery: parseQuery,
+      record: function (q, budget, shipTo) { saveHistory({ q: q, budget: budget, ship_to: shipTo }); renderHistory(); },
+      getFilter: function () { return filterInput ? filterInput.value.trim().toLowerCase() : ""; },
+      onFilterChange: function (fn) { if (filterInput) filterInput.addEventListener("input", fn); }
+    };
+  }
+
+  root.JSA = root.JSA || {};
+  root.JSA.search = { init: initSearch };
+})(window);
+
+/* Module: deep-link builder, incoming link jump (?q=...&item=...&store=...), and URL jump */
+(function (root) {
+  "use strict";
+
+  var STORE_PRESETS = {
+    "tokyo-camera": { q: "Fujifilm X100V", budget: 900, ship_to: "US-CA" },
+    "seiko-vintage": { q: "Seiko SARB033", budget: 600, ship_to: "US-CA" },
+    "retro-handheld": { q: "Game Boy Micro", budget: 250, ship_to: "US-CA" }
+  };
+
+  function buildDeepLink(params) {
+    var base = location.origin && location.origin !== "null"
+      ? (location.origin + location.pathname)
+      : location.href.split("?")[0].split("#")[0];
+    var qs = new URLSearchParams();
+    if (params.q) qs.set("q", params.q);
+    if (params.budget) qs.set("budget", String(params.budget));
+    if (params.ship_to) qs.set("ship_to", params.ship_to);
+    if (params.cond) qs.set("cond", params.cond);
+    if (params.item) qs.set("item", params.item);
+    qs.set("run", "1");
+    return base + "?" + qs.toString();
+  }
+
+  function parseIncomingLink(raw) {
+    var s = String(raw || "").trim();
+    if (!s) return null;
+    // Direct store slug preset
+    var slugMatch = s.match(/(?:\/s\/|^)([a-z0-9-]+)$/i);
+    if (slugMatch && STORE_PRESETS[slugMatch[1].toLowerCase()]) {
+      return STORE_PRESETS[slugMatch[1].toLowerCase()];
+    }
+    // Deep link URL with query params
+    try {
+      var u = new URL(s);
+      var p = u.searchParams;
+      if (p.get("q")) {
+        return { q: p.get("q"), budget: p.get("budget") || 900, ship_to: p.get("ship_to") || "US-CA", cond: p.get("cond") || "", item: p.get("item") || "" };
+      }
+      // Mercari / Buyee / Linktree URL -> extract readable slug as search query
+      var seg = u.pathname.split("/").filter(Boolean).pop() || u.hostname;
+      return { q: seg.replace(/[-_]+/g, " "), budget: 900, ship_to: "US-CA" };
+    } catch (e) {
+      return { q: s, budget: 900, ship_to: "US-CA" };
+    }
+  }
+
+  function copyLink(url) {
+    var ui = root.JSA.ui;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(function () { ui.toast("Link copied"); }).catch(function () {});
+    } else {
+      ui.toast(url);
+    }
+  }
+
+  function initLinks(onJump, getState) {
+    var ui = root.JSA.ui;
+
+    // Header share-current-link icon button
+    var shareBtn = ui.$("share-link");
+    if (shareBtn) {
+      shareBtn.addEventListener("click", function () {
+        var st = getState();
+        var item = st.selectedListingId || "";
+        var url = buildDeepLink({
+          q: ui.$("query").value.trim(),
+          budget: ui.$("budget").value,
+          ship_to: ui.$("ship_to").value,
+          cond: ui.$("condition_min").value,
+          item: item
+        });
+        copyLink(url);
+      });
+    }
+
+    // Drawer: Jump from URL / Store Link form
+    var jumpForm = ui.$("link-jump-form");
+    var jumpInput = ui.$("link-jump-input");
+    if (jumpForm && jumpInput) {
+      jumpForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var target = parseIncomingLink(jumpInput.value);
+        if (!target) return;
+        jumpInput.value = "";
+        onJump(target);
+      });
+    }
+
+    // Preset store links in drawer
+    document.querySelectorAll("[data-store-slug]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var slug = btn.getAttribute("data-store-slug");
+        if (STORE_PRESETS[slug]) onJump(STORE_PRESETS[slug]);
+      });
+    });
+
+    // Parse current URL query/hash on boot
+    var qs = new URLSearchParams(location.search);
+    var hash = new URLSearchParams((location.hash || "").replace(/^#/, ""));
+    var storeSlug = qs.get("store") || hash.get("store");
+    var initial = null;
+    if (storeSlug && STORE_PRESETS[storeSlug]) {
+      initial = Object.assign({ run: true }, STORE_PRESETS[storeSlug]);
+    } else if (qs.get("q")) {
+      initial = {
+        q: qs.get("q"),
+        budget: qs.get("budget") || "",
+        ship_to: qs.get("ship_to") || "",
+        cond: qs.get("cond") || "",
+        item: qs.get("item") || hash.get("item") || "",
+        run: qs.get("run") === "1"
+      };
+    }
+
+    return { buildDeepLink: buildDeepLink, copyLink: copyLink, initial: initial };
+  }
+
+  root.JSA = root.JSA || {};
+  root.JSA.links = { init: initLinks };
+})(window);
+
+/* Module: commerce list (minimal text, hairline rows, icon actions), cost breakdown & approval gate */
+(function (root) {
+  "use strict";
+
+  var CONDITION = { "new": "New", like_new: "Like new", good: "Good", fair: "Fair", junk: "Junk" };
+  var SOURCE = { mercari: "Mercari", yahoo_auctions: "Yahoo", other: "Shop" };
+  var GATE_ICONS = { awaiting: "shield-lock", placed: "check-circle", stopped: "x-circle", idle: "inbox" };
+  var KINDS = [
+    [/^recalled /, "recall"], [/^found /, "search"], [/^skip /, "skip"], [/^pick /, "pick"], [/^cart /, "cart"],
+    [/^no candidate/, "cart"], [/^rejected seller/, "reject"], [/^approval accepted/, "approved"],
+    [/^approval refused/, "refused"], [/^(remembered|could not remember)/, "memory"]
+  ];
+
+  function chip(text, cls) { return root.JSA.ui.h("span", { class: "chip" + (cls ? " " + cls : "") }, text); }
+
+  function renderPrefs(result) {
+    var ui = root.JSA.ui, p = result.preferences, box = ui.clear(ui.$("prefs"));
+    var sizes = Object.keys(p.sizes || {});
+    var groups = [
+      ["Condition", p.condition_min ? [chip(CONDITION[p.condition_min] || p.condition_min, "c-ink")] : []],
+      ["Sizes", sizes.map(function (k) { return chip(k + " " + p.sizes[k], "c-ink"); })],
+      ["Rejected", (p.rejected_sellers || []).map(function (s) { return chip(s, "c-red struck"); })],
+      ["Purchased", (p.past_purchases || []).map(function (s) { return chip(s, "c-green"); })]
+    ];
+    if (!groups.some(function (g) { return g[1].length; })) {
+      box.appendChild(ui.h("span", { class: "drawer-empty" }, p.user_id + " · none"));
+      return;
+    }
+    groups.forEach(function (g) {
+      if (!g[1].length) return;
+      box.appendChild(ui.h("dl", { class: "pref" }, ui.h("dt", null, g[0]), ui.h("dd", null, g[1])));
+    });
+  }
+
+  function renderTrail(result) {
+    var ui = root.JSA.ui, box = ui.clear(ui.$("trail"));
+    var trail = result.trail || [];
+    var badge = ui.$("steps-count");
+    if (badge) badge.textContent = String(trail.length);
+    trail.forEach(function (t) {
+      var kind = "step";
+      for (var i = 0; i < KINDS.length; i++) if (KINDS[i][0].test(t)) { kind = KINDS[i][1]; break; }
+      box.appendChild(ui.h("li", null, ui.h("span", { class: "k k-" + kind }, kind), ui.h("span", { class: "txt" }, t)));
+    });
+  }
+
+  function renderPicks(state, filterText, handlers) {
+    var ui = root.JSA.ui, r = state.result, box = ui.clear(ui.$("picks"));
+    var cartId = state.cart && state.cart.listing_id;
+    var filtered = r.picks.map(function (p, i) { return { pick: p, idx: i }; }).filter(function (x) {
+      if (!filterText) return true;
+      var l = x.pick.listing;
+      return (l.title_en + " " + l.title_ja + " " + l.seller + " " + l.source).toLowerCase().indexOf(filterText) !== -1;
+    });
+
+    ui.$("picks-sub").textContent = filtered.length
+      ? filtered.length + " / " + ui.usd0(r.request.max_total_usd)
+      : "0 matches";
+
+    if (!filtered.length) {
+      box.appendChild(ui.h("div", { class: "none-found" }, "No matches"));
+    }
+
+    filtered.forEach(function (entry, pos) {
+      var p = entry.pick, i = entry.idx, l = p.listing, total = ui.totalOf(p.cost);
+      var inCart = l.id === cartId;
+      var placed = inCart && state.cart && state.cart.status === "placed";
+      var url = ui.safeUrl(l.url);
+      var buyeeUrl = l.fields && l.fields.buyee_url ? ui.safeUrl(String(l.fields.buyee_url)) : null;
+
+      var actions = ui.h("div", { class: "row-actions" },
+        url ? ui.h("a", {
+          href: url, target: "_blank", rel: "noopener noreferrer",
+          class: "btn btn-ghost btn-icon", title: "Open listing", "aria-label": "Open listing",
+          onclick: function (e) { e.stopPropagation(); }
+        }, ui.icon("link-external", 14)) : null,
+        buyeeUrl ? ui.h("a", {
+          href: buyeeUrl, target: "_blank", rel: "noopener noreferrer",
+          class: "btn btn-ghost btn-icon", title: "Open on Buyee", "aria-label": "Open on Buyee",
+          onclick: function (e) { e.stopPropagation(); }
+        }, ui.icon("package", 14)) : null,
+        ui.h("button", {
+          type: "button", class: "btn btn-ghost btn-icon", title: "Copy item link", "aria-label": "Copy item link",
+          onclick: function (e) { e.stopPropagation(); handlers.onCopyItemLink(l.id); }
+        }, ui.icon("link", 14)),
+        ui.h("button", {
+          type: "button", class: "btn btn-ghost btn-icon btn-danger", title: "Reject " + l.seller, "aria-label": "Reject seller",
+          onclick: function (e) { e.stopPropagation(); handlers.onReject(l.seller); }
+        }, ui.icon("blocked", 14))
+      );
+
+      box.appendChild(ui.h("article", {
+        class: "pick-row" + (i === state.selectedIdx ? " selected" : "") + (inCart ? " in-cart" : ""),
+        style: "--i:" + pos,
+        "data-listing": l.id,
+        tabindex: "0",
+        onclick: function () { handlers.onSelect(i); }
+      },
+        ui.h("span", { class: "rank" }, "#" + (i + 1)),
+        ui.h("div", { class: "row-main" },
+          ui.h("div", { class: "row-title" },
+            ui.h("span", null, l.title_en),
+            inCart ? ui.h("span", { class: "tag-cart" + (placed ? " placed" : ""), title: placed ? "Ordered" : "In cart" },
+              ui.icon(placed ? "check-circle" : "package", 12)) : null),
+          ui.h("div", { class: "row-meta" },
+            chip(CONDITION[l.condition] || l.condition, "c-ink"),
+            ui.h("span", null, SOURCE[l.source] || l.source),
+            ui.h("span", null, l.seller))),
+        ui.h("span", { class: "row-price" }, ui.usd(total)),
+        actions));
+    });
+
+    var skipped = r.trail.map(function (t) { return /^skip (\S+): (.*)$/.exec(t); }).filter(Boolean);
+    var sk = ui.clear(ui.$("skipped"));
+    sk.hidden = !skipped.length;
+    if (skipped.length) {
+      sk.appendChild(ui.h("span", { class: "skipped-label" }, skipped.length + " filtered"));
+      skipped.slice(0, 4).forEach(function (m) {
+        sk.appendChild(chip(m[1], /budget/i.test(m[2]) ? "c-amber" : "c-red"));
+      });
+    }
+  }
+
+  function renderCost(state) {
+    var ui = root.JSA.ui, r = state.result, panel = ui.clear(ui.$("cost-panel"));
+    var pick = r.picks[state.selectedIdx] || r.picks[0];
+    if (!pick) { panel.hidden = true; return; }
+    panel.hidden = false;
+    var l = pick.listing, cost = pick.cost, req = r.request;
+    var total = ui.totalOf(cost), room = req.max_total_usd - total;
+
+    var lines = ui.h("ul", { class: "lines" });
+    cost.lines.forEach(function (line, n) {
+      var c = line.citation || {};
+      var url = c.url && ui.safeUrl(c.url);
+      lines.appendChild(ui.h("li", { class: "line", style: "--i:" + n },
+        ui.h("span", { class: "dot s" + (n % 6) }),
+        ui.h("span", { class: "label" }, line.label,
+          /item/i.test(line.label) && l.price_jpy ? ui.h("small", null, ui.yen(l.price_jpy)) : null),
+        url ? ui.h("a", { href: url, target: "_blank", rel: "noopener noreferrer", class: "asof", title: c.source || "" }, c.as_of || "ref")
+            : ui.h("span", { class: "asof", title: c.source || "" }, c.as_of || "—"),
+        ui.h("span", { class: "amt" }, ui.usd(line.amount_usd))));
+    });
+
+    var totalEl = ui.h("span", { class: "cost-total-num" }, ui.usd(total));
+    panel.appendChild(ui.h("div", { class: "cost-head" },
+      ui.h("span", { class: "cost-title" }, "#" + (state.selectedIdx + 1) + " Landed (" + req.ship_to + ")"),
+      ui.h("span", { class: "cost-sub" },
+        room >= 0 ? ui.h("span", { class: "under" }, "-" + ui.usd(room)) : ui.h("span", { class: "over" }, "+" + ui.usd(-room)),
+        " · FX " + cost.fx_jpy_per_usd),
+      totalEl));
+    panel.appendChild(lines);
+    ui.tweenUsd(totalEl, total);
+  }
+
+  function renderGate(state, handlers) {
+    var ui = root.JSA.ui, r = state.result, cart = state.cart, g = ui.$("gate");
+    ui.clear(g);
+    if (!cart) {
+      g.className = "gate idle";
+      g.appendChild(ui.h("div", { class: "gate-body" }, ui.icon("inbox", 16), ui.h("span", { class: "gate-kicker" }, "No cart")));
+      return;
+    }
+    var pick = r.picks.filter(function (p) { return p.listing.id === cart.listing_id; })[0] || null;
+    var kind = cart.status === "awaiting_approval" ? "awaiting" : (cart.status === "placed" ? "placed" : "stopped");
+    g.className = "gate " + kind;
+
+    var actions = [];
+    if (kind === "awaiting") {
+      actions.push(ui.h("button", {
+        type: "button", class: "btn btn-ghost btn-icon", title: "Copy token", "aria-label": "Copy approval token",
+        onclick: function () { handlers.onCopyToken(cart.approval_token); }
+      }, ui.icon("copy", 14)));
+      if (pick) {
+        actions.push(ui.h("button", {
+          type: "button", class: "btn btn-ghost btn-icon btn-danger", id: "reject", title: "Reject " + pick.listing.seller, "aria-label": "Reject seller",
+          onclick: function () { handlers.onReject(pick.listing.seller); }
+        }, ui.icon("blocked", 14)));
+      }
+      actions.push(ui.h("button", {
+        type: "button", class: "btn btn-primary", id: "approve",
+        onclick: function (e) { handlers.onApprove(e.currentTarget); }
+      }, ui.icon("check", 14), "Approve"));
+    } else if (kind === "placed" && state.usedToken) {
+      actions.push(ui.h("button", {
+        type: "button", class: "btn btn-small", id: "replay", title: "Test token replay",
+        onclick: function (e) { handlers.onReplay(e.currentTarget); }
+      }, ui.icon("sync", 14), "Replay"));
+    }
+
+    g.appendChild(ui.h("div", { class: "gate-body" },
+      ui.h("div", { class: "gate-icon", "aria-hidden": "true" }, ui.icon(GATE_ICONS[kind], 16)),
+      ui.h("div", { class: "gate-item" },
+        ui.h("span", { class: "gate-kicker" }, kind === "awaiting" ? "Approve order" : (kind === "placed" ? "Placed" : "Blocked")),
+        pick ? ui.h("span", { class: "gate-sub" }, " · " + pick.listing.title_en) : null,
+        state.gateEvent ? ui.h("div", { class: "ev" }, state.gateEvent) : null),
+      ui.h("div", { class: "gate-actions" }, actions)));
+  }
+
+  root.JSA = root.JSA || {};
+  root.JSA.commerce = { renderPrefs: renderPrefs, renderTrail: renderTrail, renderPicks: renderPicks, renderCost: renderCost, renderGate: renderGate };
+})(window);
+
+/* Orchestrator: wires icons, menu, search, links, and commerce modules. */
+(function (root) {
+  "use strict";
+
+  var ui = root.JSA.ui;
+  var state = { result: null, cart: null, usedToken: null, gateEvent: null, busy: false, selectedIdx: 0, targetItemId: "" };
+
   function api(path, body) {
     return fetch(path, {
       method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body)
     }).then(function (res) {
       return res.json().catch(function () { return {}; }).then(function (data) {
-        if (!res.ok) throw new Error(data.error || ("Server returned " + res.status));
+        if (!res.ok) throw new Error(data.error || ("HTTP " + res.status));
         return data;
       });
-    }, function () {
-      throw new Error("Cannot reach server.");
-    });
+    }, function () { throw new Error("Server unreachable"); });
   }
 
   function showError(msg) {
-    var el = $("error");
+    var el = ui.$("error");
     el.hidden = !msg;
     el.textContent = msg || "";
   }
 
-  function setBusy(on, label) {
+  function setBusy(on) {
     state.busy = on;
-    $("go").disabled = on;
-    $("go-label").textContent = on ? (label || "Searching\u2026") : "Send";
+    ui.$("go").disabled = on;
     if (on) {
-      $("empty").hidden = true;
-      $("results").hidden = true;
-      $("skeleton").hidden = false;
+      ui.$("empty").hidden = true;
+      ui.$("results").hidden = true;
+      ui.$("skeleton").hidden = false;
     } else {
-      $("skeleton").hidden = true;
-      if (state.result) $("results").hidden = false;
-      else $("empty").hidden = false;
+      ui.$("skeleton").hidden = true;
+      if (state.result) ui.$("results").hidden = false;
+      else ui.$("empty").hidden = false;
     }
-  }
-
-  function tweenUsd(el, target) {
-    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      el.textContent = usd(target);
-      return;
-    }
-    var start = performance.now(), dur = 280;
-    function tick(now) {
-      var t = Math.min(1, (now - start) / dur);
-      var eased = 1 - Math.pow(1 - t, 3);
-      el.textContent = usd(target * eased);
-      if (t < 1) requestAnimationFrame(tick);
-      else el.textContent = usd(target);
-    }
-    requestAnimationFrame(tick);
   }
 
   function requestBody() {
@@ -919,20 +1060,62 @@ a:hover { text-decoration-color: var(--text-primary); }
     return { query: r.query, budget: r.max_total_usd, ship_to: r.ship_to, user_id: r.user_id, condition_min: r.condition_min };
   }
 
+  function renderAll() {
+    var c = root.JSA.commerce;
+    c.renderPrefs(state.result);
+    c.renderTrail(state.result);
+    c.renderPicks(state, searchMod.getFilter(), {
+      onSelect: function (i) { state.selectedIdx = i; renderAll(); },
+      onReject: rejectSeller,
+      onCopyItemLink: function (listingId) {
+        var r = state.result.request;
+        linksMod.copyLink(linksMod.buildDeepLink({ q: r.query, budget: r.max_total_usd, ship_to: r.ship_to, cond: r.condition_min || "", item: listingId }));
+      }
+    });
+    c.renderCost(state);
+    c.renderGate(state, {
+      onApprove: approve,
+      onReject: rejectSeller,
+      onReplay: replayToken,
+      onCopyToken: function (tok) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(tok).then(function () { ui.toast("Token copied"); }).catch(function () {});
+        }
+      }
+    });
+  }
+
+  function show(result) {
+    state.result = result;
+    state.cart = result.cart;
+    state.usedToken = null;
+    state.gateEvent = null;
+    state.selectedIdx = 0;
+    if (state.targetItemId && result.picks) {
+      var idx = result.picks.findIndex(function (p) { return p.listing.id === state.targetItemId; });
+      if (idx >= 0) state.selectedIdx = idx;
+      state.targetItemId = "";
+    }
+    ui.$("empty").hidden = true;
+    ui.$("skeleton").hidden = true;
+    ui.$("results").hidden = false;
+    renderAll();
+    renderMeta(result.meta);
+  }
+
   function runSearch(ev) {
     if (ev) ev.preventDefault();
     if (state.busy) return;
     showError("");
-    var rawQuery = $("query").value.trim();
-    var budgetVal = $("budget").value;
-    var m = rawQuery.match(/\$\s*(\d+(?:\.\d+)?)/);
-    if (m) { budgetVal = m[1]; $("budget").value = budgetVal; }
+    var parsed = searchMod.parseQuery(ui.$("query").value, ui.$("budget").value);
+    ui.$("budget").value = parsed.budget;
     var body = {
-      query: rawQuery, budget: budgetVal, ship_to: $("ship_to").value,
-      condition_min: $("condition_min").value || null
+      query: parsed.query, budget: parsed.budget, ship_to: ui.$("ship_to").value,
+      condition_min: ui.$("condition_min").value || null
     };
-    $("user-turn").hidden = false;
-    $("user-bubble").textContent = rawQuery + " · max " + usd0(budgetVal) + " · " + body.ship_to;
+    searchMod.record(body.query, body.budget, body.ship_to);
+    ui.$("user-turn").hidden = false;
+    ui.$("user-bubble").textContent = body.query + " · $" + body.budget;
     setBusy(true);
     api("/api/run", body).then(show, function (e) { showError(e.message); }).then(function () { setBusy(false); });
   }
@@ -942,7 +1125,7 @@ a:hover { text-decoration-color: var(--text-primary); }
     showError("");
     var body = requestBody();
     body.seller = seller;
-    setBusy(true, "Updating\u2026");
+    setBusy(true);
     api("/api/reject", body).then(show, function (e) { showError(e.message); }).then(function () { setBusy(false); });
   }
 
@@ -951,331 +1134,75 @@ a:hover { text-decoration-color: var(--text-primary); }
     if (!token || state.busy) return;
     showError("");
     btn.disabled = true;
-    btn.textContent = "Placing\u2026";
     api("/api/approve", { token: token }).then(function (r) {
       state.usedToken = token;
       r.cart.listing_id = r.cart.listing_id || state.cart.listing_id;
       state.cart = r.cart;
       state.result.trail = state.result.trail.concat(r.trail || []);
       renderAll();
-    }, function (e) {
-      showError(e.message);
-      btn.disabled = false;
-      clear(btn);
-      append(btn, [icon("check", 14), "Approve and place order"]);
-    });
+    }, function (e) { showError(e.message); btn.disabled = false; });
   }
 
   function replayToken(btn) {
     if (!state.usedToken) return;
     btn.disabled = true;
     api("/api/approve", { token: state.usedToken }).then(function (r) {
-      state.gateEvent = "Replay of used token: " + r.cart.status + (r.cart.detail ? " (" + r.cart.detail + ")" : "");
+      state.gateEvent = "Replay: " + r.cart.status;
       state.result.trail = state.result.trail.concat(r.trail || []);
       if (r.cart.status === "placed") state.cart = r.cart;
       renderAll();
     }, function (e) { showError(e.message); btn.disabled = false; });
   }
 
-  function show(result) {
-    state.result = result;
-    state.cart = result.cart;
-    state.usedToken = null;
-    state.gateEvent = null;
-    state.selectedIdx = 0;
-    $("empty").hidden = true;
-    $("skeleton").hidden = true;
-    $("results").hidden = false;
-    renderAll();
-    renderMeta(result.meta);
-  }
-
-  function renderAll() {
-    renderPrefs();
-    renderTrail();
-    renderPicks();
-    renderCostPanel();
-    renderGate();
-  }
-
-  function chip(text, cls) { return h("span", { class: "chip" + (cls ? " " + cls : "") }, text); }
-
-  function renderPrefs() {
-    var p = state.result.preferences, box = clear($("prefs"));
-    var sizes = Object.keys(p.sizes || {});
-    var groups = [
-      ["Condition", p.condition_min ? [chip(CONDITION[p.condition_min] || p.condition_min, "c-ink")] : []],
-      ["Sizes", sizes.map(function (k) { return chip(k + " " + p.sizes[k], "c-ink"); })],
-      ["Rejected", (p.rejected_sellers || []).map(function (s) { return chip(s, "c-red struck"); })],
-      ["Purchased", (p.past_purchases || []).map(function (s) { return chip(s, "c-green"); })]
-    ];
-    var known = groups.some(function (g) { return g[1].length; });
-    if (!known) {
-      box.appendChild(h("span", { class: "prefs-empty" }, "User " + p.user_id + " · no saved preferences"));
-      return;
-    }
-    box.appendChild(h("dl", { class: "pref" }, h("dt", null, "User"), h("dd", null, p.user_id)));
-    groups.forEach(function (g) {
-      if (!g[1].length) return;
-      box.appendChild(h("dl", { class: "pref" }, h("dt", null, g[0]), h("dd", null, g[1])));
-    });
-  }
-
-  function citeNode(c) {
-    c = c || {};
-    var url = c.url && safeUrl(c.url);
-    var dated = /^\d{4}-\d{2}-\d{2}$/.test(c.as_of || "");
-    var src = c.source || "no source";
-    return h("div", { class: "cite" },
-      url ? h("a", { href: url, target: "_blank", rel: "noopener noreferrer", class: "src" }, src) : h("span", { class: "src" }, src),
-      h("span", { class: "asof" + (dated ? "" : " warn") }, c.as_of || "undated"));
-  }
-
-  function pickCard(pick, i, inCart) {
-    var l = pick.listing, cost = pick.cost;
-    var total = totalOf(cost);
-    var placed = inCart && state.cart && state.cart.status === "placed";
-    var url = safeUrl(l.url);
-    var buyeeUrl = l.fields && l.fields.buyee_url ? safeUrl(String(l.fields.buyee_url)) : null;
-    var photo = (l.photos || []).map(safeUrl).filter(Boolean)[0];
-
-    var media;
-    if (photo) {
-      var img = h("img", { class: "thumb", src: photo, alt: l.title_en, loading: "lazy", referrerpolicy: "no-referrer" });
-      img.addEventListener("error", function () { img.remove(); });
-      media = h("div", { class: "pick-media" }, img);
-    } else {
-      media = h("div", { class: "pick-media" },
-        h("div", { class: "pick-placeholder" }, icon("package", 20), SOURCE[l.source] || l.source));
-    }
-    media.appendChild(h("div", { class: "pick-badges" },
-      h("span", { class: "rank" }, "#" + (i + 1)),
-      inCart ? h("span", { class: "tag-cart" + (placed ? " placed" : "") },
-        icon(placed ? "check-circle" : "package", 12), placed ? "Ordered" : "In cart") : null));
-
-    var metaChips = [
-      chip(CONDITION[l.condition] || l.condition, "c-ink"),
-      chip(l.ships_abroad ? "Ships abroad" : "Via proxy", l.ships_abroad ? "c-green" : "c-amber")
-    ];
-
-    return h("article", {
-      class: "pick" + (i === state.selectedIdx ? " selected" : "") + (inCart ? " in-cart" : ""),
-      style: "--i:" + i,
-      "data-listing": l.id,
-      tabindex: "0",
-      onclick: function () { state.selectedIdx = i; renderPicks(); renderCostPanel(); }
-    },
-      media,
-      h("div", { class: "pick-body" },
-        h("h3", null, l.title_en),
-        h("div", { class: "pick-price-row" },
-          h("span", { class: "pick-price" }, usd(total)),
-          h("span", { class: "pick-source" }, SOURCE[l.source] || l.source)),
-        h("div", { class: "pick-meta" }, metaChips)),
-      h("div", { class: "pick-foot" },
-        h("div", { class: "pick-links" },
-          url ? h("a", { href: url, target: "_blank", rel: "noopener noreferrer", class: "ext-link", onclick: function (e) { e.stopPropagation(); } },
-            "Listing", icon("link-external", 12)) : null,
-          buyeeUrl ? h("a", { href: buyeeUrl, target: "_blank", rel: "noopener noreferrer", class: "ext-link", onclick: function (e) { e.stopPropagation(); } },
-            "Buyee", icon("link-external", 12)) : null),
-        h("button", {
-          type: "button", class: "btn btn-small btn-danger",
-          onclick: function (e) { e.stopPropagation(); rejectSeller(l.seller); }
-        }, icon("blocked", 12), "Reject")));
-  }
-
-  function renderPicks() {
-    var r = state.result, box = clear($("picks"));
-    var cartId = state.cart && state.cart.listing_id;
-    $("picks-sub").textContent = r.picks.length
-      ? r.picks.length + " matching items found within " + usd0(r.request.max_total_usd)
-      : "No matching items found within " + usd0(r.request.max_total_usd);
-    if (!r.picks.length) {
-      box.appendChild(h("div", { class: "none-found" },
-        h("strong", null, "No listing within " + usd0(r.request.max_total_usd)),
-        "Raise the max budget or lower the minimum condition."));
-    }
-    r.picks.forEach(function (p, i) { box.appendChild(pickCard(p, i, p.listing.id === cartId)); });
-
-    var skipped = r.trail.map(function (t) { return /^skip (\S+): (.*)$/.exec(t); }).filter(Boolean);
-    var sk = clear($("skipped"));
-    sk.hidden = !skipped.length;
-    if (skipped.length) {
-      sk.appendChild(h("h3", null, "Filtered out (" + skipped.length + ")"));
-      sk.appendChild(h("ul", null, skipped.map(function (m) {
-        var budget = /budget/i.test(m[2]);
-        return h("li", null, chip(budget ? "Over budget" : "Blocked", budget ? "c-amber" : "c-red"), h("code", null, m[1]), m[2]);
-      })));
-    }
-  }
-
-  function renderCostPanel() {
-    var r = state.result, panel = clear($("cost-panel"));
-    var pick = r.picks[state.selectedIdx] || r.picks[0];
-    if (!pick) { panel.hidden = true; return; }
-    panel.hidden = false;
-    var l = pick.listing, cost = pick.cost, req = r.request;
-    var total = totalOf(cost), room = req.max_total_usd - total;
-
-    var lines = h("ul", { class: "lines" });
-    cost.lines.forEach(function (line, n) {
-      var hint = /item/i.test(line.label) && l.price_jpy ? h("small", null, yen(l.price_jpy)) : null;
-      lines.appendChild(h("li", { class: "line", style: "--i:" + n },
-        h("span", { class: "dot s" + (n % 6) }),
-        h("span", { class: "label" }, line.label, hint),
-        h("span", { class: "amt" }, usd(line.amount_usd)),
-        citeNode(line.citation)));
-    });
-
-    var totalEl = h("span", { class: "cost-total-num" }, usd(total));
-    panel.appendChild(h("div", { class: "cost-head" },
-      h("span", { class: "cost-title" }, "#" + (state.selectedIdx + 1) + " · " + l.title_en),
-      h("span", { class: "cost-sub" },
-        room >= 0 ? h("span", { class: "under" }, usd(room) + " under") : h("span", { class: "over" }, usd(-room) + " over"),
-        " · FX " + cost.fx_jpy_per_usd)));
-    panel.appendChild(lines);
-    panel.appendChild(h("div", { class: "cost-total-row" },
-      h("span", { class: "cost-total-label" }, "Estimated landed total (" + req.ship_to + ")"),
-      totalEl));
-    panel.appendChild(h("p", { class: "cost-why" }, "Rank " + Number(pick.score).toFixed(2) + " · " + pick.reason));
-    tweenUsd(totalEl, total);
-  }
-
-  var GATE_ICONS = { awaiting: "shield-lock", placed: "check-circle", stopped: "x-circle", idle: "inbox" };
-
-  function gateShell(kind, kicker, note, item, actions) {
-    var g = $("gate");
-    clear(g).className = "gate " + kind;
-    g.appendChild(h("div", { class: "gate-body" },
-      h("div", { class: "gate-state" },
-        h("div", { class: "gate-icon", "aria-hidden": "true" }, icon(GATE_ICONS[kind] || "inbox", 16)),
-        h("div", null, h("div", { class: "gate-kicker" }, kicker), h("div", { class: "gate-note" }, note))),
-      h("div", { class: "gate-item" }, item),
-      h("div", { class: "gate-actions" }, actions)));
-  }
-
-  function renderGate() {
-    var r = state.result, cart = state.cart;
-    if (!cart) {
-      gateShell("idle", "No cart created", "No listing fit within budget.", null, null);
-      return;
-    }
-    var pick = r.picks.filter(function (p) { return p.listing.id === cart.listing_id; })[0] || null;
-    var item = [
-      pick ? h("div", { class: "t" }, pick.listing.title_en) : null,
-      cart.detail ? h("div", { class: "d" }, cart.detail) : null
-    ];
-    if (cart.status === "awaiting_approval") {
-      var copyBtn = h("button", {
-        type: "button", class: "btn btn-ghost btn-copy", "aria-label": "Copy approval token",
-        onclick: function () {
-          if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(cart.approval_token).then(function () {
-              clear(copyBtn); append(copyBtn, [icon("check", 12), "Copied"]);
-              setTimeout(function () { clear(copyBtn); append(copyBtn, [icon("copy", 12), "Copy"]); }, 1400);
-            }).catch(function () {});
-          }
-        }
-      }, icon("copy", 12), "Copy");
-      item.push(h("div", { class: "tok-row" }, h("span", { class: "tok" }, "token " + cart.approval_token), copyBtn));
-      gateShell("awaiting", "Approval required", "Cart filled. Nothing paid yet.", item, [
-        h("button", { type: "button", class: "btn btn-primary", id: "approve", onclick: function (e) { approve(e.currentTarget); } },
-          icon("check", 14), "Approve and place order"),
-        pick ? h("button", { type: "button", class: "btn btn-small btn-danger", id: "reject", onclick: function () { rejectSeller(pick.listing.seller); } },
-          icon("blocked", 14), "Reject " + pick.listing.seller) : null
-      ]);
-    } else if (cart.status === "placed") {
-      if (state.gateEvent) item.push(h("div", { class: "ev" }, state.gateEvent));
-      gateShell("placed", "Order placed", "Approved. Single-use token consumed.", item, [
-        state.usedToken ? h("button", { type: "button", class: "btn btn-small", id: "replay", onclick: function (e) { replayToken(e.currentTarget); } },
-          icon("sync", 14), "Test replay") : null
-      ]);
-    } else {
-      gateShell("stopped", cart.status === "failed" ? "Checkout failed" : "Blocked", "Nothing paid.", item, null);
-    }
-  }
-
-  var KINDS = [
-    [/^recalled /, "recall"], [/^found /, "search"], [/^skip /, "skip"], [/^pick /, "pick"], [/^cart /, "cart"],
-    [/^no candidate/, "cart"], [/^rejected seller/, "reject"], [/^approval accepted/, "approved"],
-    [/^approval refused/, "refused"], [/^(remembered|could not remember)/, "memory"]
-  ];
-  function renderTrail() {
-    var box = clear($("trail"));
-    var trail = state.result.trail || [];
-    $("steps-summary").textContent = "Agent steps (" + trail.length + " actions · preferences & reasoning)";
-    trail.forEach(function (t) {
-      var kind = "step";
-      for (var i = 0; i < KINDS.length; i++) if (KINDS[i][0].test(t)) { kind = KINDS[i][1]; break; }
-      box.appendChild(h("li", null, h("span", { class: "k k-" + kind }, kind), h("span", { class: "txt" }, t)));
-    });
-  }
-
   function renderMeta(meta) {
     if (!meta) return;
-    var m = clear($("mode"));
+    var m = ui.clear(ui.$("mode"));
     m.hidden = false;
     m.className = "mode" + (meta.live ? " live" : "");
-    append(m, [icon(meta.live ? "globe" : "shield-check", 14), meta.live ? "Live" : "Offline dry run"]);
-    var w = meta.wiring || {};
-    $("foot").textContent = Object.keys(w).map(function (k) { return k + "=" + w[k]; }).join(" · ");
+    m.setAttribute("title", meta.live ? "Live adapters enabled" : "Offline dry run");
+    ui.append(m, [ui.icon(meta.live ? "globe" : "shield-check", 14), meta.live ? "Live" : "Dry"]);
   }
 
-  function currentTheme() {
-    var saved = null;
-    try { saved = localStorage.getItem("jsa-theme"); } catch (e) {}
-    if (saved === "light" || saved === "dark") return saved;
-    return (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
-  }
-  function applyTheme(theme) {
-    document.documentElement.setAttribute("data-theme", theme);
-    var btn = $("theme-toggle");
-    if (btn) {
-      clear(btn);
-      btn.appendChild(icon(theme === "dark" ? "sun" : "moon", 16));
-      btn.setAttribute("title", theme === "dark" ? "Switch to light theme" : "Switch to dark theme");
-    }
-  }
-  applyTheme(currentTheme());
-  var themeBtn = $("theme-toggle");
-  if (themeBtn) {
-    themeBtn.addEventListener("click", function () {
-      var next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
-      try { localStorage.setItem("jsa-theme", next); } catch (e) {}
-      applyTheme(next);
-    });
-  }
+  // Init modules
+  var menuMod = root.JSA.menu.init({});
+  var searchMod = root.JSA.search.init(function () { menuMod.close(); runSearch(); });
+  searchMod.onFilterChange(function () { if (state.result) renderAll(); });
 
-  document.addEventListener("keydown", function (e) {
-    if (e.key === "/" && !e.metaKey && !e.ctrlKey && !e.altKey) {
-      var tag = (document.activeElement && document.activeElement.tagName) || "";
-      if (tag !== "INPUT" && tag !== "TEXTAREA" && tag !== "SELECT") {
-        e.preventDefault();
-        $("query").focus();
-        $("query").select();
-      }
-    }
+  var linksMod = root.JSA.links.init(function (target) {
+    if (target.q) ui.$("query").value = target.q;
+    if (target.budget) ui.$("budget").value = target.budget;
+    if (target.ship_to) ui.$("ship_to").value = target.ship_to;
+    if (target.cond !== undefined) ui.$("condition_min").value = target.cond;
+    state.targetItemId = target.item || "";
+    menuMod.close();
+    runSearch();
+  }, function () {
+    var pick = state.result && state.result.picks && state.result.picks[state.selectedIdx];
+    return { selectedListingId: pick ? pick.listing.id : "" };
   });
 
-  $("form").addEventListener("submit", runSearch);
+  ui.$("form").addEventListener("submit", runSearch);
   document.querySelectorAll(".example-chip").forEach(function (btn) {
     btn.addEventListener("click", function () {
-      $("query").value = btn.getAttribute("data-q") || "";
-      $("budget").value = btn.getAttribute("data-budget") || "900";
+      ui.$("query").value = btn.getAttribute("data-q") || "";
+      ui.$("budget").value = btn.getAttribute("data-budget") || "900";
       runSearch();
     });
   });
 
-  var qs = new URLSearchParams(location.search);
-  if (qs.get("q")) $("query").value = qs.get("q");
-  if (qs.get("budget")) $("budget").value = qs.get("budget");
-  if (qs.get("ship_to")) $("ship_to").value = qs.get("ship_to");
-  if (qs.get("cond")) $("condition_min").value = qs.get("cond");
+  if (linksMod.initial) {
+    if (linksMod.initial.q) ui.$("query").value = linksMod.initial.q;
+    if (linksMod.initial.budget) ui.$("budget").value = linksMod.initial.budget;
+    if (linksMod.initial.ship_to) ui.$("ship_to").value = linksMod.initial.ship_to;
+    if (linksMod.initial.cond) ui.$("condition_min").value = linksMod.initial.cond;
+    state.targetItemId = linksMod.initial.item || "";
+  }
+
   fetch("/api/meta").then(function (r) { return r.json(); }).then(function (meta) {
     renderMeta(meta);
-    if (qs.get("run") === "1" && !meta.live) runSearch();
+    if (linksMod.initial && linksMod.initial.run && !meta.live) runSearch();
   }).catch(function () {});
-})();
+})(window);
 
 </script>
 <script>window.addEventListener('DOMContentLoaded',function(){var f=document.getElementById('form');if(f)f.dispatchEvent(new Event('submit',{cancelable:true}));});</script>

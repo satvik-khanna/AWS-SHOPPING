@@ -145,7 +145,7 @@ class Session:
 
 
 def make_handler(session: Session, allowed_hosts: tuple[str, ...] | None, quiet: bool = False):
-    static = {f"/static/{p.name}": p for p in STATIC.iterdir() if p.suffix in MIME}
+    static = {f"/static/{p.relative_to(STATIC).as_posix()}": p for p in STATIC.rglob("*") if p.is_file() and p.suffix in MIME}
     static["/"] = static["/index.html"] = STATIC / "index.html"
     posts = {"/api/run": session.run, "/api/approve": session.approve, "/api/reject": session.reject}
 
