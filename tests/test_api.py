@@ -192,7 +192,7 @@ class ApiTest(unittest.TestCase):
         st, _, sess = self.call("GET", f"/api/sessions/{sid}")
         self.assertEqual(st, 200)
         self.assertEqual(sess["id"], sid)
-        self.assertEqual(sess["state"], "awaiting_approval")
+        self.assertIn(sess["state"], ("awaiting_approval", "awaiting_swipe"))   # checkout C1: chrome flow stops at awaiting_swipe
         self.assertGreaterEqual(len(sess["steps"]), 4)
         st404, _, err = self.call("GET", "/api/sessions/does-not-exist")
         self.assertEqual((st404, err["error"]["code"]), (404, "not_found"))

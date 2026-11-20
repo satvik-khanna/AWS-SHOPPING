@@ -6,7 +6,8 @@
     python3 -m shopper sessions                               # list carts and their states
     python3 -m shopper log <session_id>                       # step log for the demo
     python3 -m shopper memory [--user u] [--condition-min good] [--size shoes=27cm] [--note ...]
-    python3 -m shopper firedrill [-n 130]
+    python3 -m shopper firedrill [-n 190]
+    python3 -m shopper vault show|address|signed-in|card --user u ...   # per-user checkout info (no secrets)
 
 (Also `python3 -m shopper.cli_checkout <same args>`.) Plain `python3 -m shopper "<query>"` is untouched.
 """
@@ -17,7 +18,7 @@ import json
 import sys
 from dataclasses import asdict
 
-SUBCOMMANDS = {"buy", "approve", "reject", "sessions", "log", "memory", "firedrill"}
+SUBCOMMANDS = {"buy", "approve", "reject", "sessions", "log", "memory", "firedrill", "vault"}
 
 
 def _checkout():
@@ -41,15 +42,21 @@ def main(argv=None) -> int:
     b.add_argument("query"); b.add_argument("--budget", type=float, required=True)
     b.add_argument("--ship-to", default="US-CA"); b.add_argument("--user", default="default")
     b.add_argument("--condition-min"); b.add_argument("--json", action="store_true")
-    a = sub.add_parser("approve"); a.add_argument("token")
+    a = sub.add_parser("approve"); a.add_argument("token"); a.add_argument("--user")
     r = sub.add_parser("reject"); r.add_argument("token"); r.add_argument("--reason", default="")
+    r.add_argument("--user")
     r.add_argument("--seller", action="store_true", help="also never show this seller again")
     sub.add_parser("sessions")
     lg = sub.add_parser("log"); lg.add_argument("session_id")
     m = sub.add_parser("memory"); m.add_argument("--user", default="default")
     m.add_argument("--condition-min"); m.add_argument("--size", action="append", default=[])
     m.add_argument("--note"); m.add_argument("--reject-seller")
-    f = sub.add_parser("firedrill"); f.add_argument("-n", type=int, default=130)
+    f = sub.add_parser("firedrill"); f.add_argument("-n", type=int, default=190)
+    v = sub.add_parser("vault"); v.add_argument("action", choices=["show", "address", "signed-in", "signed-out", "card", "forget"])
+    v.add_argument("--user", default="default")
+    for k in ("name", "line1", "line2", "city", "region", "postal", "country", "phone",
+              "site", "token", "brand", "last4", "exp", "label"):
+        v.add_argument(f"--{k}", default="")
     args = p.parse_args(argv)
 
     if args.cmd == "buy":
@@ -81,7 +88,8 @@ def main(argv=None) -> int:
 
     if args.cmd in ("approve", "reject"):
         co = _checkout()
-        res = co.approve(args.token) if args.cmd == "approve" else co.reject(args.token, args.reason, args.seller)
+        res = (co.approve(args.token, user_id=args.user) if args.cmd == "approve"
+               else co.reject(args.token, args.reason, args.seller, user_id=args.user))
         print(f"{args.cmd}: {res.status} — {res.detail}")
         _print_session(co, res.detail)
         return 0 if res.status in ("placed", "blocked") and args.cmd == "reject" or res.status == "placed" else 1
@@ -110,6 +118,27 @@ def main(argv=None) -> int:
         if args.reject_seller:
             mem.reject_seller(args.user, args.reject_seller)
         print(json.dumps(asdict(mem.recall(args.user)), ensure_ascii=False, indent=2))
+        return 0
+
+    if args.cmd == "vault":
+        from .models import PaymentMethodRef, ShippingAddress
+        from .vault import JsonVault, VaultError, public_view
+        vt = JsonVault()
+        try:
+            if args.action == "address":
+                vt.set_address(args.user, ShippingAddress(name=args.name, line1=args.line1, line2=args.line2,
+                                                          city=args.city, region=args.region, postal_code=args.postal,
+                                                          country=args.country, phone=args.phone))
+            elif args.action in ("signed-in", "signed-out"):
+                vt.set_signed_in(args.user, args.site, args.action == "signed-in")
+            elif args.action == "card":
+                vt.add_payment_method(args.user, PaymentMethodRef(token=args.token, brand=args.brand,
+                                                                  last4=args.last4, exp=args.exp, label=args.label))
+            elif args.action == "forget":
+                vt.forget(args.user)
+        except VaultError as e:
+            print(f"vault: refused: {e}"); return 1
+        print(json.dumps(public_view(vt.get(args.user)), ensure_ascii=False, indent=2))
         return 0
 
     if args.cmd == "firedrill":

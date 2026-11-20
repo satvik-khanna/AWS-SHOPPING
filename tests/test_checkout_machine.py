@@ -118,9 +118,10 @@ class LiveSwitch(unittest.TestCase):
         from unittest import mock
         from shopper.checkout.drivers import default_driver
         with mock.patch.dict(os.environ, {"SHOPPER_LIVE": "0"}):
-            self.assertEqual(default_driver().name, "sim-buyee")
-        with mock.patch.dict(os.environ, {"SHOPPER_LIVE": "1", "BUYEE_STORAGE_STATE": "/nonexistent.json"}):
-            self.assertEqual(default_driver().name, "sim-buyee")
+            self.assertEqual(default_driver().name, "fake-chrome")
+        with mock.patch.dict(os.environ, {"SHOPPER_LIVE": "1", "BUYEE_STORAGE_STATE": "/nonexistent.json",
+                                          "DT_AX": "/nonexistent/dt-ax"}):
+            self.assertEqual(default_driver().name, "fake-chrome")
 
     def test_buyee_urls(self):
         from shopper.checkout.drivers import buyee_url
