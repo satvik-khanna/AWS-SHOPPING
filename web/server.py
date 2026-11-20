@@ -144,7 +144,7 @@ class Session:
             return {"cart": asdict(cart), "trail": trail}
 
 
-def make_handler(session: Session, allowed_hosts: tuple[str, ...] | None):
+def make_handler(session: Session, allowed_hosts: tuple[str, ...] | None, quiet: bool = False):
     static = {f"/static/{p.name}": p for p in STATIC.iterdir() if p.suffix in MIME}
     static["/"] = static["/index.html"] = STATIC / "index.html"
     posts = {"/api/run": session.run, "/api/approve": session.approve, "/api/reject": session.reject}
@@ -222,15 +222,17 @@ def make_handler(session: Session, allowed_hosts: tuple[str, ...] | None):
             self._json(200, out)
 
         def log_message(self, fmt: str, *args) -> None:
-            sys.stderr.write("web: " + (fmt % args) + "\n")
+            if not quiet:
+                sys.stderr.write("web: " + (fmt % args) + "\n")
 
     return Handler
 
 
-def create_server(host: str = "127.0.0.1", port: int = DEFAULT_PORT, deps: Deps | None = None) -> ThreadingHTTPServer:
+def create_server(host: str = "127.0.0.1", port: int = DEFAULT_PORT, deps: Deps | None = None,
+                  quiet: bool = False) -> ThreadingHTTPServer:
     session = Session(deps)
     allowed = LOOPBACK if host in LOOPBACK else None
-    httpd = ThreadingHTTPServer((host, port), make_handler(session, allowed))
+    httpd = ThreadingHTTPServer((host, port), make_handler(session, allowed, quiet))
     httpd.daemon_threads = True
     httpd.session = session     # for tests
     return httpd
