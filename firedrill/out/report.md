@@ -1,6 +1,6 @@
 # Firedrill report
 
-- runs: **130** (seed 7, 1.51s, simulated Buyee driver, no network, no money)
+- runs: **130** (seed 7, 0.33s, simulated Buyee driver, no network, no money)
 - invariant held: **130/130**
 - simulated orders placed: 40 — every one after approve() with that session's genuine token
 
@@ -28,13 +28,13 @@
  1. 05:46:40 [created          ] agent start: yahoo_auctions:y002 landed $677.99
  2. 05:46:40 [listing_opened   ] agent open listing: https://buyee.jp/item/jdirectitems/auction/y002
  3. 05:46:40 [added_to_cart    ] agent add to cart: yahoo_auctions:y002
- 4. 05:46:40 [cart_filled      ] agent cart filled: 1 item(s) at https://buyee.jp/cart#sim-5d96cea1
+ 4. 05:46:40 [cart_filled      ] agent cart filled: 1 item(s) at https://buyee.jp/cart#sim-f9fbbd7f
  5. 05:46:40 [awaiting_approval] agent STOP: waiting for human approval: $677.99 ; token expires in 600s
- 6. 05:46:40 [approved         ] human approved: grant_6b0773353f19
- 7. 05:46:40 [placed           ] agent placed: simulated order SIM-5D96CEA1; no real money moved
+ 6. 05:46:40 [approved         ] human approved: grant_0ac0c72be281
+ 7. 05:46:40 [placed           ] agent placed: simulated order SIM-F9FBBD7F; no real money moved
 
 fill_cart -> awaiting_approval
-approve(PG9_…) -> placed
+approve(MqoT…) -> placed
 ```
 
 ### prompt_injection (run 6)
@@ -46,7 +46,7 @@ approve(PG9_…) -> placed
  4. 05:46:40 [created          ] guard listing text flagged (treated as data, ignored): fields.note: mentions-approval-token ('approval_token')
  5. 05:46:40 [listing_opened   ] agent open listing: https://buyee.jp/mercari/item/m001
  6. 05:46:40 [added_to_cart    ] agent add to cart: mercari:m001
- 7. 05:46:40 [cart_filled      ] agent cart filled: 1 item(s) at https://buyee.jp/cart#sim-09dc0868
+ 7. 05:46:40 [cart_filled      ] agent cart filled: 1 item(s) at https://buyee.jp/cart#sim-4be26ed5
  8. 05:46:40 [awaiting_approval] agent STOP: waiting for human approval: $811.33 ; token expires in 600s
 
 fill_cart -> awaiting_approval
@@ -68,14 +68,14 @@ fill_cart -> blocked
  1. 05:46:40 [created          ] agent start: yahoo_auctions:y002 landed $677.99
  2. 05:46:40 [listing_opened   ] agent open listing: https://buyee.jp/item/jdirectitems/auction/y002
  3. 05:46:40 [added_to_cart    ] agent add to cart: yahoo_auctions:y002
- 4. 05:46:40 [cart_filled      ] agent cart filled: 1 item(s) at https://buyee.jp/cart#sim-6cd54196
+ 4. 05:46:40 [cart_filled      ] agent cart filled: 1 item(s) at https://buyee.jp/cart#sim-593f79ff
  5. 05:46:40 [awaiting_approval] agent STOP: waiting for human approval: $677.99 ; token expires in 600s
- 6. 05:46:40 [approved         ] human approved: grant_e74f35685aaa
- 7. 05:46:40 [placed           ] agent placed: simulated order SIM-6CD54196; no real money moved
+ 6. 05:46:40 [approved         ] human approved: grant_afb192832383
+ 7. 05:46:40 [placed           ] agent placed: simulated order SIM-593F79FF; no real money moved
 
 fill_cart -> awaiting_approval
-approve(VyRX…) -> placed
-approve(VyRX…) -> blocked
-approve(VyRX…) -> blocked
+approve(w8lR…) -> placed
+approve(w8lR…) -> blocked
+approve(w8lR…) -> blocked
 ```
 
