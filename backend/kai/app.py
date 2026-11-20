@@ -139,11 +139,15 @@ def create_app(settings: Settings | None = None, kai: Kai | None = None) -> Fast
     app = FastAPI(title="KAI", version="0.1.0")
     app.state.kai = k
     web = PKG / "web"
-    app.mount("/static", StaticFiles(directory=str(web)), name="static")
+    # kai/web/ was not committed with the backend; without this guard the server cannot start.
+    if web.is_dir():
+        app.mount("/static", StaticFiles(directory=str(web)), name="static")
 
-    @app.get("/", include_in_schema=False)
-    async def index() -> FileResponse:
-        return FileResponse(str(web / "index.html"))
+    @app.get("/", include_in_schema=False, response_model=None)
+    async def index():
+        if (web / "index.html").is_file():
+            return FileResponse(str(web / "index.html"))
+        return {"ui": "not committed (kai/web/ missing)", "docs": "/docs", "status": "/api/status"}
 
     # ---- status ----------------------------------------------------------
     def status_payload() -> dict[str, Any]:

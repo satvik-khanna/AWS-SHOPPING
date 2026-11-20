@@ -44,7 +44,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .logo i{width:18px;height:18px;border-radius:50%;background:conic-gradient(from 200deg,#c679c4,#fa3d1d,#ffb005,#e1e1fe,#0358f7,#c679c4)}
 .nav-links{display:flex;gap:22px;font-size:14px;color:var(--ink-50)}
 
-/* small mono labels, Dia uses these for 01/02/03 */
+/* small mono section labels */
 .label{font-family:var(--mono);font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-50);display:flex;gap:10px;align-items:center;margin:0 0 14px}
 .label b{font-weight:500;color:var(--ink)}
 
@@ -141,8 +141,10 @@ button{font:inherit;color:inherit;cursor:pointer}
 /* 4. results */
 .results{margin-top:96px}
 .results[hidden]{display:none}
-.results h2{font-family:var(--serif);font-weight:400;font-size:clamp(34px,5vw,48px);line-height:1.05;letter-spacing:-.015em;margin:0 0 6px}
-.results .sub{color:var(--ink-50);margin:0 0 28px}
+.results h2{font-family:var(--serif);font-weight:400;font-size:clamp(34px,5vw,48px);line-height:1.05;letter-spacing:-.015em;margin:0 0 14px}
+.handoff{margin:0 0 28px;font-size:15px;color:var(--ink-50)}
+.handoff b{color:var(--ink);font-weight:500}
+.handoff a{color:var(--ink);text-underline-offset:3px}
 .opts{display:grid;gap:0;border-top:1px solid var(--line)}
 .opt{display:grid;grid-template-columns:64px 1fr auto 22px;align-items:center;gap:18px;padding:18px 14px;border-bottom:1px solid var(--line);cursor:pointer;border-radius:0;transition:background .2s}
 .opt:hover{background:var(--line-2)}
@@ -154,10 +156,61 @@ button{font:inherit;color:inherit;cursor:pointer}
 .opt .price{text-align:right;font-size:20px;font-weight:500;font-variant-numeric:tabular-nums}
 .opt .price small{display:block;font-family:var(--mono);font-size:12px;color:var(--ink-50);font-weight:400}
 .tag{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.04em;margin-left:8px;padding:2px 8px;border-radius:999px;background:var(--lilac);color:#2a2a7a;vertical-align:2px}
+.tag.live{background:#d9f5e3;color:#0b5a2a}
+.tag.sample{background:var(--sunk);color:var(--ink-50)}
+.opt .t a{color:inherit;text-underline-offset:3px}
 .approve-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:28px}
 .approve-row p{margin:0 auto 0 0;min-width:240px;flex:1;color:var(--ink-50)}
 .approve-row p b{color:var(--ink);font-weight:500}
 .done-msg{font-family:var(--serif);font-size:26px;line-height:1.2}
+.approve-row .done-note{flex-basis:100%;font-family:var(--mono);font-size:13px}
+.cartrow.sm{padding:5px 10px;margin-bottom:4px;font-size:12px;gap:10px}
+
+/* 6. cited cost + audit trail */
+.audit{margin-top:56px}
+.audit .label{margin-top:56px}
+.quiet{color:var(--ink-50);font-size:14px}
+.cite{border-top:1px solid var(--line)}
+.cite-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,400px) 92px;gap:6px 24px;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line-2);font-size:14px}
+.cite-row .amt{grid-column:3;text-align:right;font-variant-numeric:tabular-nums;font-weight:500}
+.cite-row.total{border-bottom-color:var(--line);font-weight:500;padding-top:16px;padding-bottom:16px}
+.cite-row.total .amt{font-size:17px}
+/* source chip: provider pill, rule key, as-of date */
+.src{display:flex;align-items:center;gap:8px;min-width:0;font-family:var(--mono);font-size:12px;color:var(--ink-50);text-decoration:none}
+.src .prov{flex:none;display:inline-flex;align-items:center;gap:6px;font-size:11px;text-transform:uppercase;letter-spacing:.04em;padding:2px 9px 2px 7px;border-radius:999px;background:var(--sunk);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line-2)}
+.src .prov::before{content:"";width:6px;height:6px;border-radius:50%;background:conic-gradient(from 200deg,#c679c4,#fa3d1d,#ffb005,#e1e1fe,#0358f7,#c679c4)}
+.src .key{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.src .est{flex:none;font-size:11px;color:var(--ink-35)}
+.src .asof{flex:none;margin-left:auto;color:var(--ink-35)}
+a.src:hover .key{color:var(--ink);text-decoration:underline;text-underline-offset:3px}
+/* audit trail: a quiet timeline, one dot per event */
+.trail{list-style:none;margin:0;padding:6px 0 0}
+.trail li{position:relative;display:grid;grid-template-columns:7px 62px minmax(0,1fr);gap:0 14px;align-items:baseline;padding:7px 14px;font-size:14px;overflow-wrap:anywhere}
+.trail li::before{content:"";position:absolute;left:17px;top:0;bottom:0;width:1px;background:var(--line)}
+.trail li:first-child::before{top:17px}
+.trail li:last-child::before{bottom:auto;height:17px}
+.trail li:only-child::before{display:none}
+.trail .dot{position:relative;align-self:start;margin-top:7px;width:7px;height:7px;border-radius:50%;background:var(--ink-35);box-shadow:0 0 0 4px var(--paper)}
+.trail .kind{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-35)}
+.trail li.pick .dot{background:var(--blue)}
+.trail li.cart .dot{background:var(--yellow)}
+.trail li.skip{color:var(--ink-50)}
+.trail li.skip .dot{background:var(--paper);box-shadow:inset 0 0 0 1.5px var(--ink-35),0 0 0 4px var(--paper)}
+.trail li.you{font-weight:500}
+.trail li.you .dot{background:var(--ink)}
+.trail li.you .kind{color:var(--ink)}
+.steps{margin-top:18px;padding:14px 0;border-radius:16px;background:var(--sunk);font-family:var(--mono);font-size:12px;color:var(--ink-50)}
+.steps:empty{display:none}
+.steps p{margin:0 0 8px;padding:0 14px}
+.steps p:last-child{margin-bottom:0}
+.steps .steps-h{color:var(--ink)}
+.steps .warn{color:var(--red)}
+.step{display:grid;grid-template-columns:70px 150px 56px minmax(0,1fr);gap:12px;padding:3px 14px;overflow-wrap:anywhere}
+@media (max-width:640px){
+  .cite-row{grid-template-columns:minmax(0,1fr) auto}.cite-row .amt{grid-column:2;grid-row:1}.cite-row .src{grid-column:1/-1;grid-row:2}
+  .trail li{grid-template-columns:7px minmax(0,1fr)}.trail .kind{grid-column:2}.trail .txt{grid-column:2}
+  .step{grid-template-columns:70px minmax(0,1fr)}.step span:nth-child(n+3){grid-column:2}
+}
 
 /* 5. notification */
 .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,24px);opacity:0;pointer-events:none;transition:.3s cubic-bezier(.2,.8,.2,1);
@@ -187,7 +240,7 @@ button{font:inherit;color:inherit;cursor:pointer}
   <div class="prompt-ring" id="ring">
     <form class="prompt" id="form">
       <label class="sr" for="ask">What are you looking for?</label>
-      <textarea id="ask" placeholder="Find a used Fujifilm X100V in Japan under $900 landed, shipped to California"></textarea>
+      <textarea id="ask" placeholder="Find a used Fujifilm X100V in Japan under $1,800 landed, shipped to California"></textarea>
       <div class="prompt-row">
         <label class="notify"><input type="checkbox" class="switch" id="notifyMe" checked> Notify me when done</label>
         <button class="btn btn-dark" id="go" type="submit">Start<span class="kbd">↵</span></button>
@@ -198,14 +251,14 @@ button{font:inherit;color:inherit;cursor:pointer}
   <div class="work" id="work" hidden>
     <!-- 2. Plan -->
     <section class="plan" aria-labelledby="h-plan">
-      <p class="label" id="h-plan"><b>01</b> Plan</p>
+      <p class="label" id="h-plan">Plan</p>
       <ol id="plan"></ol>
       <div class="plan-foot"><span id="elapsed">0s</span><button class="btn btn-quiet" id="stop" type="button" style="padding:6px 0">Stop</button></div>
     </section>
 
     <!-- 3. Live browser -->
     <section class="live" aria-labelledby="h-live">
-      <p class="label live-h" id="h-live"><span><b>02</b>&nbsp;&nbsp;Agent's browser</span><span class="state" id="rec">Live</span></p>
+      <p class="label live-h" id="h-live"><span>Agent's browser</span><span class="state" id="rec">Live</span></p>
       <div class="browser">
         <div class="chrome"><span class="dots"><i></i><i></i><i></i></span><span class="url" id="url">about:blank</span><span style="width:42px"></span></div>
         <div class="screen" id="screen"></div>
@@ -217,11 +270,18 @@ button{font:inherit;color:inherit;cursor:pointer}
 
   <!-- 4. Results -->
   <section class="results" id="results" hidden aria-labelledby="h-res">
-    <p class="label"><b>03</b> Waiting for your approval</p>
     <h2 id="h-res">Three good matches.</h2>
-    <p class="sub">Prices are landed: item, fees, shipping and duty, all in.</p>
+    <p class="handoff" id="handoff"></p>
     <div class="opts" id="opts"></div>
     <div class="approve-row" id="approveRow"></div>
+
+    <!-- 6. Cited cost + audit trail, straight from the backend -->
+    <div class="audit">
+      <div id="cost"></div>
+      <p class="label">Audit trail</p>
+      <ol class="trail" id="trail"></ol>
+      <div class="steps" id="steps"></div>
+    </div>
   </section>
 </div>
 
@@ -231,11 +291,17 @@ button{font:inherit;color:inherit;cursor:pointer}
 <script>
 (() => {
   const $ = s => document.querySelector(s);
-  const PICKS = [
-    { id: "a", emoji: "📷", t: "Fujifilm X100V, silver", jp: "富士フイルム X100V シルバー 美品", s: "Mercari · like new · 4,200 shots · box included", yen: 118000, usd: 872.40, best: true },
-    { id: "b", emoji: "📷", t: "Fujifilm X100V, black", jp: "X100V ブラック 付属品あり", s: "Yahoo Auctions · good · light marks on top plate", yen: 109800, usd: 818.15 },
-    { id: "c", emoji: "📷", t: "Fujifilm X100V + hood", jp: "X100V フード付き", s: "Mercari · good · seller ships in 3 days", yen: 121500, usd: 896.90 },
-  ];
+
+  // Backend: `python3 -m shopper.api --port 8000` (see docs/API.md).
+  // Override with ?api=http://host:port, ?user=name. ?fast=1 shortens the replay.
+  const qs = new URLSearchParams(location.search);
+  const API = (qs.get("api") || "http://127.0.0.1:8000").replace(/\/+$/, "");
+  const USER = qs.get("user") || "demo";
+  const SPEED = qs.has("fast") ? 0.1 : 1;
+  const DEFAULT_BUDGET = 900, SHIP_TO = "US-CA";
+
+  let RUN = null, PICKS = [], decided = "", decisions = [], runSeq = 0;
+
   const PLAN = [
     "Search Mercari and Yahoo Auctions",
     "Read and translate the listings",
@@ -244,35 +310,70 @@ button{font:inherit;color:inherit;cursor:pointer}
     "Add the top pick to the Buyee cart",
     "Wait for your approval",
   ];
-  const usd = n => "$" + n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const EMOJI = { camera: "📷", camera_accessory: "🎒", sneakers: "👟", vinyl: "💿", figure: "🧸", apparel: "👕", electronics: "📻", indie_merch: "🎨" };
+  const SOURCES = { mercari: "Mercari", yahoo_auctions: "Yahoo Auctions" };
 
-  // fake pages shown in the live browser
+  const usd = n => "$" + Number(n).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const yen = n => "¥" + Number(n).toLocaleString("en-US");
+  const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const httpUrl = u => /^https?:\/\//i.test(u || "") ? u : "";
+  const bare = u => String(u || "").replace(/^https?:\/\//, "");
+  const noSession = s => String(s || "").replace(/^\[session [^\]]*\]\s*/, "");
+  const parseBudget = text => { const m = text.match(/\$\s?([\d,]+(?:\.\d+)?)/); const n = m ? parseFloat(m[1].replace(/,/g, "")) : NaN; return n > 0 ? n : DEFAULT_BUDGET; };
+
+  // Budget and destination go to the API as their own fields, so drop those clauses from the search text
+  // (otherwise the backend treats words like "landed" as something the listing must mention).
+  const searchText = text => text.replace(/[,;]?\s*\b(?:under|below|up to|max(?:imum)?|less than)\s*\$\s?[\d,.]+(?:\s+(?:landed|delivered|total|all[- ]in))?/gi, "")
+    .replace(/[,;]?\s*\b(?:shipped|delivered|shipping)\s+to\s+[^,;.]+/gi, "").replace(/\s+/g, " ").trim() || text;
+
+  async function api(path, body) {
+    const r = await fetch(API + path, body ? { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) } : undefined);
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error((j.error && j.error.message) || `HTTP ${r.status}`);
+    return j;
+  }
+
+  // API pick -> what the page shows. Every value comes from /api/run.
+  function toPick(p, i) {
+    const l = p.listing, f = l.fields || {};
+    const src = SOURCES[l.source] || f.marketplace || "Other store";
+    return { id: l.id, emoji: EMOJI[l.category] || "📦", t: l.title_en || l.title_ja, jp: l.title_ja, src,
+      s: `${src} · ${String(l.condition).replace(/_/g, " ")} · seller ${l.seller}`, why: p.reason,
+      yen: l.price_jpy, usd: p.cost.total_usd, best: i === 0, url: l.url, seller: l.seller,
+      cond: String(l.condition).replace(/_/g, " "), condJa: f.condition_ja || "", lines: p.cost.lines,
+      // Listings found by the live web search carry found_via; everything else is bundled sample data.
+      real: !!f.found_via, check: f.price_check || "" };
+  }
+  const cartPick = () => PICKS.find(p => RUN.cart && p.id === RUN.cart.listing_id) || PICKS[0];
+
+  // Pages replayed in the agent's browser, filled from the real run.
   const PAGES = {
-    search: (q) => `<div class="site"><div class="site-top"><span class="site-logo">mercari</span><div class="site-search" id="t-search">${q}</div></div>
-      <div class="grid3">${PICKS.map((p, i) => `<div class="tile" id="t-tile${i}"><div class="img">${p.emoji}</div><div class="p">¥${p.yen.toLocaleString()}</div><div class="n">${p.jp}</div></div>`).join("")}</div></div>`,
-    listing: (tr) => `<div class="site"><div class="site-top"><span class="site-logo">mercari</span><div class="site-search">X100V</div></div>
-      <div class="detail"><div class="img">📷</div><div>
-        <div style="font-weight:700;font-size:15px">${tr ? `<span class="tr">${PICKS[0].t}</span>` : PICKS[0].jp}</div>
-        ${tr ? `<div class="jp">${PICKS[0].jp}</div>` : ""}
-        <div style="font-size:18px;font-weight:800;margin:6px 0">¥118,000</div>
-        <div>${tr ? `<span class="tr">Condition: like new. About 4,200 shots. Box and strap included.</span>` : "商品の状態：未使用に近い。ショット数約4200。元箱・ストラップ付き。"}</div>
-        <span class="fakebtn" id="t-buy">購入手続きへ</span></div></div></div>`,
-    cost: () => `<div class="site"><div style="font-weight:700;margin-bottom:8px">Landed cost</div>
-      ${[["Item ¥118,000", "$786.67"], ["Buyee fee", "$2.00"], ["Japan shipping", "$8.00"], ["EMS to California", "$48.50"], ["US duty (cameras 0%)", "$0.00"], ["Card FX fee", "$27.23"]].map(([a, b]) => `<div class="cartrow"><span>${a}</span><b>${b}</b></div>`).join("")}
-      <div class="cartrow" style="border-color:#111"><span>Total</span><b>$872.40</b></div></div>`,
-    cart: () => `<div class="site"><div class="site-top"><span class="site-logo" style="color:#ea580c">buyee</span><div class="site-search">Cart</div></div>
-      <div class="cartrow" id="t-cart"><span>📷 富士フイルム X100V シルバー 美品</span><b>¥118,000</b></div>
-      <div class="cartrow"><span>Subtotal (1 item)</span><b>¥118,000</b></div>
-      <div class="paused">⏸ Stopped before payment. Waiting for your approval.</div></div>`,
+    search: (q) => `<div class="site"><div class="site-top"><span class="site-logo">${esc(PICKS[0].src.toLowerCase())}</span><div class="site-search" id="t-search">${esc(q)}</div></div>
+      <div class="grid3">${PICKS.map((p, i) => `<div class="tile" id="t-tile${i}"><div class="img">${p.emoji}</div><div class="p">${yen(p.yen)}</div><div class="n">${esc(p.jp)}</div></div>`).join("")}</div></div>`,
+    listing: (tr) => { const p = PICKS[0]; return `<div class="site"><div class="site-top"><span class="site-logo">${esc(p.src.toLowerCase())}</span><div class="site-search">${esc(bare(p.url))}</div></div>
+      <div class="detail"><div class="img">${p.emoji}</div><div>
+        <div style="font-weight:700;font-size:15px">${tr ? `<span class="tr">${esc(p.t)}</span>` : esc(p.jp)}</div>
+        ${tr ? `<div class="jp">${esc(p.jp)}</div>` : ""}
+        <div style="font-size:18px;font-weight:800;margin:6px 0">${yen(p.yen)}</div>
+        <div>${tr ? `<span class="tr">Condition: ${esc(p.cond)}</span>` : esc(p.condJa ? "商品の状態：" + p.condJa : "")}</div>
+        <span class="fakebtn" id="t-buy">購入手続きへ</span></div></div></div>`; },
+    cost: () => { const p = PICKS[0]; return `<div class="site"><div style="font-weight:700;margin-bottom:8px">Landed cost</div>
+      ${p.lines.map(l => `<div class="cartrow sm"><span>${esc(l.label)}</span><b>${usd(l.amount_usd)}</b></div>`).join("")}
+      <div class="cartrow sm" style="border-color:#111"><span>Total</span><b>${usd(p.usd)}</b></div></div>`; },
+    cart: () => { const p = cartPick(); return `<div class="site"><div class="site-top"><span class="site-logo" style="color:#ea580c">buyee</span><div class="site-search">Cart</div></div>
+      <div class="cartrow" id="t-cart"><span>${p.emoji} ${esc(p.jp)}</span><b>${yen(p.yen)}</b></div>
+      <div class="cartrow"><span>Subtotal (1 item)</span><b>${yen(p.yen)}</b></div>
+      <div class="paused">⏸ Stopped before payment. Waiting for your approval.</div></div>`; },
+    note: (title, body) => `<div class="site"><div style="font-weight:700;margin-bottom:8px">${esc(title)}</div><div style="color:#555">${body}</div></div>`,
   };
 
   let timers = [], startAt = 0, clock, stopped = false;
-  const later = (ms, fn) => timers.push(setTimeout(() => !stopped && fn(), ms));
+  const later = (ms, fn) => timers.push(setTimeout(() => !stopped && fn(), ms * SPEED));
 
   function setPlan(doing) {
     $("#plan").innerHTML = PLAN.map((t, i) => {
       const c = i < doing ? "done" : i === doing ? "doing" : "";
-      return `<li class="${c}"><span class="num">${String(i + 1).padStart(2, "0")}</span><span>${t}</span><span class="st" aria-label="${c || "queued"}"></span></li>`;
+      return `<li class="${c}"><span class="num">${i + 1}</span><span>${t}</span><span class="st" aria-label="${c || "queued"}"></span></li>`;
     }).join("");
   }
   function show(url, html, caption) {
@@ -286,52 +387,153 @@ button{font:inherit;color:inherit;cursor:pointer}
     cur.style.top = (a.top - b.top + a.height / 2) + "px";
     document.querySelectorAll(".hl").forEach(e => e.classList.remove("hl"));
     el.classList.add("hl");
-    if (click) setTimeout(() => { cur.classList.remove("click"); void cur.offsetWidth; cur.classList.add("click"); }, 800);
+    if (click) setTimeout(() => { cur.classList.remove("click"); void cur.offsetWidth; cur.classList.add("click"); }, 800 * SPEED);
   }
   const working = on => $("#ring").classList.toggle("working", on);
+  function halt(state) { clearInterval(clock); working(false); $("#rec").className = "state off"; $("#rec").textContent = state; $("#stop").disabled = true; }
 
-  function start() {
+  async function start() {
     timers.forEach(clearTimeout); timers = []; stopped = false;
+    const seq = ++runSeq, text = $("#ask").value.trim(), budget = parseBudget(text);
+    RUN = null; PICKS = []; decided = ""; decisions = [];
     $("#work").hidden = false; $("#results").hidden = true; $("#toast").classList.remove("show");
-    $("#rec").className = "state"; $("#rec").textContent = "Live"; $("#stop").disabled = false;
+    $("#rec").className = "state"; $("#rec").textContent = "Working"; $("#stop").disabled = false;
     working(true);
     startAt = Date.now(); clearInterval(clock);
     clock = setInterval(() => $("#elapsed").textContent = Math.round((Date.now() - startAt) / 1000) + "s", 500);
     setTimeout(() => $("#work").scrollIntoView({ behavior: "smooth", block: "start" }), 150);
 
     setPlan(0);
-    show("jp.mercari.com/search?keyword=X100V", PAGES.search(""), "Searching Mercari for <em>X100V…</em>");
-    later(600, () => { $("#t-search").textContent = "X100V"; pointAt("t-search"); });
+    show(bare(API) + "/api/run", PAGES.note("Asking the agent", `Budget ${usd(budget)} landed, shipped to ${SHIP_TO}.`), "Searching<em>…</em> a live web search can take up to a minute.");
+    let run;
+    try { run = await api("/api/run", { query: searchText(text), budget, ship_to: SHIP_TO, user: USER }); }
+    catch (e) { if (seq === runSeq) fail(e); return; }
+    if (stopped || seq !== runSeq) return;
+    RUN = run; PICKS = run.picks.map(toPick);
+    if (!PICKS.length) return finish();
+
+    // Replay of the steps the backend just took, using its real output.
+    const top = PICKS[0], n = PICKS.length;
+    const kw = ((run.trail.find(t => t.startsWith("source:")) || "").match(/\[(.*)\]/) || [])[1];
+    const keyword = kw ? kw.replace(/'/g, "") : text;
+    const rules = (top.lines[0] && top.lines[0].citation.source.split("#")[0]) || "rules";
+    $("#rec").textContent = "Replay";
+    show(bare(top.url).split("/")[0] + "/search", PAGES.search(""), "Searching Mercari and Yahoo Auctions<em>…</em>");
+    later(600, () => { $("#t-search").textContent = keyword; pointAt("t-search"); });
     later(2200, () => { setPlan(1); pointAt("t-tile0", true); $("#caption").innerHTML = "Opening the top listing<em>…</em>"; });
-    later(3400, () => { show("jp.mercari.com/item/m8231…", PAGES.listing(false), "Reading the listing <em>in Japanese…</em>"); pointAt("t-buy"); });
-    later(5000, () => { show("jp.mercari.com/item/m8231…", PAGES.listing(true), "Translated the title and condition."); });
-    later(6600, () => { setPlan(2); show("senso · landed cost", PAGES.cost(), "Working out the <em>real</em> cost of each…"); });
-    later(8400, () => { setPlan(3); $("#caption").innerHTML = "Ranking three matches by condition and price<em>…</em>"; });
-    later(9400, () => { setPlan(4); show("buyee.jp/cart", PAGES.cart(), "Adding the silver X100V to your cart<em>…</em>"); pointAt("t-cart", true); });
+    later(3400, () => { show(bare(top.url), PAGES.listing(false), "Reading the listing <em>in Japanese…</em>"); pointAt("t-buy"); });
+    later(5000, () => { show(bare(top.url), PAGES.listing(true), "Translated the title and condition."); });
+    later(6600, () => { setPlan(2); show("landed cost · " + rules, PAGES.cost(), "Working out the <em>real</em> cost of each…"); });
+    later(8400, () => { setPlan(3); $("#caption").innerHTML = `Ranking ${n} match${n === 1 ? "" : "es"} by condition and price<em>…</em>`; });
+    later(9400, () => { setPlan(4); show(bare(run.cart.cart_url || "buyee.jp/cart"), PAGES.cart(), `Adding ${esc(cartPick().t)} to your cart<em>…</em>`); pointAt("t-cart", true); });
     later(11000, finish);
   }
 
+  function fail(e) {
+    halt("Offline");
+    show(bare(API), PAGES.note("Can't reach the agent", `${esc(e.message)}<br><br>Start it from the repo root:<br><code>python3 -m shopper.api --port 8000</code>`),
+      "The agent backend <em>isn't answering.</em>");
+  }
+
   function finish() {
-    setPlan(5); clearInterval(clock); working(false);
-    $("#rec").className = "state off"; $("#rec").textContent = "Paused";
-    $("#caption").innerHTML = "Cart is ready. <em>Nothing has been paid.</em>";
-    renderResults("a");
+    const n = PICKS.length;
+    // No picks has two different causes: nothing was found at all, or everything found was over budget / blocked.
+    const none = RUN.trail.some(t => t === "found 0 listings");
+    halt(n ? "Paused" : "Done");
+    setPlan(n ? 5 : 3);
+    $("#h-res").textContent = n ? `${["", "One", "Two", "Three"][n] || n} good match${n === 1 ? "" : "es"}.` : none ? "No listings found." : "Nothing fits that budget.";
+    $("#caption").innerHTML = n ? "Cart is ready." : (none ? "The search came back empty." : "No listing fits.") + " <em>Nothing was added to a cart.</em>";
+    if (!n) show(bare(API) + "/api/run", PAGES.note(none ? "No listings found" : "No match within budget", none ? "No listing matched that search. The audit trail below shows where the agent looked." : "The audit trail below shows what was found and why each listing was skipped."), $("#caption").innerHTML);
+    renderResults(n ? cartPick().id : null);
     $("#results").hidden = false;
-    notify("Your shortlist is ready", "Three matches. The X100V is waiting in your cart.");
+    loadSession();
+    if (n) notify("Your shortlist is ready", `${n} match${n === 1 ? "" : "es"}. ${cartPick().t} is waiting in your cart.`);
+    else notify(none ? "No listings found" : "Nothing within budget", none ? "See the audit trail for where the agent looked." : "See the audit trail for what was skipped.");
   }
 
   function renderResults(sel) {
     $("#opts").innerHTML = PICKS.map(p => `
       <label class="opt">
         <span class="img">${p.emoji}</span>
-        <span><span class="t">${p.t}</span>${p.best ? '<span class="tag">Best match</span>' : ""}<br><span class="s">${p.s}</span></span>
-        <span class="price">${usd(p.usd)}<small>¥${p.yen.toLocaleString()}</small></span>
-        <input type="radio" name="pick" value="${p.id}" ${p.id === sel ? "checked" : ""} aria-label="Choose ${p.t}"></label>`).join("");
+        <span><span class="t">${p.real && httpUrl(p.url) ? `<a href="${esc(p.url)}" target="_blank" rel="noopener noreferrer">${esc(p.t)} ↗</a>` : esc(p.t)}</span>${p.best ? '<span class="tag">Best match</span>' : ""}<span class="tag ${p.real ? "live" : "sample"}">${p.real ? "Live listing" : "Sample data"}</span><br><span class="s">${esc(p.s)}</span><br><span class="s">${esc(p.why)}</span>${p.check ? `<br><span class="s">${esc(p.check)}</span>` : ""}</span>
+        <span class="price">${usd(p.usd)}<small>${yen(p.yen)}</small></span>
+        <input type="radio" name="pick" value="${esc(p.id)}" ${p.id === sel ? "checked" : ""} aria-label="Choose ${esc(p.t)}"></label>`).join("");
     const p = PICKS.find(x => x.id === sel);
-    $("#approveRow").innerHTML = `
-      <p>Buy <b>${p.t}</b> through Buyee. Your card is charged <b>${usd(p.usd)}</b>.</p>
-      <button class="btn btn-quiet" id="skip" type="button">Skip</button>
-      <button class="btn btn-dark" id="approve" type="button">Approve ${usd(p.usd)}</button>`;
+    renderCost(p);
+    renderTrail();
+    renderHandoff();
+    if (!p) { $("#approveRow").innerHTML = ""; return; }
+    if (decided) { $("#approveRow").innerHTML = decided; return; }
+    const c = cartPick();
+    // The backend carts its top pick only; the approval token covers that one listing.
+    $("#approveRow").innerHTML = p.id === c.id
+      ? `<p>Buy <b>${esc(p.t)}</b> through Buyee for <b>${usd(p.usd)}</b> landed. Nothing is paid until you approve.</p>
+         <button class="btn btn-quiet" id="skip" type="button">Skip</button>
+         <button class="btn btn-dark" id="approve" type="button">Approve ${usd(p.usd)}</button>`
+      : `<p><b>${esc(p.t)}</b> is not in the cart. The agent carted its top pick, <b>${esc(c.t)}</b>; skip that one and search again to move on.</p>
+         <button class="btn btn-dark" type="button" disabled>Approve ${usd(p.usd)}</button>`;
+  }
+
+  // The agent cannot browse Buyee itself (Buyee blocks automated clients), so it hands the person
+  // its translated Japanese search to open in their own browser.
+  function renderHandoff() {
+    const src = RUN.trail.find(t => t.startsWith("source:")) || "";
+    const m = src.match(/search for '([^']+)'/) || src.match(/\['([^']+)'/);
+    const k = m ? m[1] : searchText($("#ask").value.trim()), q = encodeURIComponent(k);
+    const a = (href, label) => `<a href="${href}" target="_blank" rel="noopener noreferrer">${label}</a>`;
+    $("#handoff").innerHTML = `Check live listings yourself: the agent's Japanese search <b>${esc(k)}</b> on `
+      + a(`https://buyee.jp/mercari/search?keyword=${q}&status=on_sale`, "Mercari via Buyee") + " or "
+      + a(`https://buyee.jp/item/search/query/${q}`, "Yahoo Auctions via Buyee") + ".";
+  }
+
+  // Every cost line with the rule it came from. A citation source looks like
+  // "senso:japan-landed-cost-rules#fx_jpy_per_usd" (or "fixtures/rules.json#key (estimate)" offline).
+  function asOf(d) {
+    const m = String(d || "").match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (!m) return String(d || "");
+    const opt = { month: "short", day: "numeric" };
+    if (+m[1] !== new Date().getFullYear()) opt.year = "numeric";
+    return new Date(+m[1], m[2] - 1, +m[3]).toLocaleDateString("en-US", opt);
+  }
+  function srcChip(c) {
+    const m = String(c.source).match(/^(.*?)#(.+?)(\s*\(estimate\))?$/);
+    const doc = m ? m[1] : "", key = m ? m[2] : String(c.source);
+    const prov = /^[a-z]+:/i.test(doc) ? doc.split(":")[0] : doc ? "Local" : "";
+    const u = httpUrl(c.url), tip = esc(`${c.source} · as of ${c.as_of}`);
+    const body = (prov ? `<span class="prov">${esc(prov)}</span>` : "") + `<span class="key">${esc(key)}</span>`
+      + (m && m[3] ? `<span class="est">est.</span>` : "") + `<span class="asof">${esc(asOf(c.as_of))}</span>`;
+    return u ? `<a class="src" href="${esc(u)}" target="_blank" rel="noopener noreferrer" title="${tip}">${body}</a>` : `<span class="src" title="${tip}">${body}</span>`;
+  }
+  function renderCost(p) {
+    if (!p) { $("#cost").innerHTML = `<p class="quiet">No pick, so no cost to show.</p>`; return; }
+    $("#cost").innerHTML = `<div class="cite">${p.lines.map(l => `<div class="cite-row"><span>${esc(l.label)}</span>${srcChip(l.citation)}<span class="amt">${usd(l.amount_usd)}</span></div>`).join("")}
+      <div class="cite-row total"><span>Total landed, ${esc(p.t)}</span><span class="amt">${usd(p.usd)}</span></div></div>`;
+  }
+
+  // The agent's own log, then what the human decided on this page. Each line gets a short kind tag
+  // taken from its prefix ("skip m123: over budget" -> SKIP, "m123: over budget").
+  const KINDS = [[/^recalled preferences for [^:]+:\s*/, "memory"], [/^source:\s*/, "source"], [/^found (?=\d)/, "search", true],
+    [/^skip\s+/, "skip"], [/^ranker:\s*/, "ranker"], [/^pick\s+/, "pick"], [/^cart\s+/, "cart"], [/^no candidate/, "result", true]];
+  function trailRow(t, human) {
+    if (human) return { kind: "you", text: t.replace(/^human\s+/, "") };
+    for (const [re, kind, keep] of KINDS) if (re.test(t)) return { kind, text: keep ? t : t.replace(re, "") };
+    return { kind: "note", text: t };
+  }
+  function renderTrail() {
+    const rows = (RUN ? RUN.trail : []).map(t => trailRow(t, false)).concat(decisions.map(t => trailRow(t, true)));
+    $("#trail").innerHTML = rows.map(r => `<li class="${r.kind}"><span class="dot"></span><span class="kind">${r.kind}</span><span class="txt">${esc(r.text)}</span></li>`).join("");
+  }
+
+  async function loadSession() {
+    const sid = RUN && RUN.cart && RUN.cart.session_id;
+    if (!sid) { $("#steps").innerHTML = ""; return; }
+    try {
+      const s = await api("/api/sessions/" + encodeURIComponent(sid));
+      const time = at => new Date(at * 1000).toLocaleTimeString("en-US", { hour12: false });
+      $("#steps").innerHTML = `<p class="steps-h">Checkout session ${esc(s.id)} · driver ${esc(s.driver)} · state ${esc(s.state)}</p>`
+        + (s.warnings || []).map(w => `<p class="warn">⚠ ${esc(typeof w === "string" ? w : JSON.stringify(w))}</p>`).join("")
+        + (s.steps || []).map(x => `<div class="step"><span>${time(x.at)}</span><span>${esc(x.state)}</span><span>${esc(x.actor)}</span><span>${esc(x.action)}${x.detail ? " · " + esc(x.detail) : ""}</span></div>`).join("");
+    } catch (e) { $("#steps").innerHTML = `<p class="quiet">Step log unavailable: ${esc(e.message)}</p>`; }
   }
 
   function notify(title, body) {
@@ -342,19 +544,48 @@ button{font:inherit;color:inherit;cursor:pointer}
     if (document.hidden) { const t = document.title; document.title = "✓ " + title; addEventListener("focus", () => document.title = t, { once: true }); }
   }
 
+  function decide(html, line) {
+    decided = html; if (line) decisions.push(line);
+    $("#approveRow").innerHTML = decided; renderTrail(); loadSession();
+  }
+  const outcome = c => `${c.status}: ${noSession(c.detail)}`;
+
+  async function approve(again) {
+    const p = cartPick(), btn = $(again ? "#again" : "#approve");
+    if (btn) btn.disabled = true;
+    let c;
+    try { c = await api("/api/approve", { approval_token: RUN.cart.approval_token }); }
+    catch (e) { if (btn) btn.disabled = false; return notify("Approval failed", e.message); }
+    if (again) return decide(decided.replace(/<button[^>]*id="again"[^>]*>.*?<\/button>/, "") + `<p class="done-note">Same token again → <b>${esc(outcome(c))}</b></p>`, `human reused the approval token → ${outcome(c)}`);
+    if (c.status === "placed") {
+      setPlan(6);
+      notify("Approved", `${p.t}, ${usd(p.usd)}`);
+      decide(`<p class="done-msg">Approved. <em style="color:var(--ink-50)">${esc(p.t)}, ${usd(p.usd)}. ${esc(noSession(c.detail))}.</em></p>
+        <button class="btn btn-quiet" id="again" type="button">Try the same token again</button>`, `human approved ${p.id} → ${outcome(c)}`);
+    } else {
+      decide(`<p class="done-msg">Not placed. <em style="color:var(--ink-50)">${esc(outcome(c))}.</em></p>`, `human approved ${p.id} → ${outcome(c)}`);
+    }
+  }
+
+  async function skip() {
+    const p = cartPick(); $("#skip").disabled = true;
+    try { await api("/api/reject", { user: USER, seller: p.seller, approval_token: RUN.cart.approval_token, reason: "skipped in the UI" }); }
+    catch (e) { $("#skip").disabled = false; return notify("Skip failed", e.message); }
+    decide(`<p class="done-msg">Skipped. <em style="color:var(--ink-50)">Nothing was paid. Seller ${esc(p.seller)} is remembered and left out of your next search.</em></p>`,
+      `human skipped ${p.id} → approval token revoked, seller ${p.seller} remembered as rejected`);
+  }
+
   // events
   $("#form").onsubmit = e => { e.preventDefault(); if (!$("#ask").value.trim()) $("#ask").value = $("#ask").placeholder; start(); };
   $("#ask").onkeydown = e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); $("#form").requestSubmit(); } };
   document.querySelectorAll(".ex").forEach(b => b.onclick = () => { $("#ask").value = b.textContent; $("#ask").focus(); });
   $("#notifyMe").onchange = e => { if (e.target.checked && "Notification" in window && Notification.permission === "default") Notification.requestPermission(); };
-  $("#stop").onclick = () => { stopped = true; timers.forEach(clearTimeout); clearInterval(clock); working(false);
-    $("#rec").className = "state off"; $("#rec").textContent = "Stopped"; $("#caption").innerHTML = "Stopped. <em>Nothing was paid.</em>"; $("#stop").disabled = true; };
+  $("#stop").onclick = () => { stopped = true; timers.forEach(clearTimeout); halt("Stopped"); $("#caption").innerHTML = "Stopped. <em>Nothing was paid.</em>"; };
   $("#opts").onchange = e => renderResults(e.target.value);
   $("#approveRow").onclick = e => {
-    if (e.target.id === "approve") { const p = PICKS.find(x => x.id === document.querySelector("[name=pick]:checked").value);
-      $("#approveRow").innerHTML = `<p class="done-msg">Ordered. <em style="color:var(--ink-50)">${p.t}, ${usd(p.usd)}. Buyee will email you when it ships.</em></p>`;
-      notify("Order placed", `${p.t}, ${usd(p.usd)}`); setPlan(6); }
-    if (e.target.id === "skip") $("#approveRow").innerHTML = `<p class="done-msg">Skipped. <em style="color:var(--ink-50)">Cart emptied, nothing was paid.</em></p>`;
+    if (e.target.id === "approve") approve(false);
+    if (e.target.id === "again") approve(true);
+    if (e.target.id === "skip") skip();
   };
 })();
 </script>
