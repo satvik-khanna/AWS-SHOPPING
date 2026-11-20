@@ -16,9 +16,9 @@ class DryRunCheckout(BuyeeCheckout):
     in a later process) and approve/reject feeding the JSON memory."""
 
     def __init__(self, **kw):
-        from ..config import DATA_DIR
+        from ..config import data_dir
         from ..memory import build_memory
-        kw.setdefault("store", FileSessionStore(DATA_DIR / "checkout"))
+        kw.setdefault("store", FileSessionStore(data_dir() / "checkout"))
         kw.setdefault("memory", build_memory())
         super().__init__(**kw)
 

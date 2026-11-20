@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import inspect
 
 from .interfaces import Checkout, CostEngine, ListingSource, MemoryStore, Ranker
 from .models import PipelineResult, ShoppingRequest
@@ -48,9 +49,13 @@ def run(req: ShoppingRequest, deps: Deps, top_k: int = 3) -> PipelineResult:
 
     cart = None
     if picks:
-        if hasattr(deps.checkout, "budget_usd"):
-            deps.checkout.budget_usd = req.max_total_usd
-        cart = deps.checkout.fill_cart(picks[0])
+        sig = inspect.signature(deps.checkout.fill_cart)
+        kw = {}
+        if "budget_usd" in sig.parameters:
+            kw["budget_usd"] = req.max_total_usd
+        if "user_id" in sig.parameters:
+            kw["user_id"] = req.user_id
+        cart = deps.checkout.fill_cart(picks[0], **kw)
         trail.append(f"cart {cart.status} for {cart.listing_id}")
     else:
         trail.append("no candidate within budget")

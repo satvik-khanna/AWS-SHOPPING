@@ -8,7 +8,7 @@ import threading
 from dataclasses import asdict, fields
 from pathlib import Path
 
-from ..config import DATA_DIR
+from ..config import data_dir
 from ..models import Listing, Preferences
 
 CONDITIONS = ["junk", "fair", "good", "like_new", "new"]
@@ -18,7 +18,7 @@ _lock = threading.Lock()
 
 class JsonMemory:
     def __init__(self, path: Path | None = None):
-        self.path = Path(path) if path else DATA_DIR / "memory.json"
+        self.path = Path(path) if path else data_dir() / "memory.json"
 
     def _load(self) -> dict:
         if self.path.exists():
@@ -30,7 +30,7 @@ class JsonMemory:
 
     def _save(self, data: dict) -> None:
         self.path.parent.mkdir(parents=True, exist_ok=True)
-        tmp = self.path.with_suffix(f".tmp{os.getpid()}")
+        tmp = self.path.with_suffix(f".tmp{os.getpid()}-{threading.get_ident()}")
         tmp.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
         os.replace(tmp, self.path)
 

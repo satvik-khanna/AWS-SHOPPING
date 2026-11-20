@@ -95,6 +95,7 @@ class Session:
     cart_url: str | None = None
     order_ref: str | None = None
     grant_id: str | None = None
+    user_id: str = "default"
 
     @property
     def listing_id(self) -> str:

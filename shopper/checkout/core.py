@@ -37,16 +37,19 @@ class BuyeeCheckout:
         self.clock = clock
 
     # ---- agent side -------------------------------------------------------------
-    def fill_cart(self, pick: RankedPick) -> CartResult:
+    def fill_cart(self, pick: RankedPick, *, budget_usd: float | None = None,
+                  user_id: str | None = None) -> CartResult:
         now = self.clock()
+        eff_budget = self.budget_usd if budget_usd is None else budget_usd
+        eff_user = user_id or self.user_id
         s = M.Session(id=secrets.token_hex(8), listing=asdict(pick.listing), total_usd=pick.cost.total_usd,
-                      driver=getattr(self.driver, "name", "?"), created_at=now)
+                      driver=getattr(self.driver, "name", "?"), created_at=now, user_id=eff_user)
         s.note("agent", "start", f"{pick.listing.id} landed ${pick.cost.total_usd}", now)
         s.warnings = scan_injection(pick.listing)
         for w in s.warnings:
             s.note("guard", "listing text flagged (treated as data, ignored)", w, now)
 
-        reason = preflight(pick, self.budget_usd)
+        reason = preflight(pick, eff_budget)
         if reason:
             s.advance(M.BLOCKED, "guard", "preflight", reason, now=now)
             self.store.save(s)
@@ -130,7 +133,7 @@ class BuyeeCheckout:
             return
         try:
             from ..memory.feedback import apply_feedback
-            apply_feedback(self.memory, self.user_id, kind, s.listing, **kw)
+            apply_feedback(self.memory, s.user_id or self.user_id, kind, s.listing, **kw)
             s.note("agent", f"memory updated ({kind})", now=self.clock())
             self.store.save(s)
         except Exception as e:  # memory must never break checkout

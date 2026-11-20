@@ -55,14 +55,29 @@ class RulesCostEngine:
     # --- pieces ----------------------------------------------------------------------------
     def blocked_reason(self, listing: Listing) -> str | None:
         R = self.rules
+        if isinstance(listing.price_jpy, bool) or not isinstance(listing.price_jpy, int) or listing.price_jpy <= 0:
+            return f"invalid price_jpy: {listing.price_jpy!r}"
+        if listing.weight_kg is not None:
+            if (isinstance(listing.weight_kg, bool)
+                    or not isinstance(listing.weight_kg, (int, float))
+                    or not math.isfinite(listing.weight_kg)
+                    or listing.weight_kg <= 0):
+                return f"invalid weight_kg: {listing.weight_kg!r}"
         cat = (listing.category or "").lower()
         p = R["prohibited"]["value"].get(cat)
         if p:
             return f"banned: {cat}: {p['reason']} ({p['url']})"
         n = listing.fields.get("lithium_batteries")
-        if n and str(n).isdigit() and int(n) > R["lithium_installed_max"]["value"]:
-            return (f"banned: {n} installed lithium batteries > max {R['lithium_installed_max']['value']} "
-                    f"per package ({R['lithium_installed_max']['url']})")
+        if n is not None and str(n).strip() != "":
+            try:
+                count = float(str(n).strip())
+            except ValueError:
+                return f"invalid lithium_batteries: {n!r}"
+            if not math.isfinite(count) or count < 0:
+                return f"invalid lithium_batteries: {n!r}"
+            if count > R["lithium_installed_max"]["value"]:
+                return (f"banned: {n} installed lithium batteries > max {R['lithium_installed_max']['value']} "
+                        f"per package ({R['lithium_installed_max']['url']})")
         return None
 
     def ship_weight(self, listing: Listing) -> float:

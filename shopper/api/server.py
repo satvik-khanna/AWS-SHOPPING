@@ -135,15 +135,22 @@ class Service:
         if len(seller) > 120:
             raise _bad("seller is too long (max 120 characters)")
         user = _user(body)
+        seller_clean = seller.strip()
         token = body.get("approval_token")
         reason = body.get("reason") if isinstance(body.get("reason"), str) else ""
         with self.lock:
-            self.deps.memory.reject_seller(user, seller.strip())
+            self.deps.memory.reject_seller(user, seller_clean)
+            tokens_to_reject: list[str] = []
             if isinstance(token, str) and token:
-                self.revoked.add(token)
-                self.carts.pop(token, None)
+                tokens_to_reject.append(token)
+            for t, (u, l) in list(self.carts.items()):
+                if u == user and l.seller == seller_clean and t not in tokens_to_reject:
+                    tokens_to_reject.append(t)
+            for t in tokens_to_reject:
+                self.revoked.add(t)
+                self.carts.pop(t, None)
                 if hasattr(self.deps.checkout, "reject"):
-                    self.deps.checkout.reject(token, reason=reason, reject_seller=False)
+                    self.deps.checkout.reject(t, reason=reason or "seller rejected", reject_seller=False)
             return asdict(self.deps.memory.recall(user))
 
     def session(self, session_id: str) -> dict:
