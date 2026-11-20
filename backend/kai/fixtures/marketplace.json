@@ -1,0 +1,15 @@
+{
+  "_note": "SAMPLE DATA. Invented marketplace listings for offline demos and tests. Not real listings; URLs use the reserved .invalid domain.",
+  "listings": [
+    {"id": "mk-1001", "category": "keycaps", "title": "PBTキーキャップセット 日本語配列 132キー", "description": "量産品のPBT製キーキャップセット。昇華印刷。", "priceJpy": 4980, "availability": "IN_STOCK", "storeName": "サンプルマーケット (fixture)", "url": "https://market.kai-fixture.invalid/items/mk-1001"},
+    {"id": "mk-1002", "category": "keycaps", "title": "アルチザンキーキャップ「金魚鉢」 レジン 光沢仕上げ", "description": "金魚を封入したクリアレジンのアルチザンキーキャップ。光沢仕上げ。ハンドメイド。", "priceJpy": 9800, "availability": "IN_STOCK", "storeName": "サンプルマーケット (fixture)", "url": "https://market.kai-fixture.invalid/items/mk-1002"},
+    {"id": "mk-1003", "category": "keycaps", "title": "真鍮削り出しキーキャップ ESC用", "description": "真鍮の無垢材から削り出した金属製キーキャップ。", "priceJpy": 15400, "availability": "IN_STOCK", "storeName": "サンプルマーケット (fixture)", "url": "https://market.kai-fixture.invalid/items/mk-1003"},
+    {"id": "mk-1004", "category": "keycaps", "title": "木製キーキャップ ウォールナット 手作り マット仕上げ", "description": "ウォールナット材を手作業で削ったハンドメイドのキーキャップ。オイル仕上げでマットな質感。", "priceJpy": 6200, "availability": "IN_STOCK", "storeName": "サンプルマーケット (fixture)", "url": "https://market.kai-fixture.invalid/items/mk-1004"},
+    {"id": "mk-1005", "category": "keycaps", "title": "お寿司キーキャップ 4個セット", "description": "量産のノベルティキーキャップ。", "priceJpy": 1480, "availability": "IN_STOCK", "storeName": "サンプルマーケット (fixture)", "url": "https://market.kai-fixture.invalid/items/mk-1005"},
+    {"id": "mk-1006", "category": "keycaps", "title": "【中古】アルチザンキーキャップ まとめ売り 5個", "description": "中古のアルチザンキーキャップ5個セット。使用感あり。", "priceJpy": 11000, "availability": "IN_STOCK", "storeName": "サンプルマーケット (fixture)", "url": "https://market.kai-fixture.invalid/items/mk-1006"},
+    {"id": "mk-2001", "category": "figures", "title": "ソフビフィギュア 怪獣 限定カラー", "description": "数量限定カラーのソフビフィギュア。", "priceJpy": 7700, "availability": "IN_STOCK", "storeName": "サンプルマーケット (fixture)", "url": "https://market.kai-fixture.invalid/items/mk-2001"},
+    {"id": "mk-2002", "category": "figures", "title": "【中古】1/7スケールフィギュア 箱あり", "description": "中古の1/7スケールフィギュア。箱に傷みあり。", "priceJpy": 12800, "availability": "IN_STOCK", "storeName": "サンプルマーケット (fixture)", "url": "https://market.kai-fixture.invalid/items/mk-2002"},
+    {"id": "mk-3001", "category": "cameras", "title": "【中古】フィルムカメラ レンジファインダー 整備済み", "description": "整備済みの中古フィルムカメラ。", "priceJpy": 24800, "availability": "IN_STOCK", "storeName": "サンプルマーケット (fixture)", "url": "https://market.kai-fixture.invalid/items/mk-3001"},
+    {"id": "mk-4001", "category": "handmade", "title": "ハンドメイド 陶器の箸置き 5個セット", "description": "手作りの陶器製箸置き。マットな釉薬。", "priceJpy": 2800, "availability": "IN_STOCK", "storeName": "サンプルマーケット (fixture)", "url": "https://market.kai-fixture.invalid/items/mk-4001"}
+  ]
+}

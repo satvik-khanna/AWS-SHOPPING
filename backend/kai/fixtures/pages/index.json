@@ -1,0 +1,14 @@
+{
+  "https://tsukumo-keys.booth.pm.kai-fixture.invalid/items/1001": {"file": "booth_tsukiyo.html"},
+  "https://kumo-resin.thebase.in.kai-fixture.invalid/items/2002": {"file": "base_unkai.html"},
+  "https://hoshi-cap.kai-fixture.invalid/products/hoshikuzu": {"file": "shopify_hoshikuzu.html"},
+  "https://neko-keys.booth.pm.kai-fixture.invalid/items/1004": {"file": "booth_neko_soldout.html"},
+  "https://linktr.ee.kai-fixture.invalid/yama_craft": {"file": "linkhub_yama.html"},
+  "https://yama-craft.stores.jp.kai-fixture.invalid": {"file": "stores_yama_top.html"},
+  "https://yama-craft.stores.jp.kai-fixture.invalid/items/64f0a1b2c3d4e5f6": {"file": "stores_yamagiri.html"},
+  "https://blog.kai-fixture.invalid/keycap-news": {"file": "blog_keycap_news.html"},
+  "https://shiro-keys.base.shop.kai-fixture.invalid/items/9009": {"file": "blog_keycap_news.html", "status": 403},
+  "https://garage-oni.booth.pm.kai-fixture.invalid/items/3001": {"file": "booth_yashahime.html"},
+  "https://hinata-glass.thebase.in.kai-fixture.invalid/items/4001": {"file": "base_asatsuyu.html"},
+  "https://market.kai-fixture.invalid/items/mk-1001": {"file": "market_pbt_set.html"}
+}
