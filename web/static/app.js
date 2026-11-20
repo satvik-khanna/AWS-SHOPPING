@@ -65,24 +65,27 @@
 
     var body = requestBody();
     body.listing_id = pick.listing.id;
+    body.open_real = true;
     var profile = vaultMod.get();
-    var apiDone = api("/api/buy", body).catch(function () { return state.result; });
-
-    agentMod.runComputerUseBuy(pick, profile, function () {
-      apiDone.then(function (res) {
-        if (agentMod.isAborted()) return;
-        if (res && res.cart) {
-          state.result = res;
-          state.cart = res.cart;
-          state.usedToken = null;
-          state.gateEvent = null;
-        }
-        state.buyReady = true;
-        renderAll();
-        chatMod.scrollBottom();
-      });
-    });
+    var realUrl = agentMod.beginRealBuy(pick, profile);
     chatMod.scrollBottom();
+
+    api("/api/buy", body).then(function (res) {
+      if (agentMod.isAborted()) return;
+      if (res && res.cart) {
+        state.result = res;
+        state.cart = res.cart;
+        state.usedToken = null;
+        state.gateEvent = null;
+      }
+      state.buyReady = true;
+      agentMod.completeRealBuy(pick, profile, res, realUrl);
+      renderAll();
+      chatMod.scrollBottom();
+    }, function (e) {
+      agentMod.stop();
+      showError(e.message);
+    });
   }
 
   function renderAll() {

@@ -68,14 +68,36 @@ class DonTacosChromeDriver:
         self._sessions: dict[str, dict[str, Any]] = {}
 
     def open_listing(self, session_id: str, listing: dict) -> str:
-        url = buyee_url(listing)
+        fields = listing.get("fields") if isinstance(listing.get("fields"), dict) else {}
+        url = str(fields.get("buyee_url") or "") or buyee_url(listing)
         opened = _run(["open-url", self.app, url])
         self._sessions[session_id] = {
             "pid": int(opened["pid"]),
             "window": f"id:{opened['id']}" if opened.get("id") is not None else str(opened.get("window", 0)),
+            "title": str(opened.get("title") or ""),
             "url": url,
         }
         return url
+
+    def inspect_window(self, session_id: str) -> dict[str, Any]:
+        sess = self._sessions.get(session_id)
+        if not sess:
+            return {}
+        tree = _run(["tree", str(sess["pid"]), "--window", sess["window"]])
+        controls = []
+        for win in tree.get("windows") or []:
+            for el in win.get("elements") or []:
+                label = str(el.get("label") or "").strip()
+                if label and el.get("role") in ("AXButton", "AXLink", "AXTextField"):
+                    controls.append({"role": el.get("role"), "label": label[:80], "ref": el.get("ref")})
+        return {
+            "pid": sess["pid"],
+            "window": sess["window"],
+            "title": sess.get("title") or "",
+            "url": sess.get("url") or "",
+            "controls": controls[:12],
+            "controls_count": len(controls),
+        }
 
     def add_to_cart(self, session_id: str, listing: dict) -> None:
         sess = self._sessions.get(session_id)

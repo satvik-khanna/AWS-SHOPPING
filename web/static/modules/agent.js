@@ -1,16 +1,22 @@
-/* Module: Agent's browser (Dia-style Chrome Computer Use viewport)
-   Opens a new Chrome tab on Buy, auto signs-in from User Vault, fills shipping & card,
-   and pauses right before Pay so the user only needs to swipe. */
+/* Module: Agent's browser — opens the REAL destination website (via don-tacos dt-ax Chrome Computer Use
+   when server is running, or real browser tab via window.open in standalone file:// mode) and displays
+   live URL, real Chrome accessibility controls, and checkout readiness. */
 (function (root) {
   "use strict";
 
   var STEPS = [
-    "New Chrome tab",
-    "Auto sign-in (Vault)",
-    "Open listing",
-    "Fill shipping & card",
-    "Ready to swipe"
+    "Open real site",
+    "Vault session",
+    "Inspect page",
+    "Cart ready",
+    "Swipe to pay"
   ];
+
+  function resolveRealUrl(listing) {
+    var ui = root.JSA.ui;
+    var buyee = listing && listing.fields && listing.fields.buyee_url;
+    return ui.safeUrl(buyee) || ui.safeUrl(listing && listing.url) || "https://buyee.jp/";
+  }
 
   function initAgent(onStop) {
     var ui = root.JSA.ui;
@@ -27,7 +33,7 @@
     var cursorEl = ui.$("ab-cursor");
     var captionEl = ui.$("ab-caption");
     var notifyToggle = ui.$("notify-toggle");
-    var timers = [], clock = null, startAt = 0, aborted = false, browserOpen = false;
+    var clock = null, startAt = 0, aborted = false, browserOpen = false;
 
     function setBrowserVisible(on) {
       browserOpen = on;
@@ -50,53 +56,27 @@
       if (urlEl) urlEl.textContent = url;
       if (screenEl) { ui.clear(screenEl); ui.append(screenEl, nodes); }
       if (captionEl) captionEl.textContent = caption;
-    }
-
-    function pointAt(id, click) {
-      var el = document.getElementById(id);
-      if (!el || !cursorEl || !cursorEl.parentElement) return;
-      var a = el.getBoundingClientRect(), b = cursorEl.parentElement.getBoundingClientRect();
-      if (!a.width && !a.height) return;
-      cursorEl.style.left = Math.round(a.left - b.left + a.width / 2) + "px";
-      cursorEl.style.top = Math.round(a.top - b.top + a.height / 2) + "px";
-      screenEl.querySelectorAll(".ab-hl").forEach(function (n) { n.classList.remove("ab-hl"); });
-      el.classList.add("ab-hl");
-      if (click) {
-        setTimeout(function () {
-          cursorEl.classList.remove("click");
-          void cursorEl.offsetWidth;
-          cursorEl.classList.add("click");
-        }, 280);
-      }
+      if (cursorEl) cursorEl.hidden = true;
     }
 
     function clearTimers() {
-      timers.forEach(clearTimeout);
-      timers = [];
       clearInterval(clock);
       clock = null;
     }
 
-    function startSearch() {
-      if (ring) ring.classList.add("working");
-    }
+    function startSearch() { if (ring) ring.classList.add("working"); }
+    function finishSearch() { if (ring) ring.classList.remove("working"); }
 
-    function finishSearch() {
-      if (ring) ring.classList.remove("working");
-    }
-
-    function runComputerUseBuy(pick, profile, onReady) {
+    function beginRealBuy(pick, profile) {
       aborted = false;
       clearTimers();
-      var l = pick.listing, total = ui.totalOf(pick.cost);
-      var cardStr = profile && profile.card ? (profile.card.brand + " •••• " + profile.card.last4) : "Visa •••• 4242";
-      var acct = (profile && profile.email) || "buyer@example.com";
-      var addr = (profile && profile.address) || "San Francisco, CA";
+      var l = pick.listing, realUrl = resolveRealUrl(l);
+      var cardStr = profile && profile.card ? (profile.card.brand + " •••• " + profile.card.last4) : "Saved card";
 
       if (ring) ring.classList.add("working");
       if (strip) strip.hidden = false;
       setBrowserVisible(true);
-      if (dot) { dot.className = "live-dot live"; dot.textContent = "Chrome · Live"; }
+      if (dot) { dot.className = "live-dot live"; dot.textContent = "Chrome · Opening"; }
       if (stopBtn) stopBtn.disabled = false;
       startAt = Date.now();
       if (elapsedEl) elapsedEl.textContent = "0s";
@@ -104,72 +84,70 @@
         if (elapsedEl) elapsedEl.textContent = Math.round((Date.now() - startAt) / 1000) + "s";
       }, 250);
 
-      // Step 0: Open new Chrome tab + Vault auto sign-in
-      renderSteps(0);
-      showStage("chrome://newtab → buyee.jp/login", [
+      renderSteps(1);
+      showStage(realUrl, [
         ui.h("div", { class: "ab-site" },
-          ui.h("div", { class: "ab-top" },
-            ui.h("span", { class: "ab-logo ab-buyee" }, "buyee"),
-            ui.h("div", { class: "ab-input" }, "Auto sign-in (" + profile.userId + ")")),
-          ui.h("div", { class: "ab-cartrow", id: "ab-login" },
-            ui.h("span", null, "Session vault · " + acct),
-            ui.h("strong", null, "Signed in")))
-      ], "Opened Chrome tab & restored session from User Vault");
-      setTimeout(function () { pointAt("ab-login", true); }, 80);
+          ui.h("div", { class: "ab-cartrow" },
+            ui.h("span", { class: "ab-cart-title" }, "Opening real website in Chrome: " + l.title_en),
+            ui.h("a", { href: realUrl, target: "_blank", rel: "noopener noreferrer", class: "btn btn-small btn-primary" },
+              ui.icon("link-external", 12), "Open site")),
+          ui.h("div", { class: "ab-jp" }, "Vault: " + (profile && profile.userId || "default") + " · " + cardStr))
+      ], "Launching real Chrome window via don-tacos dt-ax…");
 
-      // Step 1: Navigate to listing & add to cart
-      timers.push(setTimeout(function () {
-        if (aborted) return;
-        renderSteps(2);
-        showStage("buyee.jp/item/" + encodeURIComponent(l.id), [
-          ui.h("div", { class: "ab-site" },
-            ui.h("div", { class: "ab-top" },
-              ui.h("span", { class: "ab-logo ab-mercari" }, l.source),
-              ui.h("div", { class: "ab-input" }, l.title_en)),
-            ui.h("div", { class: "ab-cartrow" },
-              ui.h("span", { class: "ab-cart-title" }, l.title_en),
-              ui.h("strong", null, ui.usd(total))),
-            ui.h("span", { class: "ab-fakebtn", id: "ab-add" }, "Add to Buyee cart"))
-        ], "Clicking Add to cart via Computer Use\u2026");
-        setTimeout(function () { pointAt("ab-add", true); }, 80);
-      }, 450));
+      return realUrl;
+    }
 
-      // Step 2: Fill shipping & saved card, pause right before Pay
-      timers.push(setTimeout(function () {
-        if (aborted) return;
-        renderSteps(3);
-        showStage("buyee.jp/checkout/confirm", [
-          ui.h("div", { class: "ab-site" },
-            ui.h("div", { class: "ab-top" },
-              ui.h("span", { class: "ab-logo ab-buyee" }, "buyee checkout"),
-              ui.h("div", { class: "ab-input" }, cardStr + " · " + addr)),
-            ui.h("div", { class: "ab-cartrow", id: "ab-pay-ready" },
-              ui.h("span", { class: "ab-cart-title" }, l.title_en),
-              ui.h("strong", null, ui.usd(total))),
-            ui.h("div", { class: "ab-paused" }, "Paused before Pay · swipe below to purchase."))
-        ], "Checkout filled. Swipe to pay.");
-        setTimeout(function () { pointAt("ab-pay-ready", false); }, 80);
-      }, 900));
+    function completeRealBuy(pick, profile, res, realUrl) {
+      if (aborted) return;
+      clearTimers();
+      renderSteps(STEPS.length);
+      if (ring) ring.classList.remove("working");
+      if (stopBtn) stopBtn.disabled = true;
 
-      timers.push(setTimeout(function () {
-        if (aborted) return;
-        clearTimers();
-        renderSteps(STEPS.length);
-        if (ring) ring.classList.remove("working");
-        if (dot) { dot.className = "live-dot paused"; dot.textContent = "Ready"; }
-        if (stopBtn) stopBtn.disabled = true;
-        notify("Ready — swipe to pay " + ui.usd(total));
-        if (onReady) onReady();
-      }, 1250));
+      var cua = (res && res.cua) || {};
+      var openedInChrome = Boolean(cua.opened_in_chrome);
+      var targetUrl = cua.opened_url || realUrl;
+      var controls = Array.isArray(cua.controls) ? cua.controls : [];
+      var l = pick.listing, total = ui.totalOf(pick.cost);
+
+      // In standalone file:// preview (no backend server), open the real website directly in a new browser tab
+      if (!openedInChrome && location.protocol === "file:") {
+        try { window.open(targetUrl, "_blank", "noopener,noreferrer"); } catch (e) {}
+      }
+
+      if (dot) {
+        dot.className = "live-dot paused";
+        dot.textContent = openedInChrome ? "Chrome · Live" : "Tab opened";
+      }
+
+      var statusText = openedInChrome
+        ? ("Chrome window " + (cua.window || "") + " opened via don-tacos dt-ax" + (controls.length ? (" · " + controls.length + " controls read") : ""))
+        : (cua.error ? ("Fallback tab opened (" + cua.error + ")") : "Opened real website in new browser tab.");
+
+      var controlChips = controls.length
+        ? ui.h("div", { class: "ab-controls" }, controls.slice(0, 5).map(function (c) {
+            return ui.h("span", { class: "chip" }, c.label);
+          }))
+        : null;
+
+      showStage(targetUrl, [
+        ui.h("div", { class: "ab-site" },
+          ui.h("div", { class: "ab-cartrow" },
+            ui.h("span", { class: "ab-cart-title" }, l.title_en + " · " + ui.usd(total)),
+            ui.h("a", { href: targetUrl, target: "_blank", rel: "noopener noreferrer", class: "btn btn-small" },
+              ui.icon("link-external", 12), "Open tab")),
+          controlChips,
+          ui.h("div", { class: "ab-paused" }, statusText + " · Swipe below to pay."))
+      ], openedInChrome ? "Real Chrome tab ready · swipe to pay" : "Real site opened · swipe to pay");
+
+      notify("Ready — swipe to pay " + ui.usd(total));
     }
 
     function markPaid(pick) {
       var l = pick ? pick.listing : { title_en: "Order" };
-      showStage("buyee.jp/checkout/complete", [
+      var realUrl = resolveRealUrl(l);
+      showStage(realUrl, [
         ui.h("div", { class: "ab-site" },
-          ui.h("div", { class: "ab-top" },
-            ui.h("span", { class: "ab-logo ab-buyee" }, "buyee"),
-            ui.h("div", { class: "ab-input" }, "Order confirmed")),
           ui.h("div", { class: "ab-paused placed" }, "Paid & ordered: " + l.title_en))
       ], "Order placed.");
       if (dot) { dot.className = "live-dot paused"; dot.textContent = "Paid"; }
@@ -206,7 +184,8 @@
     return {
       startSearch: startSearch,
       finishSearch: finishSearch,
-      runComputerUseBuy: runComputerUseBuy,
+      beginRealBuy: beginRealBuy,
+      completeRealBuy: completeRealBuy,
       markPaid: markPaid,
       stop: stop,
       notify: notify,

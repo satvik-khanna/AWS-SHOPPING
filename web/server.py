@@ -151,18 +151,26 @@ class Session:
                 if cart.approval_token:
                     self.active_token = cart.approval_token
                     self.in_cart[cart.approval_token] = (req.user_id, target_pick.listing)
+                out["trail"].append(f"cart prepared for {target_pick.listing.id} (awaiting swipe approval)")
+            if target_pick is not None:
                 l_data = asdict(target_pick.listing)
                 cua_info = don_tacos_cua.probe()
-                if config.live() and cua_info.get("ok"):
+                open_real = bool(body.get("open_real"))
+                if (open_real or config.live()) and cua_info.get("ok"):
                     try:
                         drv = don_tacos_cua.DonTacosChromeDriver()
-                        opened_url = drv.open_listing(cart.approval_token or target_pick.listing.id, l_data)
+                        sid = (out.get("cart") or {}).get("approval_token") or target_pick.listing.id
+                        opened_url = drv.open_listing(sid, l_data)
                         cua_info["opened_url"] = opened_url
-                        out["trail"].append(f"don-tacos dt-ax opened Chrome tab: {opened_url}")
+                        cua_info["opened_in_chrome"] = True
+                        try:
+                            cua_info.update(drv.inspect_window(sid))
+                        except Exception:
+                            pass
+                        out["trail"].append(f"don-tacos dt-ax opened Chrome: {opened_url}")
                     except Exception as e:
                         cua_info["error"] = str(e)
                 out["cua"] = cua_info
-                out["trail"].append(f"cart prepared for {target_pick.listing.id} (awaiting swipe approval)")
             return out
 
     def approve(self, body: dict) -> dict:
