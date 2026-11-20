@@ -4,6 +4,14 @@ Japan Shopping Agent
 
 Problem: Japanese marketplaces like Mercari and Yahoo Auctions carry items you can’t get elsewhere. But the listings are in Japanese, many sellers won’t ship abroad, and the real cost is hidden across proxy fees, shipping and duties.
 
+- Instagram profiles and links in bios
+- Linktree and Beacons pages
+- Small independent online stores
+- Niche fan communities
+- Independent artists and creators
+- Limited-edition merchandise and handmade collectibles
+- Products sold through small communities rather than major marketplaces
+
 What it does: You describe what you want (“used Fujifilm X100V under $900, shipped to California”). The agent then:
 
 Recalls your preferences and past purchases.
