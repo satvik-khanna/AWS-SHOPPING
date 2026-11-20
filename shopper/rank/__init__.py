@@ -1,10 +1,19 @@
-"""Ranking + explanation. Base: cheapest-first with condition bonus.
-TODO(rank pane): Superlinked rerank + Claude API final pick/explanation behind SHOPPER_LIVE."""
+"""Ranking + explanation.
+
+    PriceRanker     base: cheapest-first with condition bonus (kept for comparison / tests)
+    SmartRanker     offline: relevance to the query + landed cost + condition + user preferences,
+                    one human-readable reason per pick
+    default_ranker  what shopper/app.py wires in (SmartRanker, optionally reranked by Claude when
+                    SHOPPER_LIVE=1 and ANTHROPIC_API_KEY is set; any error -> offline order)
+"""
 from __future__ import annotations
 
 from ..models import LandedCost, Listing, Preferences, RankedPick, ShoppingRequest
+from .smart import CONDITION_ORDER, SmartRanker, score_parts
+from .llm import ClaudeRerank
 
-CONDITION_ORDER = ["junk", "fair", "good", "like_new", "new"]
+__all__ = ["PriceRanker", "SmartRanker", "ClaudeRerank", "default_ranker", "score_parts",
+           "CONDITION_ORDER"]
 
 
 class PriceRanker:
@@ -21,3 +30,7 @@ class PriceRanker:
             picks.append(RankedPick(l, c, score,
                                     f"${c.total_usd} landed (${req.max_total_usd - c.total_usd:.0f} under budget), condition {l.condition}"))
         return sorted(picks, key=lambda p: p.score, reverse=True)
+
+
+def default_ranker():
+    return ClaudeRerank(base=SmartRanker())
