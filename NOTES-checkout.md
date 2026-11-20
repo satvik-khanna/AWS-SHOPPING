@@ -6,7 +6,7 @@
 
 ## Requests to the owners of shared files
 
-- pipeline.py: `fill_cart(pick)` gets no budget, so the checkout's own over-budget guard only runs when a caller sets `checkout.budget_usd` (the `buy` CLI does this). Suggest `deps.checkout.budget_usd = req.max_total_usd` in `run()`, or a `budget_usd` arg on `Checkout.fill_cart`.
+- ~~pipeline.py: pass the budget to fill_cart~~ done in 7478f1d (`fill_cart(pick, budget_usd=, user_id=)`, pipeline passes them when the signature accepts them).
 - models.py: `Listing` has no description field, so injection scanning only covers title / seller / url / fields. If the listings pane adds `description_ja`, the checkout guard should scan it too.
 - `CartResult` has no session id; it is carried as a `[session <id>]` prefix in `detail`. A `session_id` field would be cleaner for the API pane (`GET /sessions/<id>` step log).
 - interfaces.py: `Checkout` has no `reject`; `BuyeeCheckout.reject(token, reason, reject_seller)` exists and the API pane can call it.
