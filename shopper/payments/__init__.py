@@ -3,7 +3,7 @@
     from shopper.payments import build_provider
     p = build_provider("card")
     ref = p.methods("alice")[0]
-    it = p.create_intent("alice", cart_total, ref.id, idem_key, cart_session_id=cart.session_id)
+    it = p.create_intent("alice", cart_total, ref.token, idem_key, cart_session_id=cart.session_id)
     ... user swipes -> checkout approval gate mints the ApprovalGrant for that cart ...
     it = p.confirm(it, grant)          # charges once; blocked without the grant or on amount mismatch
 

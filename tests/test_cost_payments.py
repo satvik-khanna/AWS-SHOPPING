@@ -54,7 +54,7 @@ class Flow(unittest.TestCase):
 
     def intent(self, kind="card", amount=None, key="k1", ref=None):
         p = self.p[kind]
-        return p.create_intent("u", self.total if amount is None else amount, ref or p.methods("u")[0].id, key,
+        return p.create_intent("u", self.total if amount is None else amount, ref or p.methods("u")[0].token, key,
                                cart_session_id=self.sid)
 
     def test_methods_are_references_only(self):
@@ -63,8 +63,8 @@ class Flow(unittest.TestCase):
             self.assertTrue(ms)
             for m in ms:
                 self.assertEqual(m.kind, k)
-                self.assertTrue(m.last4 is None or len(m.last4) == 4)
-        self.assertTrue(self.p["card"].methods("u")[0].id.startswith("pm_"))
+                self.assertTrue(m.last4 == "" or (len(m.last4) == 4 and m.last4.isdigit()))
+        self.assertTrue(self.p["card"].methods("u")[0].token.startswith("pm_"))
 
     def test_happy_path_all_kinds_charge_once(self):
         for i, k in enumerate(KINDS):

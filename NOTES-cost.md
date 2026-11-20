@@ -3,7 +3,7 @@
 ## P1 payments (2026-11-20) — summary
 1. Works: `shopper/payments` = PaymentProvider (interfaces.py) for card (Stripe PaymentMethod token), stripe, paypal (Orders v2), venmo (PayPal Orders v2 + JS SDK button). `build_provider(kind)`; offline fake by default.
 2. Guards (all kinds): confirm() needs the checkout ApprovalGrant the approval gate recorded for that cart session; amount must equal the approved cart's landed total to the cent; same idempotency key -> same intent; one paid intent per cart (double swipe returns the first result, no second charge); provider gets Idempotency-Key / PayPal-Request-Id. Ledger = `$SHOPPER_DATA_DIR/payments/ledger.json` (flock).
-3. Run: `python3 -m unittest tests.test_cost_payments` (15 tests; mutation red-proof in each guard).
+3. Run: `python3 -m unittest tests.test_cost_payments` (15 tests; 9 mutations, one per guard, each turns a test red). PaymentMethodRef is the shared vault type (token, brand, last4, exp, label) plus `kind`.
 4. Fake: all charges offline (FakeBackend). Live Stripe/PayPal adapters are written against the docs below and unit-tested with a mocked HTTP opener only; never run against the real sandbox (no keys on this machine).
 5. Keys the owner must issue (test/sandbox only): `STRIPE_SECRET_KEY` = Stripe sandbox secret `sk_test_...` (or restricted `rk_test_...` with PaymentIntents write + PaymentMethods read); optional `STRIPE_CUSTOMER_ID` (sandbox customer with saved cards). `PAYPAL_CLIENT_ID` + `PAYPAL_CLIENT_SECRET` from a PayPal Developer sandbox REST app (US business sandbox account, Venmo needs US + USD); optional `PAYPAL_CUSTOMER_ID` for vaulted methods. Live keys (sk_live_/rk_live_/pk_*, PAYPAL_ENV != sandbox) are refused.
 

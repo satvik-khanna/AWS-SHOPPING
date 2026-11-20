@@ -43,13 +43,13 @@ class FakeBackend:
     """Offline. Stripe's public test tokens (docs.stripe.com/testing) as saved methods; no network."""
     live = False
     METHODS = {
-        "card": [PaymentMethodRef("pm_card_visa", "card", "Visa ...4242 12/34", "visa", "4242", 12, 2034),
-                 PaymentMethodRef("pm_card_visa_chargeDeclined", "card", "Visa ...0002 12/34 (declines)",
-                                  "visa", "0002", 12, 2034)],
-        "stripe": [PaymentMethodRef("pm_card_mastercard", "stripe", "Stripe: Mastercard ...4444 12/34",
-                                    "mastercard", "4444", 12, 2034)],
-        "paypal": [PaymentMethodRef("paypal:checkout", "paypal", "PayPal (approve in PayPal)")],
-        "venmo": [PaymentMethodRef("venmo:checkout", "venmo", "Venmo (approve in the Venmo app)")],
+        "card": [PaymentMethodRef("pm_card_visa", "visa", "4242", "12/34", "Visa ...4242 12/34", "card"),
+                 PaymentMethodRef("pm_card_visa_chargeDeclined", "visa", "0002", "12/34",
+                                  "Visa ...0002 12/34 (declines)", "card")],
+        "stripe": [PaymentMethodRef("pm_card_mastercard", "mastercard", "4444", "12/34",
+                                    "Stripe: Mastercard ...4444 12/34", "stripe")],
+        "paypal": [PaymentMethodRef("paypal:checkout", "paypal", "", "", "PayPal (approve in PayPal)", "paypal")],
+        "venmo": [PaymentMethodRef("venmo:checkout", "venmo", "", "", "Venmo (approve in the Venmo app)", "venmo")],
     }
 
     def __init__(self, kind: str):
@@ -60,7 +60,7 @@ class FakeBackend:
         return list(self.METHODS[self.kind])
 
     def create(self, it: PaymentIntent) -> PaymentIntent:
-        if it.method_ref not in {m.id for m in self.METHODS[self.kind]}:
+        if it.method_ref not in {m.token for m in self.METHODS[self.kind]}:
             return replace(it, status="blocked", detail=f"unknown {self.kind} method {it.method_ref}")
         ref = "fake_" + hashlib.sha256(it.idempotency_key.encode()).hexdigest()[:12]
         return replace(it, provider_ref=ref, detail="offline fake; nothing will be charged")
@@ -133,7 +133,7 @@ class StripeBackend:
 
     def list_methods(self, user_id: str) -> list[PaymentMethodRef]:
         if not self.customer:
-            return [PaymentMethodRef("pm_card_visa", self.kind, "Visa ...4242 (Stripe test token)", "visa", "4242")]
+            return [PaymentMethodRef("pm_card_visa", "visa", "4242", "", "Visa ...4242 (Stripe test token)", self.kind)]
         params = {"limit": 20}
         if self.kind == "card":
             params["type"] = "card"
@@ -141,10 +141,10 @@ class StripeBackend:
         out = []
         for pm in data.get("data", []):
             c = pm.get("card") or {}
-            label = (f"{c.get('brand', pm.get('type', '?')).title()} ...{c.get('last4', '')} "
-                     f"{c.get('exp_month', '')}/{str(c.get('exp_year', ''))[-2:]}").strip()
-            out.append(PaymentMethodRef(pm["id"], self.kind, label, c.get("brand"), c.get("last4"),
-                                        c.get("exp_month"), c.get("exp_year")))
+            exp = f"{int(c['exp_month']):02d}/{str(c['exp_year'])[-2:]}" if c.get("exp_month") else ""
+            brand = c.get("brand") or pm.get("type", "?")
+            out.append(PaymentMethodRef(pm["id"], brand, c.get("last4", ""), exp,
+                                        f"{brand.title()} ...{c.get('last4', '')} {exp}".strip(), self.kind))
         return out
 
     def create(self, it: PaymentIntent) -> PaymentIntent:
@@ -217,15 +217,16 @@ class PayPalBackend:
         return self._http(method, self.base + path, h, json.dumps(body).encode() if body is not None else None)
 
     def list_methods(self, user_id: str) -> list[PaymentMethodRef]:
-        out = [PaymentMethodRef(f"{self.kind}:checkout", self.kind,
-                                "PayPal (approve in PayPal)" if self.kind == "paypal" else "Venmo (approve in the Venmo app)")]
+        out = [PaymentMethodRef(f"{self.kind}:checkout", self.kind, "", "",
+                                "PayPal (approve in PayPal)" if self.kind == "paypal" else "Venmo (approve in the Venmo app)",
+                                self.kind)]
         if self.customer:
             data = self._call("GET", "/v3/vault/payment-tokens?" + urllib.parse.urlencode({"customer_id": self.customer}))
             for t in data.get("payment_tokens", []):
                 src = t.get("payment_source") or {}
                 if self.kind in src:
                     who = (src[self.kind] or {}).get("email_address") or t["id"]
-                    out.append(PaymentMethodRef(t["id"], self.kind, f"{self.kind.title()} {who} (saved)"))
+                    out.append(PaymentMethodRef(t["id"], self.kind, "", "", f"{self.kind.title()} {who} (saved)", self.kind))
         return out
 
     def _order(self, it: PaymentIntent) -> dict:
