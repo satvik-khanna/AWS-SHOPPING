@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shopping Agent Mockup</title>
+<!--
+  Basic components mockup, styled after diabrowser.com.
+  Dia uses licensed fonts (Exposure serif, ABC Oracle sans, ABC Favorit Mono);
+  the free stand-ins here are Instrument Serif, Geist and Geist Mono.
+  Palette is Dia's: #FBFAF6 paper, black ink at 100/50/10%, and the
+  #c679c4 → #fa3d1d → #ffb005 → #e1e1fe → #0358f7 accent gradient.
+  Standalone, fake data, open directly in a browser.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FBFAF6; --surface:#FFFFFF; --sunk:#F3F2EE;
+  --ink:#111111; --ink-50:rgba(0,0,0,.5); --ink-35:rgba(0,0,0,.35); --line:rgba(0,0,0,.1); --line-2:rgba(0,0,0,.06);
+  --btn:#111111; --btn-ink:#FFFFFF;
+  --blue:#0358F7; --red:#FA3D1D; --yellow:#FFB005; --pink:#C679C4; --lilac:#E1E1FE;
+  --rainbow:linear-gradient(90deg,#c679c4,#fa3d1d,#ffb005,#e1e1fe,#0358f7,#c679c4);
+  --serif:"Instrument Serif","Exposure VAR",Georgia,serif;
+  --sans:"Geist","ABC Oracle",-apple-system,Helvetica,sans-serif;
+  --mono:"Geist Mono","ABC Favorit Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#1B1B1B; --surface:#232323; --sunk:#2B2B2B;
+  --ink:#F8F8F8; --ink-50:rgba(248,248,248,.55); --ink-35:rgba(248,248,248,.38); --line:rgba(248,248,248,.12); --line-2:rgba(248,248,248,.07);
+  --btn:#F8F8F8; --btn-ink:#111111;
+}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--paper);color:var(--ink);font:400 16px/1.5 var(--sans);-webkit-font-smoothing:antialiased;letter-spacing:-.005em}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.wrap{max-width:1040px;margin:0 auto;padding:0 16px 120px}
+
+/* header */
+.nav{display:flex;align-items:center;justify-content:space-between;padding:22px 0}
+.logo{font-family:var(--serif);font-size:26px;line-height:1;display:flex;align-items:center;gap:10px}
+.logo i{width:18px;height:18px;border-radius:50%;background:conic-gradient(from 200deg,#c679c4,#fa3d1d,#ffb005,#e1e1fe,#0358f7,#c679c4)}
+.nav-links{display:flex;gap:22px;font-size:14px;color:var(--ink-50)}
+
+/* small mono labels, Dia uses these for 01/02/03 */
+.label{font-family:var(--mono);font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-50);display:flex;gap:10px;align-items:center;margin:0 0 14px}
+.label b{font-weight:500;color:var(--ink)}
+
+/* buttons */
+.btn{border:0;border-radius:999px;padding:11px 20px;font-weight:500;font-size:15px;background:transparent;transition:opacity .15s,transform .15s}
+.btn:active{transform:scale(.98)}
+.btn-dark{background:var(--btn);color:var(--btn-ink)}
+.btn-dark:hover{opacity:.85}
+.btn-quiet{color:var(--ink-50)}
+.btn-quiet:hover{color:var(--ink)}
+.btn-line{box-shadow:inset 0 0 0 1px var(--line)}
+.btn-line:hover{box-shadow:inset 0 0 0 1px var(--ink-35)}
+.btn[disabled]{opacity:.35;cursor:not-allowed}
+
+/* 1. hero + prompt */
+.hero{text-align:center;padding:72px 0 36px}
+.hero h1{font-family:var(--serif);font-weight:400;font-size:clamp(44px,7vw,76px);line-height:1;letter-spacing:-.02em;margin:0}
+.hero h1 em{font-style:italic}
+.hero p{margin:16px auto 0;max-width:460px;color:var(--ink-50);font-size:17px}
+
+.prompt-ring{max-width:760px;margin:0 auto;border-radius:28px;padding:1.5px;background:var(--line);transition:background .3s}
+.prompt-ring.working{background:var(--rainbow);background-size:200% 100%;animation:flow 3s linear infinite}
+@keyframes flow{to{background-position:-200% 0}}
+.prompt{background:var(--surface);border-radius:26.5px;padding:18px 18px 14px;box-shadow:0 1px 2px rgba(0,0,0,.03),0 12px 40px rgba(0,0,0,.04)}
+.prompt textarea{display:block;width:100%;min-height:84px;resize:none;border:0;outline:none;background:transparent;color:var(--ink);font:400 19px/1.45 var(--sans);padding:4px 6px}
+.prompt textarea::placeholder{color:var(--ink-35)}
+.prompt-row{display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap}
+.notify{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink-50);margin-right:auto;padding-left:6px;cursor:pointer}
+.switch{appearance:none;width:30px;height:18px;border-radius:999px;background:var(--line);position:relative;cursor:pointer;margin:0;transition:background .2s}
+.switch::after{content:"";position:absolute;left:2px;top:2px;width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.2);transition:transform .2s}
+.switch:checked{background:var(--blue)}
+.switch:checked::after{transform:translateX(12px)}
+.kbd{font-family:var(--mono);font-size:12px;opacity:.6;margin-left:6px}
+.examples{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:18px auto 0;max-width:760px}
+.ex{border:0;background:transparent;box-shadow:inset 0 0 0 1px var(--line);border-radius:999px;padding:7px 14px;font-size:14px;color:var(--ink-50)}
+.ex:hover{color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink-35)}
+
+/* work area */
+.work{display:grid;grid-template-columns:280px minmax(0,1fr);gap:48px;margin-top:88px}
+@media (max-width:820px){.work{grid-template-columns:1fr;gap:40px}}
+.work[hidden]{display:none}
+
+/* 2. plan */
+.plan ol{list-style:none;margin:0;padding:0}
+.plan li{display:grid;grid-template-columns:28px 1fr 18px;align-items:baseline;padding:11px 0;border-top:1px solid var(--line-2);color:var(--ink-35);transition:color .3s}
+.plan li:last-child{border-bottom:1px solid var(--line-2)}
+.plan .num{font-family:var(--mono);font-size:12px}
+.plan .st{justify-self:end;align-self:center;width:8px;height:8px;border-radius:50%}
+.plan li.doing{color:var(--ink)}
+.plan li.doing .st{background:var(--rainbow);background-size:300% 100%;animation:flow 1.5s linear infinite;width:10px;height:10px}
+.plan li.done{color:var(--ink)}
+.plan li.done .st{width:auto;height:auto;background:none;font-size:13px}
+.plan li.done .st::after{content:"✓"}
+.plan-foot{display:flex;justify-content:space-between;align-items:center;margin-top:14px;font-family:var(--mono);font-size:12px;color:var(--ink-50)}
+
+/* 3. live browser */
+.live-h{display:flex;justify-content:space-between}
+.state{display:inline-flex;align-items:center;gap:6px}
+.state::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--red);animation:blink 1.4s infinite}
+.state.off::before{background:var(--ink-35);animation:none}
+@keyframes blink{50%{opacity:.25}}
+.browser{border-radius:20px;overflow:hidden;background:var(--surface);box-shadow:0 0 0 1px var(--line),0 24px 60px -20px rgba(0,0,0,.12);position:relative}
+.chrome{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--sunk)}
+.dots{display:flex;gap:6px}.dots i{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.url{flex:1;text-align:center;font-family:var(--mono);font-size:12px;color:var(--ink-50);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.screen{height:340px;position:relative;overflow:hidden;font-size:13px;background:#fff;color:#111}
+.caption{margin:16px 0 0;font-family:var(--serif);font-size:24px;line-height:1.2;min-height:1.2em}
+.caption em{color:var(--ink-50)}
+.cursor{position:absolute;width:18px;height:18px;left:50%;top:60%;transition:left .8s cubic-bezier(.4,0,.2,1),top .8s cubic-bezier(.4,0,.2,1);pointer-events:none;z-index:5}
+.cursor svg{width:18px;height:18px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.3))}
+.cursor.click::after{content:"";position:absolute;left:-8px;top:-8px;width:20px;height:20px;border-radius:50%;border:2px solid var(--blue);animation:ping .5s ease-out}
+@keyframes ping{from{transform:scale(.3);opacity:1}to{transform:scale(1.4);opacity:0}}
+.hl{box-shadow:0 0 0 2px var(--blue)!important;border-radius:8px}
+
+/* fake third-party pages inside the browser (kept neutral on purpose) */
+.site{padding:16px;font-family:-apple-system,Helvetica,sans-serif}
+.site-top{display:flex;gap:8px;align-items:center;margin-bottom:12px}
+.site-logo{font-weight:800;color:#e11d48}
+.site-search{flex:1;border:1px solid #e5e7eb;border-radius:6px;padding:5px 8px;color:#555;min-height:28px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tile{border:1px solid #eee;border-radius:8px;padding:8px}
+.tile .img,.detail .img{border-radius:6px;background:#f3f4f6;display:grid;place-items:center}
+.tile .img{height:90px;margin-bottom:6px;font-size:28px}
+.tile .p{font-weight:700}
+.tile .n{color:#666;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.detail{display:grid;grid-template-columns:160px 1fr;gap:14px}
+.detail .img{height:160px;font-size:56px}
+.fakebtn{display:inline-block;margin-top:10px;background:#e11d48;color:#fff;border-radius:6px;padding:7px 14px;font-weight:700}
+.jp{color:#888;font-size:12px}
+.tr{background:#fef3c7;border-radius:4px;padding:0 3px}
+.cartrow{display:flex;justify-content:space-between;border:1px solid #eee;border-radius:8px;padding:10px;margin-bottom:8px}
+.paused{margin-top:10px;padding:8px 10px;border-radius:8px;background:#fff7ed;color:#c2410c;font-weight:600}
+
+/* 4. results */
+.results{margin-top:96px}
+.results[hidden]{display:none}
+.results h2{font-family:var(--serif);font-weight:400;font-size:clamp(34px,5vw,48px);line-height:1.05;letter-spacing:-.015em;margin:0 0 6px}
+.results .sub{color:var(--ink-50);margin:0 0 28px}
+.opts{display:grid;gap:0;border-top:1px solid var(--line)}
+.opt{display:grid;grid-template-columns:64px 1fr auto 22px;align-items:center;gap:18px;padding:18px 14px;border-bottom:1px solid var(--line);cursor:pointer;border-radius:0;transition:background .2s}
+.opt:hover{background:var(--line-2)}
+.opt input{appearance:none;width:18px;height:18px;border-radius:50%;box-shadow:inset 0 0 0 1.5px var(--ink-35);margin:0;cursor:pointer}
+.opt input:checked{box-shadow:inset 0 0 0 5px var(--ink)}
+.opt .img{width:64px;height:64px;border-radius:14px;background:var(--sunk);display:grid;place-items:center;font-size:28px}
+.opt .t{font-size:17px;font-weight:500}
+.opt .s{font-size:14px;color:var(--ink-50)}
+.opt .price{text-align:right;font-size:20px;font-weight:500;font-variant-numeric:tabular-nums}
+.opt .price small{display:block;font-family:var(--mono);font-size:12px;color:var(--ink-50);font-weight:400}
+.tag{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.04em;margin-left:8px;padding:2px 8px;border-radius:999px;background:var(--lilac);color:#2a2a7a;vertical-align:2px}
+.approve-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:28px}
+.approve-row p{margin:0 auto 0 0;min-width:240px;flex:1;color:var(--ink-50)}
+.approve-row p b{color:var(--ink);font-weight:500}
+.done-msg{font-family:var(--serif);font-size:26px;line-height:1.2}
+
+/* 5. notification */
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,24px);opacity:0;pointer-events:none;transition:.3s cubic-bezier(.2,.8,.2,1);
+  width:min(440px,calc(100vw - 32px));background:var(--btn);color:var(--btn-ink);border-radius:22px;padding:14px 14px 14px 18px;display:flex;gap:14px;align-items:center;box-shadow:0 20px 50px rgba(0,0,0,.25)}
+.toast.show{transform:translate(-50%,0);opacity:1;pointer-events:auto}
+.toast .ic{width:10px;height:10px;border-radius:50%;background:var(--rainbow);background-size:300% 100%;flex:none}
+.toast b{display:block;font-weight:500}
+.toast span{font-size:14px;opacity:.65}
+.toast button{margin-left:auto;border:0;background:transparent;color:inherit;opacity:.6;font-size:20px;line-height:1;padding:4px 8px}
+
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="nav">
+    <div class="logo">[PLACEHOLDER NAME]</div>
+    <nav class="nav-links"><span>History</span><span>Preferences</span></nav>
+  </header>
+
+  <!-- 1. Prompt box -->
+  <section class="hero">
+    <h1>Find <em>niche</em> items</h1>
+  </section>
+  <div class="prompt-ring" id="ring">
+    <form class="prompt" id="form">
+      <label class="sr" for="ask">What are you looking for?</label>
+      <textarea id="ask" placeholder="Find a used Fujifilm X100V in Japan under $900 landed, shipped to California"></textarea>
+      <div class="prompt-row">
+        <label class="notify"><input type="checkbox" class="switch" id="notifyMe" checked> Notify me when done</label>
+        <button class="btn btn-dark" id="go" type="submit">Start<span class="kbd">↵</span></button>
+      </div>
+    </form>
+  </div>
+
+  <div class="work" id="work" hidden>
+    <!-- 2. Plan -->
+    <section class="plan" aria-labelledby="h-plan">
+      <p class="label" id="h-plan"><b>01</b> Plan</p>
+      <ol id="plan"></ol>
+      <div class="plan-foot"><span id="elapsed">0s</span><button class="btn btn-quiet" id="stop" type="button" style="padding:6px 0">Stop</button></div>
+    </section>
+
+    <!-- 3. Live browser -->
+    <section class="live" aria-labelledby="h-live">
+      <p class="label live-h" id="h-live"><span><b>02</b>&nbsp;&nbsp;Agent's browser</span><span class="state" id="rec">Live</span></p>
+      <div class="browser">
+        <div class="chrome"><span class="dots"><i></i><i></i><i></i></span><span class="url" id="url">about:blank</span><span style="width:42px"></span></div>
+        <div class="screen" id="screen"></div>
+        <div class="cursor" id="cursor"><svg viewBox="0 0 24 24"><path d="M3 2l7 19 2.5-7.5L20 11z" fill="#111" stroke="#fff" stroke-width="1.5"/></svg></div>
+      </div>
+      <p class="caption" id="caption" aria-live="polite"></p>
+    </section>
+  </div>
+
+  <!-- 4. Results -->
+  <section class="results" id="results" hidden aria-labelledby="h-res">
+    <p class="label"><b>03</b> Waiting for your approval</p>
+    <h2 id="h-res">Three good matches.</h2>
+    <p class="sub">Prices are landed: item, fees, shipping and duty, all in.</p>
+    <div class="opts" id="opts"></div>
+    <div class="approve-row" id="approveRow"></div>
+  </section>
+</div>
+
+<!-- 5. Notification (in-page; a system notification is also sent if you switched tabs) -->
+<div class="toast" id="toast" role="status"><span class="ic"></span><div><b id="tt"></b><span id="ts"></span></div><button aria-label="Dismiss" onclick="this.parentElement.classList.remove('show')">×</button></div>
+
+<script>
+(() => {
+  const $ = s => document.querySelector(s);
+  const PICKS = [
+    { id: "a", emoji: "📷", t: "Fujifilm X100V, silver", jp: "富士フイルム X100V シルバー 美品", s: "Mercari · like new · 4,200 shots · box included", yen: 118000, usd: 872.40, best: true },
+    { id: "b", emoji: "📷", t: "Fujifilm X100V, black", jp: "X100V ブラック 付属品あり", s: "Yahoo Auctions · good · light marks on top plate", yen: 109800, usd: 818.15 },
+    { id: "c", emoji: "📷", t: "Fujifilm X100V + hood", jp: "X100V フード付き", s: "Mercari · good · seller ships in 3 days", yen: 121500, usd: 896.90 },
+  ];
+  const PLAN = [
+    "Search Mercari and Yahoo Auctions",
+    "Read and translate the listings",
+    "Work out the landed cost of each",
+    "Pick the best three",
+    "Add the top pick to the Buyee cart",
+    "Wait for your approval",
+  ];
+  const usd = n => "$" + n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  // fake pages shown in the live browser
+  const PAGES = {
+    search: (q) => `<div class="site"><div class="site-top"><span class="site-logo">mercari</span><div class="site-search" id="t-search">${q}</div></div>
+      <div class="grid3">${PICKS.map((p, i) => `<div class="tile" id="t-tile${i}"><div class="img">${p.emoji}</div><div class="p">¥${p.yen.toLocaleString()}</div><div class="n">${p.jp}</div></div>`).join("")}</div></div>`,
+    listing: (tr) => `<div class="site"><div class="site-top"><span class="site-logo">mercari</span><div class="site-search">X100V</div></div>
+      <div class="detail"><div class="img">📷</div><div>
+        <div style="font-weight:700;font-size:15px">${tr ? `<span class="tr">${PICKS[0].t}</span>` : PICKS[0].jp}</div>
+        ${tr ? `<div class="jp">${PICKS[0].jp}</div>` : ""}
+        <div style="font-size:18px;font-weight:800;margin:6px 0">¥118,000</div>
+        <div>${tr ? `<span class="tr">Condition: like new. About 4,200 shots. Box and strap included.</span>` : "商品の状態：未使用に近い。ショット数約4200。元箱・ストラップ付き。"}</div>
+        <span class="fakebtn" id="t-buy">購入手続きへ</span></div></div></div>`,
+    cost: () => `<div class="site"><div style="font-weight:700;margin-bottom:8px">Landed cost</div>
+      ${[["Item ¥118,000", "$786.67"], ["Buyee fee", "$2.00"], ["Japan shipping", "$8.00"], ["EMS to California", "$48.50"], ["US duty (cameras 0%)", "$0.00"], ["Card FX fee", "$27.23"]].map(([a, b]) => `<div class="cartrow"><span>${a}</span><b>${b}</b></div>`).join("")}
+      <div class="cartrow" style="border-color:#111"><span>Total</span><b>$872.40</b></div></div>`,
+    cart: () => `<div class="site"><div class="site-top"><span class="site-logo" style="color:#ea580c">buyee</span><div class="site-search">Cart</div></div>
+      <div class="cartrow" id="t-cart"><span>📷 富士フイルム X100V シルバー 美品</span><b>¥118,000</b></div>
+      <div class="cartrow"><span>Subtotal (1 item)</span><b>¥118,000</b></div>
+      <div class="paused">⏸ Stopped before payment. Waiting for your approval.</div></div>`,
+  };
+
+  let timers = [], startAt = 0, clock, stopped = false;
+  const later = (ms, fn) => timers.push(setTimeout(() => !stopped && fn(), ms));
+
+  function setPlan(doing) {
+    $("#plan").innerHTML = PLAN.map((t, i) => {
+      const c = i < doing ? "done" : i === doing ? "doing" : "";
+      return `<li class="${c}"><span class="num">${String(i + 1).padStart(2, "0")}</span><span>${t}</span><span class="st" aria-label="${c || "queued"}"></span></li>`;
+    }).join("");
+  }
+  function show(url, html, caption) {
+    $("#url").textContent = url; $("#screen").innerHTML = html; $("#caption").innerHTML = caption;
+  }
+  function pointAt(id, click) {
+    const el = document.getElementById(id), cur = $("#cursor");
+    if (!el) return;
+    const a = el.getBoundingClientRect(), b = cur.parentElement.getBoundingClientRect();
+    cur.style.left = (a.left - b.left + a.width / 2) + "px";
+    cur.style.top = (a.top - b.top + a.height / 2) + "px";
+    document.querySelectorAll(".hl").forEach(e => e.classList.remove("hl"));
+    el.classList.add("hl");
+    if (click) setTimeout(() => { cur.classList.remove("click"); void cur.offsetWidth; cur.classList.add("click"); }, 800);
+  }
+  const working = on => $("#ring").classList.toggle("working", on);
+
+  function start() {
+    timers.forEach(clearTimeout); timers = []; stopped = false;
+    $("#work").hidden = false; $("#results").hidden = true; $("#toast").classList.remove("show");
+    $("#rec").className = "state"; $("#rec").textContent = "Live"; $("#stop").disabled = false;
+    working(true);
+    startAt = Date.now(); clearInterval(clock);
+    clock = setInterval(() => $("#elapsed").textContent = Math.round((Date.now() - startAt) / 1000) + "s", 500);
+    setTimeout(() => $("#work").scrollIntoView({ behavior: "smooth", block: "start" }), 150);
+
+    setPlan(0);
+    show("jp.mercari.com/search?keyword=X100V", PAGES.search(""), "Searching Mercari for <em>X100V…</em>");
+    later(600, () => { $("#t-search").textContent = "X100V"; pointAt("t-search"); });
+    later(2200, () => { setPlan(1); pointAt("t-tile0", true); $("#caption").innerHTML = "Opening the top listing<em>…</em>"; });
+    later(3400, () => { show("jp.mercari.com/item/m8231…", PAGES.listing(false), "Reading the listing <em>in Japanese…</em>"); pointAt("t-buy"); });
+    later(5000, () => { show("jp.mercari.com/item/m8231…", PAGES.listing(true), "Translated the title and condition."); });
+    later(6600, () => { setPlan(2); show("senso · landed cost", PAGES.cost(), "Working out the <em>real</em> cost of each…"); });
+    later(8400, () => { setPlan(3); $("#caption").innerHTML = "Ranking three matches by condition and price<em>…</em>"; });
+    later(9400, () => { setPlan(4); show("buyee.jp/cart", PAGES.cart(), "Adding the silver X100V to your cart<em>…</em>"); pointAt("t-cart", true); });
+    later(11000, finish);
+  }
+
+  function finish() {
+    setPlan(5); clearInterval(clock); working(false);
+    $("#rec").className = "state off"; $("#rec").textContent = "Paused";
+    $("#caption").innerHTML = "Cart is ready. <em>Nothing has been paid.</em>";
+    renderResults("a");
+    $("#results").hidden = false;
+    notify("Your shortlist is ready", "Three matches. The X100V is waiting in your cart.");
+  }
+
+  function renderResults(sel) {
+    $("#opts").innerHTML = PICKS.map(p => `
+      <label class="opt">
+        <span class="img">${p.emoji}</span>
+        <span><span class="t">${p.t}</span>${p.best ? '<span class="tag">Best match</span>' : ""}<br><span class="s">${p.s}</span></span>
+        <span class="price">${usd(p.usd)}<small>¥${p.yen.toLocaleString()}</small></span>
+        <input type="radio" name="pick" value="${p.id}" ${p.id === sel ? "checked" : ""} aria-label="Choose ${p.t}"></label>`).join("");
+    const p = PICKS.find(x => x.id === sel);
+    $("#approveRow").innerHTML = `
+      <p>Buy <b>${p.t}</b> through Buyee. Your card is charged <b>${usd(p.usd)}</b>.</p>
+      <button class="btn btn-quiet" id="skip" type="button">Skip</button>
+      <button class="btn btn-dark" id="approve" type="button">Approve ${usd(p.usd)}</button>`;
+  }
+
+  function notify(title, body) {
+    if (!$("#notifyMe").checked) return;
+    $("#tt").textContent = title; $("#ts").textContent = body; $("#toast").classList.add("show");
+    clearTimeout(notify.h); notify.h = setTimeout(() => $("#toast").classList.remove("show"), 6000);
+    if (document.hidden && "Notification" in window && Notification.permission === "granted") new Notification(title, { body });
+    if (document.hidden) { const t = document.title; document.title = "✓ " + title; addEventListener("focus", () => document.title = t, { once: true }); }
+  }
+
+  // events
+  $("#form").onsubmit = e => { e.preventDefault(); if (!$("#ask").value.trim()) $("#ask").value = $("#ask").placeholder; start(); };
+  $("#ask").onkeydown = e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); $("#form").requestSubmit(); } };
+  document.querySelectorAll(".ex").forEach(b => b.onclick = () => { $("#ask").value = b.textContent; $("#ask").focus(); });
+  $("#notifyMe").onchange = e => { if (e.target.checked && "Notification" in window && Notification.permission === "default") Notification.requestPermission(); };
+  $("#stop").onclick = () => { stopped = true; timers.forEach(clearTimeout); clearInterval(clock); working(false);
+    $("#rec").className = "state off"; $("#rec").textContent = "Stopped"; $("#caption").innerHTML = "Stopped. <em>Nothing was paid.</em>"; $("#stop").disabled = true; };
+  $("#opts").onchange = e => renderResults(e.target.value);
+  $("#approveRow").onclick = e => {
+    if (e.target.id === "approve") { const p = PICKS.find(x => x.id === document.querySelector("[name=pick]:checked").value);
+      $("#approveRow").innerHTML = `<p class="done-msg">Ordered. <em style="color:var(--ink-50)">${p.t}, ${usd(p.usd)}. Buyee will email you when it ships.</em></p>`;
+      notify("Order placed", `${p.t}, ${usd(p.usd)}`); setPlan(6); }
+    if (e.target.id === "skip") $("#approveRow").innerHTML = `<p class="done-msg">Skipped. <em style="color:var(--ink-50)">Cart emptied, nothing was paid.</em></p>`;
+  };
+})();
+</script>
+</body>
+</html>
