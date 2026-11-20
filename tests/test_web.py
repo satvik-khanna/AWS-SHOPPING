@@ -137,7 +137,7 @@ class Api(WebCase):
         self.assertEqual(self.post("/api/approve", {"token": b["cart"]["approval_token"]})[1]["cart"]["status"], "placed")
 
     def test_no_candidate_means_no_cart(self):
-        status, out = self.post("/api/run", dict(REQ, budget=50))
+        status, out = self.post("/api/run", dict(REQ, budget=1))
         self.assertEqual(status, 200)
         self.assertEqual((out["picks"], out["cart"]), ([], None))
 
