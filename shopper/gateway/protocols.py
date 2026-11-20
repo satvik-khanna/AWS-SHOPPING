@@ -616,34 +616,94 @@ class UnifiedCommerceAdapter:
             },
         }
         cards = "\n".join(
-            f"<li><strong>{html.escape(p.listing.title_en)}</strong> "
-            f"({html.escape(p.listing.condition)}) — <b>${p.cost.total_usd:.2f} landed</b> "
-            f"<code>{html.escape(p.listing.id)}</code></li>"
+            f'<li class="item">'
+            f'<div class="item-main">'
+            f'<div class="item-title">{html.escape(p.listing.title_en)}</div>'
+            f'<div class="item-meta">'
+            f'<span class="chip">{html.escape(p.listing.condition)}</span>'
+            f'<code>{html.escape(p.listing.id)}</code>'
+            f'</div>'
+            f'</div>'
+            f'<div class="item-price">${p.cost.total_usd:.2f}<span>landed</span></div>'
+            f'</li>'
             for p in picks
-        ) or "<li>No listings matched.</li>"
+        ) or '<li class="empty">No listings matched.</li>'
 
         return f"""<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{html.escape(store.name)} — Agentic Link-in-Bio</title>
   <link rel="ucp-manifest" href="{store_url}/.well-known/ucp">
   <link rel="mcp-server" href="{store_url}/mcp">
   <link rel="acp-checkout" href="{store_url}/acp/checkout_sessions">
   <script type="application/ld+json">{json.dumps(json_ld, ensure_ascii=False)}</script>
+  <style>
+    :root {{
+      --bg: #f6f7f8; --s1: #ffffff; --s2: #f3f5f7; --bd: #e2e6ea; --bd-s: #b9c1cb;
+      --t1: #202731; --t2: #515d6b; --t3: #6c7682; --ok: #17633a; --ok-bg: #e6f4ec;
+      --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", sans-serif;
+      --mono: ui-monospace, "SF Mono", Menlo, monospace;
+    }}
+    @media (prefers-color-scheme: dark) {{
+      :root {{
+        --bg: #11151b; --s1: #191e25; --s2: #232a33; --bd: #39424d; --bd-s: #5d6a78;
+        --t1: #f1f5f9; --t2: #c1cbd5; --t3: #a2afbc; --ok: #7ddaa5; --ok-bg: #173024;
+      }}
+    }}
+    * {{ box-sizing: border-box; }}
+    body {{ margin: 0; background: var(--bg); color: var(--t1); font: 14px/20px var(--sans); -webkit-font-smoothing: antialiased; }}
+    .wrap {{ max-width: 760px; margin: 0 auto; padding: 32px 20px 48px; }}
+    .head {{ display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding-bottom: 20px; border-bottom: 1px solid var(--bd); }}
+    h1 {{ margin: 0; font-size: 20px; line-height: 28px; font-weight: 600; letter-spacing: -0.01em; }}
+    .bio {{ margin: 4px 0 8px; color: var(--t2); }}
+    .src {{ font-size: 12px; color: var(--t3); }}
+    .src a {{ color: var(--t2); text-underline-offset: 2px; }}
+    .badge {{ display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 10px; border-radius: 999px; background: var(--ok-bg); color: var(--ok); font-size: 12px; font-weight: 500; white-space: nowrap; }}
+    section {{ margin-top: 24px; }}
+    h2 {{ margin: 0 0 10px; font-size: 13px; font-weight: 600; color: var(--t2); display: flex; align-items: center; gap: 8px; }}
+    .panel {{ list-style: none; margin: 0; padding: 0; background: var(--s1); border: 1px solid var(--bd); border-radius: 8px; overflow: hidden; }}
+    .proto {{ display: grid; grid-template-columns: 72px 1fr; gap: 12px; align-items: center; padding: 10px 14px; border-bottom: 1px solid var(--bd); }}
+    .proto:last-child {{ border-bottom: 0; }}
+    .proto-tag {{ font: 600 12px/1 var(--mono); padding: 4px 8px; border-radius: 4px; background: var(--s2); color: var(--t1); text-align: center; border: 1px solid var(--bd); }}
+    .proto code {{ font: 12px/18px var(--mono); color: var(--t2); overflow-wrap: anywhere; }}
+    .item {{ display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 14px; border-bottom: 1px solid var(--bd); }}
+    .item:last-child {{ border-bottom: 0; }}
+    .item-title {{ font-weight: 600; font-size: 14px; line-height: 20px; }}
+    .item-meta {{ display: flex; align-items: center; gap: 8px; margin-top: 4px; }}
+    .chip {{ font-size: 12px; padding: 1px 8px; border-radius: 999px; background: var(--s2); border: 1px solid var(--bd); color: var(--t2); }}
+    .item-meta code {{ font: 12px/16px var(--mono); color: var(--t3); }}
+    .item-price {{ text-align: right; font: 600 16px/20px var(--sans); font-variant-numeric: tabular-nums; white-space: nowrap; }}
+    .item-price span {{ display: block; font-size: 12px; font-weight: 400; color: var(--t3); }}
+    .empty {{ padding: 20px; text-align: center; color: var(--t3); }}
+  </style>
 </head>
 <body>
-  <h1>{html.escape(store.name)}</h1>
-  <p>{html.escape(store.bio)}</p>
-  <p>Source: <a href="{html.escape(store.source_url)}">{html.escape(store.source_url)}</a></p>
-  <h2>Agent Protocol Endpoints (1 URL = Human + MCP + UCP + ACP)</h2>
-  <ul>
-    <li>MCP (Claude / Cursor / Agents): <code>{store_url}/mcp</code></li>
-    <li>UCP (Google / Shopify): <code>{store_url}/.well-known/ucp</code></li>
-    <li>ACP (OpenAI / Stripe): <code>{store_url}/acp/checkout_sessions</code></li>
-  </ul>
-  <h2>Catalog (Landed Cost Verified)</h2>
-  <ul>{cards}</ul>
+  <div class="wrap">
+    <header class="head">
+      <div>
+        <h1>{html.escape(store.name)}</h1>
+        <p class="bio">{html.escape(store.bio)}</p>
+        <div class="src">Source: <a href="{html.escape(store.source_url)}">{html.escape(store.source_url)}</a></div>
+      </div>
+      <span class="badge">MCP · UCP · ACP</span>
+    </header>
+
+    <section>
+      <h2>Agent Protocol Endpoints</h2>
+      <ul class="panel">
+        <li class="proto"><span class="proto-tag">MCP</span><code>{store_url}/mcp</code></li>
+        <li class="proto"><span class="proto-tag">UCP</span><code>{store_url}/.well-known/ucp</code></li>
+        <li class="proto"><span class="proto-tag">ACP</span><code>{store_url}/acp/checkout_sessions</code></li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Catalog (Landed Cost Verified)</h2>
+      <ul class="panel">{cards}</ul>
+    </section>
+  </div>
 </body>
 </html>
 """

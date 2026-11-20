@@ -22,7 +22,10 @@
     "globe": ["M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM5.78 8.75a9.64 9.64 0 0 0 1.363 4.177c.255.426.542.832.857 1.215.245-.296.551-.705.857-1.215A9.64 9.64 0 0 0 10.22 8.75Zm4.44-1.5a9.64 9.64 0 0 0-1.363-4.177c-.307-.51-.612-.919-.857-1.215a9.927 9.927 0 0 0-.857 1.215A9.64 9.64 0 0 0 5.78 7.25Zm-5.944 1.5H1.543a6.507 6.507 0 0 0 4.666 5.5c-.123-.181-.24-.365-.352-.552-.715-1.192-1.437-2.874-1.581-4.948Zm-2.733-1.5h2.733c.144-2.074.866-3.756 1.58-4.948.12-.197.237-.381.353-.552a6.507 6.507 0 0 0-4.666 5.5Zm10.181 1.5c-.144 2.074-.866 3.756-1.58 4.948-.12.197-.237.381-.353.552a6.507 6.507 0 0 0 4.666-5.5Zm2.733-1.5a6.507 6.507 0 0 0-4.666-5.5c.123.181.24.365.353.552.714 1.192 1.436 2.874 1.58 4.948Z"],
     "inbox": ["M2.8 2.06A1.75 1.75 0 0 1 4.41 1h7.18c.7 0 1.333.417 1.61 1.06l2.74 6.395c.04.093.06.194.06.295v4.5A1.75 1.75 0 0 1 14.25 15H1.75A1.75 1.75 0 0 1 0 13.25v-4.5c0-.101.02-.202.06-.295Zm1.61.44a.25.25 0 0 0-.23.152L1.887 8H4.75a.75.75 0 0 1 .6.3L6.625 10h2.75l1.275-1.7a.75.75 0 0 1 .6-.3h2.863L11.82 2.652a.25.25 0 0 0-.23-.152Zm10.09 7h-2.875l-1.275 1.7a.75.75 0 0 1-.6.3h-3.5a.75.75 0 0 1-.6-.3L4.375 9.5H1.5v3.75c0 .138.112.25.25.25h12.5a.25.25 0 0 0 .25-.25Z"],
     "sync": ["M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z"],
-    "package": ["m8.878.392 5.25 3.045c.54.314.872.89.872 1.514v6.098a1.75 1.75 0 0 1-.872 1.514l-5.25 3.045a1.75 1.75 0 0 1-1.756 0l-5.25-3.045A1.75 1.75 0 0 1 1 11.049V4.951c0-.624.332-1.201.872-1.514L7.122.392a1.75 1.75 0 0 1 1.756 0ZM7.875 1.69l-4.63 2.685L8 7.133l4.755-2.758-4.63-2.685a.248.248 0 0 0-.25 0ZM2.5 5.677v5.372c0 .09.047.171.125.216l4.625 2.683V8.432Zm6.25 8.271 4.625-2.683a.25.25 0 0 0 .125-.216V5.677L8.75 8.432Z"]
+    "package": ["m8.878.392 5.25 3.045c.54.314.872.89.872 1.514v6.098a1.75 1.75 0 0 1-.872 1.514l-5.25 3.045a1.75 1.75 0 0 1-1.756 0l-5.25-3.045A1.75 1.75 0 0 1 1 11.049V4.951c0-.624.332-1.201.872-1.514L7.122.392a1.75 1.75 0 0 1 1.756 0ZM7.875 1.69l-4.63 2.685L8 7.133l4.755-2.758-4.63-2.685a.248.248 0 0 0-.25 0ZM2.5 5.677v5.372c0 .09.047.171.125.216l4.625 2.683V8.432Zm6.25 8.271 4.625-2.683a.25.25 0 0 0 .125-.216V5.677L8.75 8.432Z"],
+    "sun": ["M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm0-1.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Zm5.657-8.157a.75.75 0 0 1 0 1.061l-1.061 1.06a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734l1.06-1.06a.75.75 0 0 1 1.06 0Zm-9.193 9.193a.75.75 0 0 1 0 1.06l-1.06 1.061a.75.75 0 1 1-1.061-1.06l1.06-1.061a.75.75 0 0 1 1.061 0ZM8 0a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0V.75A.75.75 0 0 1 8 0ZM3 8a.75.75 0 0 1-.75.75H.75a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 3 8Zm13 0a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 16 8Zm-8 5a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 8 13Zm3.536-1.464a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 0 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061ZM2.343 2.343a.75.75 0 0 1 1.061 0l1.06 1.061a.751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018l-1.06-1.06a.75.75 0 0 1 0-1.06Z"],
+    "moon": ["M9.598 1.591a.749.749 0 0 1 .785-.175 7.001 7.001 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Zm1.616 1.945a7 7 0 0 1-7.678 7.678 5.499 5.499 0 1 0 7.678-7.678Z"],
+    "copy": ["M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z", "M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"]
   };
 
   function icon(name, size) {
@@ -258,7 +261,13 @@
       chip(l.seller),
       chip(l.ships_abroad ? "Ships abroad" : "Via proxy", l.ships_abroad ? "c-green" : "c-amber")
     ];
-    Object.keys(l.fields || {}).forEach(function (k) { chips.push(chip(k.replace(/_/g, " ") + ": " + l.fields[k])); });
+    var buyeeUrl = null;
+    Object.keys(l.fields || {}).forEach(function (k) {
+      var val = l.fields[k];
+      if (k === "buyee_url") { buyeeUrl = safeUrl(String(val || "")); return; }
+      if (/^https?:\/\//i.test(String(val || ""))) return;
+      chips.push(chip(k.replace(/_/g, " ") + ": " + val));
+    });
 
     var img = null;
     if (photo) {
@@ -289,8 +298,11 @@
       h("div", { class: "fx" }, "FX " + cost.fx_jpy_per_usd + " JPY/USD"),
       h("p", { class: "why" }, h("b", null, "Rank " + Number(pick.score).toFixed(2)), pick.reason),
       h("div", { class: "pick-actions" },
-        url ? h("a", { href: url, target: "_blank", rel: "noopener noreferrer", class: "ext-link" },
-          "Open listing", icon("link-external", 14)) : h("span", { class: "step-sub" }, "No listing link"),
+        h("div", { class: "pick-links" },
+          url ? h("a", { href: url, target: "_blank", rel: "noopener noreferrer", class: "ext-link" },
+            "Open listing", icon("link-external", 14)) : h("span", { class: "step-sub" }, "No listing link"),
+          buyeeUrl ? h("a", { href: buyeeUrl, target: "_blank", rel: "noopener noreferrer", class: "ext-link" },
+            "Buyee", icon("link-external", 14)) : null),
         h("button", { type: "button", class: "btn btn-small btn-danger", onclick: function () { rejectSeller(l.seller); } },
           icon("blocked", 14), "Reject seller")));
   }
@@ -354,7 +366,18 @@
     }
 
     if (cart.status === "awaiting_approval") {
-      item.push(h("div", { class: "tok" }, "token " + cart.approval_token));
+      var copyBtn = h("button", {
+        type: "button", class: "btn btn-ghost btn-copy", "aria-label": "Copy approval token",
+        onclick: function () {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(cart.approval_token).then(function () {
+              clear(copyBtn); append(copyBtn, [icon("check", 12), "Copied"]);
+              setTimeout(function () { clear(copyBtn); append(copyBtn, [icon("copy", 12), "Copy"]); }, 1400);
+            }).catch(function () {});
+          }
+        }
+      }, icon("copy", 12), "Copy");
+      item.push(h("div", { class: "tok-row" }, h("span", { class: "tok" }, "token " + cart.approval_token), copyBtn));
       gateShell("awaiting", "Awaiting approval", "Cart filled. Nothing paid.", item, total, [
         h("button", { type: "button", class: "btn btn-primary", id: "approve", onclick: function (e) { approve(e.currentTarget); } },
           icon("check", 14), "Approve and place order"),
@@ -397,6 +420,44 @@
     $("foot").textContent = Object.keys(w).map(function (k) { return k + "=" + w[k]; }).join(" · ") +
       (meta.live ? "" : " · offline dry run");
   }
+
+  /* ---------- theme & keyboard ---------- */
+
+  function currentTheme() {
+    var saved = null;
+    try { saved = localStorage.getItem("jsa-theme"); } catch (e) {}
+    if (saved === "light" || saved === "dark") return saved;
+    return (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
+  }
+  function applyTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    var btn = $("theme-toggle");
+    if (btn) {
+      clear(btn);
+      btn.appendChild(icon(theme === "dark" ? "sun" : "moon", 16));
+      btn.setAttribute("title", theme === "dark" ? "Switch to light theme" : "Switch to dark theme");
+    }
+  }
+  applyTheme(currentTheme());
+  var themeBtn = $("theme-toggle");
+  if (themeBtn) {
+    themeBtn.addEventListener("click", function () {
+      var next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+      try { localStorage.setItem("jsa-theme", next); } catch (e) {}
+      applyTheme(next);
+    });
+  }
+
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "/" && !e.metaKey && !e.ctrlKey && !e.altKey) {
+      var tag = (document.activeElement && document.activeElement.tagName) || "";
+      if (tag !== "INPUT" && tag !== "TEXTAREA" && tag !== "SELECT") {
+        e.preventDefault();
+        $("query").focus();
+        $("query").select();
+      }
+    }
+  });
 
   /* ---------- boot ---------- */
 
