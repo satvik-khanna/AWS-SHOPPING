@@ -75,6 +75,17 @@ class Engine(unittest.TestCase):
         self.assertAlmostEqual(duty("watch"), round(0.40 + item * 0.085, 2), places=2)
         self.assertAlmostEqual(duty("something_new"), round(item * 0.05, 2), places=2)
 
+    def test_japan_floor(self):
+        def total_duty(cat):
+            c = self.e.landed_cost(L(category=cat, price_jpy=100000), US)
+            return round(sum(l.amount_usd for l in c.lines if "duty" in l.label or "floor" in l.label), 2)
+        item = round(100000 / self.e.rules["fx_jpy_per_usd"]["value"], 2)
+        self.assertAlmostEqual(total_duty("camera"), round(item * 0.125, 2), places=2)   # 0% MFN -> 12.5%
+        self.assertAlmostEqual(total_duty("apparel"), round(item * 0.165, 2), places=2)  # 16.5% >= floor
+        self.assertAlmostEqual(total_duty("watch"), round(0.40 + item * 0.125, 2), places=1)
+        self.assertEqual(total_duty("vinyl"), 0.0)                                       # informational materials
+        self.assertEqual(total_duty("book"), 0.0)
+
     def test_de_minimis_suspended_small_items_pay(self):
         c = self.e.landed_cost(L(category="apparel", price_jpy=3000, weight_kg=0.3), US)
         self.assertGreater(sum(l.amount_usd for l in c.lines if "duty" in l.label), 0)
@@ -114,7 +125,7 @@ class Engine(unittest.TestCase):
         fx = r["fx_jpy_per_usd"]["value"]
         u = lambda j: round(j / fx, 2)  # noqa
         item = u(118000)
-        expect = item + u(500) + u(500) + u(0) + u(750) + u(5300) + 0.0 + round(item * 0.10, 2)
+        expect = item + u(500) + u(500) + u(0) + u(750) + u(5300) + 0.0 + round(item * 0.125, 2)
         self.assertAlmostEqual(self.e.landed_cost(L(), US).total_usd, round(expect, 2), places=2)
 
 
