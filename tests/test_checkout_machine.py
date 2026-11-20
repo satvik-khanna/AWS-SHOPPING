@@ -110,3 +110,20 @@ class Machine(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class LiveSwitch(unittest.TestCase):
+    def test_offline_unless_live_and_session(self):
+        import os
+        from unittest import mock
+        from shopper.checkout.drivers import default_driver
+        with mock.patch.dict(os.environ, {"SHOPPER_LIVE": "0"}):
+            self.assertEqual(default_driver().name, "sim-buyee")
+        with mock.patch.dict(os.environ, {"SHOPPER_LIVE": "1", "BUYEE_STORAGE_STATE": "/nonexistent.json"}):
+            self.assertEqual(default_driver().name, "sim-buyee")
+
+    def test_buyee_urls(self):
+        from shopper.checkout.drivers import buyee_url
+        self.assertEqual(buyee_url({"id": "mercari:m1", "source": "mercari"}), "https://buyee.jp/mercari/item/m1")
+        self.assertTrue(buyee_url({"id": "other:../x", "source": "other", "url": "https://a/b"}).startswith(
+            "https://buyee.jp/item/search/url?"))

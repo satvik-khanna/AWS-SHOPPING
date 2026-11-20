@@ -12,7 +12,15 @@ from .store import FileSessionStore, InMemorySessionStore
 
 
 class DryRunCheckout(BuyeeCheckout):
-    pass
+    """Default wiring: sessions/tokens on disk (so `python3 -m shopper approve <token>` works
+    in a later process) and approve/reject feeding the JSON memory."""
+
+    def __init__(self, **kw):
+        from ..config import DATA_DIR
+        from ..memory import build_memory
+        kw.setdefault("store", FileSessionStore(DATA_DIR / "checkout"))
+        kw.setdefault("memory", build_memory())
+        super().__init__(**kw)
 
 
 __all__ = ["BuyeeCheckout", "DryRunCheckout", "SimBuyeeDriver", "LiveBuyeeDriver",
