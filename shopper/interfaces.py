@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from typing import Protocol
 
-from .models import (CartResult, LandedCost, Listing, PaymentMethodRef, Preferences,
+from .models import (CartResult, LandedCost, Listing, PaymentIntent, PaymentMethodRef, Preferences,
                      RankedPick, ShippingAddress, ShoppingRequest, VaultRecord)
 
 
@@ -52,3 +52,22 @@ class Checkout(Protocol):               # owner: shopper/checkout
 
     def reject(self, approval_token: str, reason: str = "", reject_seller: bool = False) -> CartResult: ...
     """Reject a pending approval token and optionally block the seller."""
+
+
+class PaymentProvider(Protocol):        # owner: shopper/payments
+    """card (Stripe PaymentMethod token) | stripe | paypal (Orders v2) | venmo (via PayPal).
+    Offline fake by default; live sandbox/test keys only with SHOPPER_LIVE=1, live-mode keys refused."""
+
+    def methods(self, user_id: str) -> list[PaymentMethodRef]: ...
+    """Saved method references for the user (token + brand + last4 + exp; never a card number)."""
+
+    def create_intent(self, user_id: str, amount_usd: float, method_ref: str, idempotency_key: str, *,
+                      cart_session_id: str) -> PaymentIntent: ...
+    """Same idempotency_key -> same intent, never a second one. Nothing is charged here."""
+
+    def confirm(self, intent: PaymentIntent, grant: object) -> PaymentIntent: ...
+    """Charges only with the checkout ApprovalGrant minted by the user's swipe for intent.cart_session_id,
+    and only if intent.amount_usd equals that approved cart's landed total. Otherwise status='blocked'.
+    A second confirm (double swipe) returns the first result without charging again."""
+
+    def cancel(self, intent: PaymentIntent) -> PaymentIntent: ...
