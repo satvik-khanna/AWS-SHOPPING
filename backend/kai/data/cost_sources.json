@@ -1,0 +1,89 @@
+{
+  "_note": "Source documents behind KAI's landed-cost estimate. Every URL below was fetched or surfaced by web search on the retrievedAt date while building KAI; the 'text' field is KAI's summary plus short quoted excerpts. Trade rules change often: re-verify before relying on any number.",
+  "parameters": {
+    "dutyRateJapanOrigin": 0.125,
+    "dutySourceIds": ["zonos_us_tariff_tracker", "cbp_ecommerce_faq", "fedreg_2026_21600", "japanpost_us_conditions"],
+    "clearanceFeeFixedUsd": 1.69,
+    "clearanceFeeShareOfDuty": 0.10,
+    "clearanceSourceIds": ["japonica_ddp_notice", "japanpost_us_conditions"],
+    "emsZone4RatesJpy": [[500, 3900], [600, 4180], [700, 4460], [800, 4740], [900, 5020], [1000, 5300], [1250, 5990], [1500, 6600], [1750, 7290], [2000, 7900], [2500, 9100], [3000, 10300]],
+    "shippingSourceIds": ["japanpost_ems_rates"],
+    "useTaxSourceIds": ["cdtfa_use_tax"],
+    "assumedPackedWeightGramsByCategory": {"keycaps": 300, "figures": 1200, "cameras": 1500, "handmade": 500, "stationery": 400, "fashion": 800, "default": 1000},
+    "assumedProxyServiceFeeJpy": 500,
+    "assumedDomesticShippingJpy": 700,
+    "fxBufferShare": 0.03
+  },
+  "sources": [
+    {
+      "id": "japanpost_us_conditions",
+      "title": "Japan Post: Conditions for Mailing to the United States (effective October 23, 2026)",
+      "publisher": "Japan Post Co., Ltd.",
+      "url": "https://www.post.japanpost.jp/service/send/oversea/information/2026/1023_01_en.html",
+      "retrievedAt": "2026-11-20",
+      "authority": "carrier (primary)",
+      "excerpt": "As of October 15, 2026, Japan Post resumed acceptance of mail items destined for the United States at virtually all post offices... All other mail items (other than gifts between private individuals) up to USD 2,500: advance electronic data registration (advance payment of duties and taxes) required; dutiable.",
+      "text": "Japan Post notice on mail to the United States, effective October 23, 2026.\nAs of October 15, 2026, Japan Post resumed acceptance of mail items destined for the United States at virtually all post offices following the expansion of the scope of mail items subject to advance electronic data submission by U.S. Customs and Border Protection (CBP).\nFor mail items other than letters, postcards, printed matter and documents: items that are not gifts between private individuals, valued up to USD 2,500, require advance electronic data registration with advance payment of duties and taxes and are dutiable. They are labeled DDP with a 13-digit advance declaration number.\nItems over USD 2,500 do not use advance registration; duties and taxes are collected at destination and paid by the importer.\nThe final determination of whether duties and taxes are applicable is made by U.S. Customs."
+    },
+    {
+      "id": "fedreg_2026_21600",
+      "title": "Federal Register 2026-21600: Indefinite Suspension of the De Minimis Exemption for Mail Shipments and New Postal Informal Entry Process; Delayed Compliance Extension",
+      "publisher": "U.S. Customs and Border Protection (Federal Register, October 22, 2026)",
+      "url": "https://www.federalregister.gov/documents/2026/10/22/2026-21600/indefinite-suspension-of-the-de-minimis-exemption-for-mail-shipments-and-new-postal-informal-entry",
+      "retrievedAt": "2026-11-20",
+      "authority": "government (primary)",
+      "excerpt": "On June 24, 2026, CBP published an interim final rule implementing an indefinite suspension of the de minimis administrative exemption under 19 U.S.C. 1321(a)(2)(C) for merchandise arriving through the international postal network... and established a new informal entry process for merchandise valued at $2,500 or less.",
+      "text": "Federal Register document 2026-21600 (October 22, 2026).\nOn June 24, 2026, U.S. Customs and Border Protection published an interim final rule implementing an indefinite suspension of the de minimis administrative exemption under 19 U.S.C. 1321(a)(2)(C) for merchandise arriving through the international postal network.\nThe interim final rule established a new informal entry process for merchandise valued at $2,500 or less entering the United States through the mail, including shipments that would previously have been eligible for the de minimis exemption.\nThe suspension took effect on June 24, 2026; the remainder of the rule was effective July 24, 2026.\nConsequence for KAI: low-value parcels mailed from Japan are no longer duty-free; there is no $800 exemption to rely on."
+    },
+    {
+      "id": "cbp_ecommerce_faq",
+      "title": "CBP E-Commerce Frequently Asked Questions",
+      "publisher": "U.S. Customs and Border Protection",
+      "url": "https://www.cbp.gov/trade/basic-import-export/e-commerce/faqs",
+      "retrievedAt": "2026-11-20",
+      "authority": "government (primary)",
+      "excerpt": "All applicable duties, taxes, fees, exactions, and charges must be paid on these shipments, based on HTSUS classification, country of origin, dutiable value, and other relevant criteria.",
+      "text": "CBP e-commerce FAQ on the suspension of the de minimis exemption.\nThe suspension applies to merchandise valued at $800 or less arriving via all modes, including the international postal network, unless specifically excepted.\nAll applicable duties, taxes, fees, exactions, and charges must be paid on these shipments, based on HTSUS classification, country of origin, dutiable value, and other relevant criteria.\nDuty rates for mail shipments are based on the HTSUS classification and the rates in effect at the time the entry is made.\nInformal entry is generally allowed for shipments valued at $2,500 or less, subject to eligibility.\nConsequence for KAI: the true duty rate depends on the product's tariff classification, which KAI does not determine. KAI applies a single conservative rate instead."
+    },
+    {
+      "id": "zonos_us_tariff_tracker",
+      "title": "Zonos Docs: US Import Tariff Tracker - Current Rates & Status",
+      "publisher": "Zonos (third-party customs software vendor)",
+      "url": "https://zonos.com/docs/guides/us-tariff-changes",
+      "retrievedAt": "2026-11-20",
+      "authority": "third party (secondary)",
+      "excerpt": "A capped, product-specific rate for the EU, Taiwan, Japan, South Korea, and Switzerland - the Section 301 tariff is reduced by the product's MFN rate, capping the total at 10% (EU, Taiwan) or 12.5% (Japan, South Korea, Switzerland), and is 0% where the MFN rate already meets the cap.",
+      "text": "Zonos US import tariff tracker (third-party summary, not a government source).\nJuly 24, 2026: the Section 122 10% global surcharge expired for all postal shipments. Normal duties (MFN, Section 232, Section 301, etc.) now apply to postal shipments.\nSection 301 forced-labor tariff, effective July 24, 2026: 10% or 12.5% by country of origin. For Japan, South Korea and Switzerland the Section 301 tariff is reduced by the product's MFN rate, capping the total at 12.5%, and is 0% where the MFN rate already meets the cap, so the amount varies by HTS code.\nExemptions include goods already subject to Section 232 (steel, aluminum, autos and parts) and informational materials.\nThe U.S. de minimis exemption is suspended; every import incurs duty. Postal shipments under the threshold must have duties prepaid; as of July 24, 2026 that threshold is $2,500.\nConsequence for KAI: for Japan-origin goods whose MFN rate is at or below 12.5%, total duty is 12.5% of the dutiable value. Goods with a higher MFN rate, or covered by Section 232, can cost more."
+    },
+    {
+      "id": "japonica_ddp_notice",
+      "title": "Japonica Market: Resumption of Mailing Services to the U.S. (DDP notice)",
+      "publisher": "Japonica Market (third-party Japanese export merchant)",
+      "url": "https://japonicamarket.com/smart-shipping-ddp.html",
+      "retrievedAt": "2026-11-20",
+      "authority": "third party merchant (secondary; one shipper's terms)",
+      "excerpt": "For DDP shipments, customers are required to prepay customs duties and the Zonos fee ($1.69 + 10% of the customs duty) in Japanese Yen prior to shipment.",
+      "text": "Japonica Market notice on shipping to the United States (one merchant's published terms; other shippers and proxy services may charge differently).\nJapan Post has resumed shipping to the U.S. via EMS and Air Packet with a DDP (Delivered Duty Paid) requirement: duties and taxes are prepaid.\nFor DDP shipments, customers prepay customs duties and the Zonos fee ($1.69 + 10% of the customs duty) prior to shipment.\nListed terms: EMS up to $2,500: DDP, general duty rate plus Section 301/232, clearance fee $1.69 + 10% of duty.\nIf a product is subject to Section 301 duties, the amount is the greater of (12.5% of the product cost minus the normal customs duty) or USD 0."
+    },
+    {
+      "id": "japanpost_ems_rates",
+      "title": "Japan Post: Rate schedule (EMS: All Zones)",
+      "publisher": "Japan Post Co., Ltd.",
+      "url": "https://www.post.japanpost.jp/int/charge/list/ems_all_en.html",
+      "retrievedAt": "2026-11-20",
+      "authority": "carrier (primary)",
+      "excerpt": "Fourth Zone - U.S. (including Guam and other U.S. territories): up to 500g 3,900 yen; up to 600g 4,180; up to 1kg 5,300; up to 1.5kg 6,600; up to 2kg 7,900.",
+      "text": "Japan Post EMS rate schedule, all zones, in yen.\nFourth Zone is the U.S. (including Guam and other U.S. territories). For Zones 3 and 4, tentative extra charges are included.\nFourth Zone EMS rates: up to 500g 3,900 yen; up to 600g 4,180 yen; up to 700g 4,460 yen; up to 800g 4,740 yen; up to 900g 5,020 yen; up to 1kg 5,300 yen; up to 1.25kg 5,990 yen; up to 1.5kg 6,600 yen; up to 1.75kg 7,290 yen; up to 2kg 7,900 yen; up to 2.5kg 9,100 yen; up to 3kg 10,300 yen.\nConsequence for KAI: international shipping is estimated at the EMS rate for an assumed packed weight. Proxy services may offer cheaper or more expensive methods."
+    },
+    {
+      "id": "cdtfa_use_tax",
+      "title": "CDTFA: California Use Tax",
+      "publisher": "California Department of Tax and Fee Administration",
+      "url": "https://www.cdtfa.ca.gov/taxes-and-fees/use-tax.htm",
+      "retrievedAt": "2026-11-20",
+      "authority": "government (primary)",
+      "excerpt": "Generally, use tax also applies to foreign purchases of tangible personal property brought into California for storage, use, or other consumption.",
+      "text": "California Department of Tax and Fee Administration: use tax.\nGenerally, if sales tax would apply when you buy physical merchandise in California, use tax applies when you make a similar purchase without tax from a business located outside the state. For these purchases, the buyer is required to pay use tax separately.\nGenerally, use tax also applies to foreign purchases of tangible personal property brought into California for storage, use, or other consumption.\nThe easiest way to report and pay use tax is on the California state income tax return, or directly to CDTFA online.\nThe page does not state a rate; the rate depends on the buyer's location and must be looked up. KAI's rate is a configurable assumption."
+    }
+  ]
+}

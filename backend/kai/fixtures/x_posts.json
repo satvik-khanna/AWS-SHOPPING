@@ -1,0 +1,137 @@
+{
+  "_note": "SAMPLE DATA for offline demos and tests. These are not real X posts. Accounts, products, prices and stores are invented, and every URL uses the reserved .invalid top-level domain so nothing here can resolve to a real site. Date tokens like {{md:+3}} are rendered relative to today.",
+  "posts": [
+    {
+      "id": "fx900000000000000001",
+      "category": "keycaps",
+      "handle": "fx_tsukumo_keys",
+      "name": "つくも工房 (fixture)",
+      "hoursAgo": 6,
+      "text": "【新作】アルチザンキーキャップ「月夜ノ雫」本日21時より販売開始します🌙\nひとつずつ手作業で仕上げたハンドメイド品。マットな質感のレジン製です。\n数量限定20個 / ¥8,800(税込)\nBOOTHにて▶ https://tsukumo-keys.booth.pm.kai-fixture.invalid/items/1001\n#キーキャップ #自作キーボード",
+      "translation": "[New] Artisan keycap \"Tsukiyo no Shizuku\" (Moonlit Night Droplet) goes on sale today from 21:00. Each one is handmade and finished by hand. Resin with a matte texture. Limited to 20 pieces / ¥8,800 (tax included). On BOOTH.",
+      "links": ["https://tsukumo-keys.booth.pm.kai-fixture.invalid/items/1001"],
+      "media": ["/static/img/fixture-keycap.svg"]
+    },
+    {
+      "id": "fx900000000000000002",
+      "category": "keycaps",
+      "handle": "fx_kumo_resin",
+      "name": "雲レジン (fixture)",
+      "hoursAgo": 20,
+      "text": "抽選販売のお知らせ☁️\nアルチザンキーキャップ「雲海」を抽選販売します。\n受付は{{md:+3}} 23:59まで。当選者のみ購入できます。\n価格 12,000円(税込)・お一人様1点まで\nhttps://kumo-resin.thebase.in.kai-fixture.invalid/items/2002\n#キーキャップ",
+      "translation": "Lottery sale announcement. The artisan keycap \"Unkai\" (Sea of Clouds) will be sold by lottery. Entries are accepted until {{md:+3}} 23:59. Only winners can purchase. Price 12,000 yen (tax included), limit one per person.",
+      "links": ["https://kumo-resin.thebase.in.kai-fixture.invalid/items/2002"],
+      "media": []
+    },
+    {
+      "id": "fx900000000000000003",
+      "category": "keycaps",
+      "handle": "fx_hoshi_cap",
+      "name": "ほしキャップ (fixture)",
+      "hoursAgo": 30,
+      "text": "再販のお知らせ✨ キーキャップ「星屑」受注生産で予約開始しました！\n艶ありクリアレジンに金箔を封入。6,500円\n予約は{{jp:+10}}まで。発送は来月を予定しています。\nhttps://hoshi-cap.kai-fixture.invalid/products/hoshikuzu",
+      "translation": "Restock announcement. Preorders are now open for the keycap \"Hoshikuzu\" (Stardust), made to order. Glossy clear resin with gold leaf sealed inside. 6,500 yen. Preorders close {{jp:+10}}. Shipping is planned for next month.",
+      "links": ["https://hoshi-cap.kai-fixture.invalid/products/hoshikuzu"],
+      "media": []
+    },
+    {
+      "id": "fx900000000000000004",
+      "category": "keycaps",
+      "handle": "fx_neko_keys",
+      "name": "ねこキーズ (fixture)",
+      "hoursAgo": 40,
+      "text": "「ねこ肉球キーキャップ」完売しました！たくさんのご注文ありがとうございました🐾\n次回の販売は未定です。\nhttps://neko-keys.booth.pm.kai-fixture.invalid/items/1004",
+      "translation": "The \"Cat Paw Keycap\" has sold out! Thank you for all your orders. The next sale date is undecided.",
+      "links": ["https://neko-keys.booth.pm.kai-fixture.invalid/items/1004"],
+      "media": []
+    },
+    {
+      "id": "fx900000000000000005",
+      "category": "keycaps",
+      "handle": "fx_yama_craft",
+      "name": "山クラフト (fixture)",
+      "hoursAgo": 12,
+      "text": "新作キーキャップ「山霧」できました⛰️ ハンドメイド、艶消し仕上げの陶器製です。\n通販はプロフィールのリンクからどうぞ！\nhttps://linktr.ee.kai-fixture.invalid/yama_craft",
+      "translation": "The new keycap \"Yamagiri\" (Mountain Mist) is ready. Handmade ceramic with a matte finish. For online orders, use the link in my profile.",
+      "links": ["https://linktr.ee.kai-fixture.invalid/yama_craft"],
+      "media": []
+    },
+    {
+      "id": "fx900000000000000006",
+      "category": "keycaps",
+      "handle": "fx_tsukumo_keys",
+      "name": "つくも工房 (fixture)",
+      "hoursAgo": 2,
+      "text": "【販売開始】「月夜ノ雫」キーキャップ、販売はじまりました！残りわずかです🌙 ¥8,800\nhttps://tsukumo-keys.booth.pm.kai-fixture.invalid/items/1001",
+      "translation": "[On sale] The \"Tsukiyo no Shizuku\" keycap is now on sale! Only a few left. ¥8,800.",
+      "links": ["https://tsukumo-keys.booth.pm.kai-fixture.invalid/items/1001"],
+      "media": []
+    },
+    {
+      "id": "fx900000000000000007",
+      "category": "keycaps",
+      "handle": "fx_chatter",
+      "name": "キーボード好き (fixture)",
+      "hoursAgo": 5,
+      "text": "届いたキーキャップかわいすぎて仕事にならない〜！打鍵感も最高",
+      "translation": "The keycaps that arrived are so cute I can't get any work done! The typing feel is great too.",
+      "links": [],
+      "media": []
+    },
+    {
+      "id": "fx900000000000000008",
+      "category": "keycaps",
+      "handle": "fx_blog_keys",
+      "name": "キー日記 (fixture)",
+      "hoursAgo": 50,
+      "text": "新作キーキャップの販売方法についてブログにまとめました。イベント会場での先着販売になります。\nhttps://blog.kai-fixture.invalid/keycap-news",
+      "translation": "I wrote up how the new keycaps will be sold on my blog. They will be sold first come, first served at an event venue.",
+      "links": ["https://blog.kai-fixture.invalid/keycap-news"],
+      "media": []
+    },
+    {
+      "id": "fx900000000000000009",
+      "category": "keycaps",
+      "handle": "fx_shiro_keys",
+      "name": "しろキーズ (fixture)",
+      "hoursAgo": 60,
+      "text": "数量限定キーキャップ「白磁」入荷しました。通販はこちら ¥9,900\nhttps://shiro-keys.base.shop.kai-fixture.invalid/items/9009",
+      "translation": "The limited-quantity keycap \"Hakuji\" (White Porcelain) is back in stock. Online orders here. ¥9,900.",
+      "links": ["https://shiro-keys.base.shop.kai-fixture.invalid/items/9009"],
+      "media": []
+    },
+    {
+      "id": "fx900000000000000101",
+      "category": "figures",
+      "handle": "fx_garage_oni",
+      "name": "鬼ガレージ (fixture)",
+      "hoursAgo": 18,
+      "text": "【予約開始】オリジナルフィギュア「夜叉姫」1/7スケール、受注生産にて予約開始しました。\n予約締切 {{md:+14}}。価格 19,800円(税込)\nhttps://garage-oni.booth.pm.kai-fixture.invalid/items/3001",
+      "translation": "[Preorders open] Preorders have opened for the original figure \"Yasha-hime\", 1/7 scale, made to order. Preorder deadline {{md:+14}}. Price 19,800 yen (tax included).",
+      "links": ["https://garage-oni.booth.pm.kai-fixture.invalid/items/3001"],
+      "media": []
+    },
+    {
+      "id": "fx900000000000000201",
+      "category": "handmade",
+      "handle": "fx_hinata_glass",
+      "name": "ひなたガラス (fixture)",
+      "hoursAgo": 9,
+      "text": "ハンドメイドの新作ガラスピアス「朝露」販売開始しました。一点物です。3,200円\nhttps://hinata-glass.thebase.in.kai-fixture.invalid/items/4001",
+      "translation": "The new handmade glass earrings \"Asatsuyu\" (Morning Dew) are now on sale. One of a kind. 3,200 yen.",
+      "links": ["https://hinata-glass.thebase.in.kai-fixture.invalid/items/4001"],
+      "media": []
+    },
+    {
+      "id": "fx900000000000000301",
+      "category": "cameras",
+      "handle": "fx_film_tana",
+      "name": "フィルム棚 (fixture)",
+      "hoursAgo": 26,
+      "text": "中古フィルムカメラ入荷しました。整備済みのレンジファインダーが数台あります。店頭販売のみです。",
+      "translation": "Used film cameras have arrived. We have several serviced rangefinders. In-store sales only.",
+      "links": [],
+      "media": []
+    }
+  ]
+}
