@@ -139,4 +139,4 @@ class BuyeeCheckout:
     def _result(self, s: M.Session, token: str | None = None, detail: str = "") -> CartResult:
         status = s.state if s.state in ("awaiting_approval", "placed", "blocked", "failed") else "blocked"
         return CartResult(status=status, listing_id=s.listing_id, approval_token=token,
-                          cart_url=s.cart_url, detail=f"[session {s.id}] {detail}")
+                          cart_url=s.cart_url, detail=f"[session {s.id}] {detail}", session_id=s.id)

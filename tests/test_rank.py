@@ -66,6 +66,44 @@ class SmartRankerTest(unittest.TestCase):
         self.assertEqual(s, sorted(s, reverse=True))
 
 
+class DemoQueryTest(unittest.TestCase):
+    """The 3 niche demo scenarios from SURVEY / docs/survey-genres-and-rules.md."""
+
+    def test_indie_goods(self):
+        picks = run("limited-edition risograph artbook or acrylic stand from Japanese indie artist on BOOTH/BASE "
+                    "under $80, shipped to US-CA", budget=80)
+        self.assertGreaterEqual(len(picks), 5)
+        for p in picks[:3]:
+            self.assertIn(p.listing.fields.get("marketplace"), ("BOOTH", "BASE"))
+            self.assertIn("proxy buys and forwards", p.reason)
+
+    def test_vintage_sweatshirt_size_l(self):
+        picks = run("Kapital or vintage Champion Reverse Weave sweatshirt, size L, under $180, shipped to US-CA",
+                    budget=180)
+        self.assertEqual(picks[0].listing.id, "mercari:m043")         # vintage, size L, good, no flaws
+        self.assertIn("your size", picks[0].reason)
+        top3 = [p.listing.fields.get("size_letter") for p in picks[:3]]
+        self.assertEqual(top3, ["L", "L", "L"])
+        self.assertNotIn("mercari:m044", [p.listing.id for p in picks])   # over budget after duty
+
+    def test_size_from_memory(self):
+        picks = run("vintage Champion Reverse Weave sweatshirt", budget=180,
+                    prefs=Preferences("t", sizes={"top": "L"}))
+        self.assertEqual(picks[0].listing.fields.get("size_letter"), "L")
+        self.assertTrue(any("you wear L" in p.reason for p in picks))
+
+    def test_hard_off_junk(self):
+        picks = run("junk Sony Walkman or Game Boy from Hard Off Net Mall under $60, shipped to US-CA", budget=60)
+        self.assertGreaterEqual(len(picks), 4)
+        top = picks[0].listing
+        self.assertEqual(top.fields.get("junk_risk"), "repairable")
+        self.assertIn("repair bet", picks[0].reason)
+        self.assertIn("no returns", picks[0].reason)
+        parts = [i for i, p in enumerate(picks) if p.listing.fields.get("junk_risk") == "parts only"]
+        repair = [i for i, p in enumerate(picks) if p.listing.fields.get("junk_risk") == "repairable"]
+        self.assertLess(max(repair), min(parts))
+
+
 class ClaudeRerankTest(unittest.TestCase):
     def test_offline_never_calls(self):
         def boom(body, key):

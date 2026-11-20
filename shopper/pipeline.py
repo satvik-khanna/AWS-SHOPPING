@@ -23,6 +23,9 @@ def run(req: ShoppingRequest, deps: Deps, top_k: int = 3) -> PipelineResult:
                  f"{len(prefs.past_purchases)} past purchases, {len(prefs.rejected_sellers)} rejected sellers")
 
     listings = [l for l in deps.source.search(req, prefs) if l.seller not in prefs.rejected_sellers]
+    src_status = getattr(deps.source, "last_status", "")
+    if src_status:
+        trail.append(f"source: {src_status}")
     trail.append(f"found {len(listings)} listings")
 
     candidates = []
@@ -37,11 +40,16 @@ def run(req: ShoppingRequest, deps: Deps, top_k: int = 3) -> PipelineResult:
         candidates.append((l, c))
 
     picks = deps.ranker.rank(req, prefs, candidates)[:top_k]
+    rank_status = getattr(deps.ranker, "last_status", "")
+    if rank_status:
+        trail.append(f"ranker: {rank_status}")
     for p in picks:
         trail.append(f"pick {p.listing.id} ${p.cost.total_usd} score={p.score:.2f}: {p.reason}")
 
     cart = None
     if picks:
+        if hasattr(deps.checkout, "budget_usd"):
+            deps.checkout.budget_usd = req.max_total_usd
         cart = deps.checkout.fill_cart(picks[0])
         trail.append(f"cart {cart.status} for {cart.listing_id}")
     else:

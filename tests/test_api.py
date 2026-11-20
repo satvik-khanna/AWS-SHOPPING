@@ -184,6 +184,19 @@ class ApiTest(unittest.TestCase):
         self.assertIn("POST", h["Access-Control-Allow-Methods"])
         self.assertIn("Content-Type", h["Access-Control-Allow-Headers"])
 
+    def test_session_log_endpoint(self):
+        st, _, run1 = self.call("POST", "/api/run", RUN)
+        self.assertEqual(st, 200)
+        sid = run1["cart"]["session_id"]
+        self.assertTrue(sid)
+        st, _, sess = self.call("GET", f"/api/sessions/{sid}")
+        self.assertEqual(st, 200)
+        self.assertEqual(sess["id"], sid)
+        self.assertEqual(sess["state"], "awaiting_approval")
+        self.assertGreaterEqual(len(sess["steps"]), 4)
+        st404, _, err = self.call("GET", "/api/sessions/does-not-exist")
+        self.assertEqual((st404, err["error"]["code"]), (404, "not_found"))
+
 
 if __name__ == "__main__":
     unittest.main()

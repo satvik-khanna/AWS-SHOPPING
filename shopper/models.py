@@ -1,7 +1,7 @@
 """Shared data types. Every module talks through these; change only with a reason in the commit."""
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 from typing import Literal
 
 
@@ -30,7 +30,7 @@ class Preferences:
 class Listing:
     """One marketplace listing after translation/extraction."""
     id: str                         # "<source>:<native id>"
-    source: Literal["mercari", "yahoo_auctions", "other"]
+    source: Literal["mercari", "yahoo_auctions", "yahoo_fleamarket", "other"]
     url: str
     title_ja: str
     title_en: str
@@ -70,6 +70,11 @@ class LandedCost:
     def total_usd(self) -> float:
         return round(sum(l.amount_usd for l in self.lines), 2)
 
+    def to_dict(self) -> dict:
+        out = asdict(self)
+        out["total_usd"] = self.total_usd
+        return out
+
 
 @dataclass
 class RankedPick:
@@ -86,6 +91,7 @@ class CartResult:
     approval_token: str | None = None   # required to place; None once placed/blocked
     cart_url: str | None = None
     detail: str = ""
+    session_id: str | None = None
 
 
 @dataclass

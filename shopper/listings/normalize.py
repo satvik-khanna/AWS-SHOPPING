@@ -11,7 +11,8 @@ import unicodedata
 
 from ..models import Listing
 from .lexicon import (ACCESSORY_ALWAYS, ACCESSORY_NOUNS, CITY_POP_ARTISTS, CONDITION_TABLE,
-                      DEFAULT_WEIGHT_KG, ENTRIES, FLAWS, PHRASES)
+                      DEFAULT_WEIGHT_KG, ENTRIES, FLAWS, HARDOFF_RANK, JUNK_PARTS_ONLY, JUNK_REPAIRABLE,
+                      PHRASES)
 from .query import has_japanese
 
 CONDITIONS = ["junk", "fair", "good", "like_new", "new"]
@@ -157,6 +158,41 @@ def extract_fields(title_ja: str, description_ja: str = "") -> dict[str, str]:
         f["domestic_shipping"] = "seller pays"
     elif re.search(r"着払い|送料別|送料落札者負担", both):
         f["domestic_shipping"] = "buyer pays"
+    m = re.search(r"(?:サイズ|表記|size)\s*[::]?\s*(XXL|XL|XS|S|M|L)(?![A-Za-z])", both, re.I) \
+        or re.search(r"(?<![A-Za-z])(XXL|XL|XS|S|M|L)\s*サイズ", both)
+    if m:
+        f["size_letter"] = m.group(1).upper()
+    m = re.search(r"(?:サイズ|size)\s*[::]?\s*([0-5])(?![\d.])", both, re.I)
+    if m and "size_letter" not in f and re.search(r"キャピタル|kapital", both, re.I):
+        f["size_jp"] = m.group(1)            # Kapital sizes 1-5: 1=S 2=M 3=L 4=XL
+        f["size_letter"] = {"0": "XS", "1": "S", "2": "M", "3": "L", "4": "XL", "5": "XXL"}[m.group(1)]
+    m = re.search(r"着丈\s*[::]?\s*(\d{2,3})\s*cm?.{0,6}?身幅\s*[::]?\s*(\d{2,3})", both)
+    if m:
+        f["measurements_cm"] = f"length {m.group(1)}, chest width {m.group(2)}"
+    m = re.search(r"(綿|コットン|ウール|ポリエステル|デニム)\s*(\d{2,3})\s*%", both)
+    if m:
+        f["material"] = {"綿": "cotton", "コットン": "cotton", "ウール": "wool", "ポリエステル": "polyester",
+                         "デニム": "denim"}[m.group(1)] + f" {m.group(2)}%"
+    parts_only = [w for w in JUNK_PARTS_ONLY if w in both]
+    repairable = [w for w in JUNK_REPAIRABLE if w in both]
+    if parts_only:
+        f["junk_risk"] = "parts only"
+        f["junk_reason"] = "、".join(parts_only)
+    elif repairable:
+        f["junk_risk"] = "repairable"
+        f["junk_reason"] = "、".join(repairable)
+    if re.search(r"AC\s*100\s*V|100V専用|国内(?:専用|仕様)", both):
+        f["voltage_jp"] = "100V"
+    m = re.search(r"限定\s*(\d{1,4})\s*(?:部|個|枚|点)", both)
+    if m:
+        f["edition_size"] = m.group(1)
+    if "受注生産" in both:
+        f["made_to_order"] = "yes"
+        m = re.search(r"(?:発送|お届け)まで[^\n。]{0,4}?(\d{1,2})\s*(週間|日|ヶ月|か月)", both)
+        if m:
+            f["lead_time"] = m.group(1) + {"週間": " weeks", "日": " days", "ヶ月": " months", "か月": " months"}[m.group(2)]
+    if re.search(r"海外発送不可|海外発送は?(?:しておりません|できません)|国内のみ", both):
+        f["ships_abroad_note"] = "seller does not ship abroad (use the proxy)"
     flaws = _flaws(both)
     if flaws:
         f["flaws"] = ", ".join(flaws)
@@ -165,6 +201,11 @@ def extract_fields(title_ja: str, description_ja: str = "") -> dict[str, str]:
 
 # ---------------------------------------------------------------- category / weight
 _CATEGORY_RULES: list[tuple[str, str]] = [
+    ("alcohol", r"ウイスキー|ウィスキー|日本酒|焼酎|ワイン|ブランデー|whisky|whiskey"),
+    ("perfume", r"香水|オードトワレ|オードパルファム|パルファム"),
+    ("indie_merch", r"アクリルスタンド|アクスタ|画集|リソグラフ|zine|同人|缶バッジ|アートブック|作品集"),
+    ("electronics", r"ウォークマン|walkman|ゲームボーイ|game ?boy|カセットプレ|ラジカセ|ファミコン|アンプ|プレイステーション"),
+    ("apparel", r"スウェット|トレーナー|パーカー|tシャツ|ジャケット|カーディガン|シャツ|デニムパンツ"),
     ("sneakers", r"スニーカー|ナイキ|nike|ダンク|ジョーダン|ニューバランス|new balance|adidas|アディダス|オニツカ"),
     ("vinyl", r"レコード|(?<![a-z])lp(?![a-z])|帯付|帯なし|ep盤|12インチ|7インチ|アナログ盤"),
     ("figure", r"フィギュア|ねんどろいど|figma|figuarts|フィギュアーツ|一番くじ|プラモデル|メタルビルド|ポップアップパレード"),
@@ -236,7 +277,9 @@ _BUYEE = {"mercari": "https://buyee.jp/mercari/item/{id}",
 def to_listing(raw: dict) -> Listing:
     title = raw["title_ja"]
     desc = raw.get("description_ja", "")
-    cond, cond_src = normalize_condition(raw.get("condition") or raw.get("condition_ja"), title)
+    rank = str(raw.get("rank") or "").upper()
+    cond, cond_src = normalize_condition(raw.get("condition") or HARDOFF_RANK.get(rank) or raw.get("condition_ja"),
+                                         title)
     fields = extract_fields(title, desc)
     if raw.get("condition_ja"):
         fields["condition_ja"] = raw["condition_ja"]
@@ -244,7 +287,18 @@ def to_listing(raw: dict) -> Listing:
         fields["condition_source"] = "not stated, assumed good"
     elif cond_src == "title":
         fields["condition_source"] = "from title wording"
+    if rank in HARDOFF_RANK:
+        fields["rank"] = rank
+        if rank == "J":
+            fields["returns"] = "none (junk rank J: no returns or warranty, even via Buyee)"
     category = raw.get("category") or guess_category(title, desc)
+    if category == "electronics" and cond == "junk":
+        category = "electronics_junk"
+    if cond == "junk" and "returns" not in fields:
+        fields["returns"] = "none (sold as junk)"
+    for k in ("marketplace", "store_name", "hardoff_brand", "creator_handle"):
+        if raw.get(k):
+            fields[k] = str(raw[k])
     weight = raw.get("weight_kg")
     if weight is None:
         weight = DEFAULT_WEIGHT_KG.get(category or "")

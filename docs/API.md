@@ -229,11 +229,11 @@ On `placed`, the listing id is added to the user's `past_purchases`. In offline 
 ## POST /api/reject
 
 Remember "never show me this seller again" for a user. Idempotent. Returns the updated preferences;
-call `/api/run` again to get new picks without that seller.
+call `/api/run` again to get new picks without that seller. Optionally pass `approval_token` (and `reason`) to also reject the pending checkout session on the state machine.
 
 ```
 curl -s -X POST http://127.0.0.1:8000/api/reject -H 'Content-Type: application/json' \
-  -d '{"user":"alice","seller":"parts_jp"}'
+  -d '{"user":"alice","seller":"parts_jp","approval_token":"LPPmXsd8nbU","reason":"scratches"}'
 ```
 ```json
 {
@@ -248,6 +248,14 @@ curl -s -X POST http://127.0.0.1:8000/api/reject -H 'Content-Type: application/j
   ],
   "notes": []
 }
+```
+
+## GET /api/sessions/<id>
+
+Returns the timestamped checkout state-machine log, prompt-injection warnings, and current state for a session (`cart.session_id` from `/api/run`). Returns `404` if the session id does not exist.
+
+```
+curl -s 'http://127.0.0.1:8000/api/sessions/<session_id>'
 ```
 
 ## GET /api/memory?user=

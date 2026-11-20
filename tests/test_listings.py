@@ -25,7 +25,12 @@ class FixtureSetTest(unittest.TestCase):
         cats = Counter(l.category for l in FixtureSource().all())
         for c in ("camera", "sneakers", "vinyl", "figure"):
             self.assertGreaterEqual(cats[c], 5, c)
-        self.assertEqual({r["source"] for r in raw}, {"mercari", "yahoo_auctions"})
+        self.assertEqual({r["source"] for r in raw}, {"mercari", "yahoo_auctions", "other"})
+        markets = Counter(r.get("marketplace") for r in raw if r["source"] == "other")
+        self.assertGreaterEqual(markets["Off Mall (Hard Off Net Mall)"], 10)
+        self.assertGreaterEqual(markets["BOOTH"] + markets["BASE"], 5)
+        for c in ("apparel", "indie_merch", "electronics_junk", "alcohol"):
+            self.assertGreaterEqual(cats[c], 1, c)
         self.assertTrue(all(any("\u3040" <= ch <= "\u9fff" for ch in r["title_ja"]) for r in raw))
 
 
@@ -45,6 +50,36 @@ class QueryTest(unittest.TestCase):
         titles = [l.title_ja for l in FixtureSource().search(req("Fujifilm X100V"), PREFS)]
         self.assertTrue(all("X100V" in t.upper().replace(" ", "") for t in titles))
         self.assertFalse(any("X100VI" in t for t in titles))
+
+
+class NicheQueryTest(unittest.TestCase):
+    def test_or_query_keeps_both_options(self):
+        plan = parse_query("Kapital or vintage Champion Reverse Weave sweatshirt, size L, under $180")
+        self.assertEqual(plan.size_letter, "L")
+        self.assertEqual(len(plan.alternatives), 2)
+        self.assertEqual(plan.ja_keywords, ["キャピタル スウェット", "チャンピオン リバースウィーブ スウェット"])
+        ids = {l.id for l in FixtureSource().search(req(plan.raw, 180), PREFS)}
+        self.assertTrue({"mercari:m041", "mercari:m043"} <= ids)       # one per option
+        self.assertNotIn("mercari:m048", ids)                          # visvim: neither option
+
+    def test_channel_is_any_of(self):
+        ids = {l.id for l in FixtureSource().search(
+            req("limited-edition risograph artbook or acrylic stand from Japanese indie artist on BOOTH/BASE", 80), PREFS)}
+        self.assertTrue({"other:booth-5101001", "other:base-7702001", "other:booth-5101002"} <= ids)
+
+    def test_hard_off_junk_fields(self):
+        l = next(x for x in FixtureSource().all() if x.id == "other:hardoff-3002")
+        self.assertEqual((l.condition, l.category, l.fields["rank"]), ("junk", "electronics_junk", "J"))
+        self.assertEqual(l.fields["junk_risk"], "parts only")
+        self.assertIn("no returns", l.fields["returns"])
+        ok = next(x for x in FixtureSource().all() if x.id == "other:hardoff-3001")
+        self.assertEqual(ok.fields["junk_risk"], "repairable")
+        amp = next(x for x in FixtureSource().all() if x.id == "other:hardoff-3008")
+        self.assertEqual(amp.fields["voltage_jp"], "100V")
+
+    def test_kapital_numeric_size(self):
+        f = extract_fields("KAPITAL キャピタル スウェット サイズ3")
+        self.assertEqual((f["size_jp"], f["size_letter"]), ("3", "L"))
 
 
 class NormalizeTest(unittest.TestCase):

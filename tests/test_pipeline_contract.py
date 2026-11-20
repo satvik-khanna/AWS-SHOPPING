@@ -21,6 +21,7 @@ class FakeMemory:
 
 
 class FakeSource:
+    last_status = "offline fixtures"
     def search(self, req, prefs): return [listing(1), listing(2, seller="bad"), listing(3, price=500000)]
 
 
@@ -31,23 +32,33 @@ class FakeCost:
 
 
 class FakeRanker:
+    last_status = "offline ranking"
     def rank(self, req, prefs, candidates):
         return [RankedPick(l, c, 1.0, "cheapest") for l, c in candidates]
 
 
 class FakeCheckout:
+    budget_usd = None
     def fill_cart(self, pick):
-        return CartResult(status="awaiting_approval", listing_id=pick.listing.id, approval_token="tok")
+        return CartResult(status="awaiting_approval", listing_id=pick.listing.id, approval_token="tok", session_id="s1")
     def approve(self, token): raise AssertionError("pipeline must never approve")
+    def reject(self, token, reason="", reject_seller=False):
+        return CartResult(status="blocked", listing_id="", detail=f"rejected: {reason}")
 
 
 class PipelineContract(unittest.TestCase):
     def test_stops_at_approval_and_filters(self):
         req = ShoppingRequest(query="used Fujifilm X100V", max_total_usd=900, ship_to="US-CA")
-        r = run(req, Deps(FakeMemory(), FakeSource(), FakeCost(), FakeRanker(), FakeCheckout()))
+        co = FakeCheckout()
+        r = run(req, Deps(FakeMemory(), FakeSource(), FakeCost(), FakeRanker(), co))
         self.assertEqual([p.listing.id for p in r.picks], ["mercari:1"])   # bad seller + over budget dropped
         self.assertEqual(r.cart.status, "awaiting_approval")
+        self.assertEqual(r.cart.session_id, "s1")
+        self.assertEqual(co.budget_usd, 900)
         self.assertTrue(any("budget" in t for t in r.trail))
+        self.assertTrue(any("source: offline fixtures" in t for t in r.trail))
+        self.assertTrue(any("ranker: offline ranking" in t for t in r.trail))
+        self.assertEqual(r.picks[0].cost.to_dict()["total_usd"], r.picks[0].cost.total_usd)
 
 
 if __name__ == "__main__":

@@ -37,3 +37,6 @@ class Checkout(Protocol):               # owner: shopper/checkout
 
     def approve(self, approval_token: str) -> CartResult: ...
     """Only path to 'placed'. Rejects unknown/used tokens."""
+
+    def reject(self, approval_token: str, reason: str = "", reject_seller: bool = False) -> CartResult: ...
+    """Reject a pending approval token and optionally block the seller."""

@@ -1,10 +1,11 @@
 """HTTP JSON API over the same objects the CLI uses. Stdlib only, CORS for any origin.
 
     GET  /health
-    POST /api/run      {query, budget, ship_to?, user?, condition_min?} -> PipelineResult
-    POST /api/approve  {approval_token}                                 -> CartResult
-    POST /api/reject   {user?, seller}                                  -> Preferences
-    GET  /api/memory?user=                                              -> Preferences
+    POST /api/run           {query, budget, ship_to?, user?, condition_min?} -> PipelineResult
+    POST /api/approve       {approval_token}                                 -> CartResult
+    POST /api/reject        {user?, seller, approval_token?, reason?}        -> Preferences
+    GET  /api/memory?user=                                                   -> Preferences
+    GET  /api/sessions/<id>                                                  -> Checkout session step log
 
 One Deps lives for the whole server, so approval tokens issued by /api/run are still
 valid on a later /api/approve. Approval is decided only by deps.checkout.approve
@@ -134,9 +135,36 @@ class Service:
         if len(seller) > 120:
             raise _bad("seller is too long (max 120 characters)")
         user = _user(body)
+        token = body.get("approval_token")
+        reason = body.get("reason") if isinstance(body.get("reason"), str) else ""
         with self.lock:
             self.deps.memory.reject_seller(user, seller.strip())
+            if isinstance(token, str) and token:
+                self.revoked.add(token)
+                self.carts.pop(token, None)
+                if hasattr(self.deps.checkout, "reject"):
+                    self.deps.checkout.reject(token, reason=reason, reject_seller=False)
             return asdict(self.deps.memory.recall(user))
+
+    def session(self, session_id: str) -> dict:
+        if not session_id or len(session_id) > 64 or "/" in session_id:
+            raise _bad("invalid session id")
+        fn = getattr(self.deps.checkout, "session", None)
+        with self.lock:
+            s = fn(session_id) if callable(fn) else None
+        if s is None:
+            raise ApiError(404, "not_found", f"no checkout session {session_id}")
+        return {
+            "id": s.id,
+            "state": s.state,
+            "listing_id": s.listing_id,
+            "total_usd": s.total_usd,
+            "driver": s.driver,
+            "cart_url": s.cart_url,
+            "order_ref": s.order_ref,
+            "warnings": list(s.warnings),
+            "steps": [asdict(st) for st in s.steps],
+        }
 
     def memory(self, query: dict) -> dict:
         user = _user({"user": (query.get("user") or query.get("user_id") or [""])[0]})
@@ -202,6 +230,9 @@ def make_handler(service: Service, quiet: bool = False):
 
         def do_GET(self):
             def go():
+                path = urlsplit(self.path).path.rstrip("/") or "/"
+                if path.startswith("/api/sessions/"):
+                    return service.session(path[len("/api/sessions/"):])
                 _, fn = self._route(gets, posts)
                 return fn(parse_qs(urlsplit(self.path).query))
             self._guard(go)

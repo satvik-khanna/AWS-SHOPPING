@@ -64,6 +64,36 @@ ENTRIES: list[tuple[str, str, list[str], list[str]]] = [
     ("Nausicaa of the Valley of the Wind", "name", ["風の谷のナウシカ"], ["nausicaa of the valley of the wind", "nausicaa"]),
     ("Plastic Love", "name", ["プラスティック・ラヴ", "プラスティックラヴ", "プラスティック・ラブ"], ["plastic love"]),
     ("Mayonaka no Door (Stay With Me)", "name", ["真夜中のドア"], ["mayonaka no door", "stay with me"]),
+    # --- Jp-vintage streetwear
+    ("Kapital", "brand", ["キャピタル"], ["kapital"]),
+    ("Champion", "brand", ["チャンピオン"], ["champion"]),
+    ("Visvim", "brand", ["ビズビム"], ["visvim"]),
+    ("Neighborhood", "brand", ["ネイバーフッド"], ["neighborhood", "neighbourhood"]),
+    ("Reverse Weave", "name", ["リバースウィーブ", "リバースウェーブ"], ["reverse weave", "reverseweave"]),
+    ("vintage", "term", ["ヴィンテージ", "ビンテージ", "古着", "80s", "90s", "80年代", "90年代"], ["vintage", "retro"]),
+    ("sweatshirt", "type", ["スウェット", "トレーナー"], ["sweatshirt", "sweatshirts", "sweat", "crewneck"]),
+    ("hoodie", "type", ["パーカー", "フーディー"], ["hoodie", "hoody"]),
+    # --- Hard Off finds: retro electronics / games
+    ("Sony", "brand", ["ソニー"], ["sony"]),
+    ("Nintendo", "brand", ["任天堂"], ["nintendo"]),
+    ("Walkman", "model", ["ウォークマン"], ["walkman"]),
+    ("Game Boy", "model", ["ゲームボーイ"], ["game boy", "gameboy"]),
+    ("cassette player", "type", ["カセットプレーヤー", "カセットプレイヤー"], ["cassette player"]),
+    ("junk", "term", ["ジャンク"], ["junk", "for parts"]),
+    ("Japanese whisky", "type", ["ウイスキー", "ウィスキー"], ["japanese whisky", "whisky", "whiskey"]),
+    # --- indie creator goods
+    ("risograph", "type", ["リソグラフ", "リソ印刷"], ["risograph", "riso"]),
+    ("artbook", "type", ["画集", "アートブック", "作品集", "イラスト集", "ZINE", "zine"], ["artbook", "art book", "zine", "illustration book"]),
+    ("acrylic stand", "type", ["アクリルスタンド", "アクスタ"], ["acrylic stand", "acrylic standee", "acsta"]),
+    ("limited edition", "term", ["数量限定", "限定版", "限定"], ["limited-edition", "limited edition", "limited"]),
+    ("indie artist", "term", ["個人作家", "作家", "同人", "インディー", "自主制作", "個人制作"], ["indie artist", "indie creator", "indie", "independent artist"]),
+    # --- channels (any one listed channel is enough, see query.relevance)
+    ("Hard Off", "channel", ["ハードオフ", "オフモール", "ホビーオフ", "モードオフ", "オフハウス", "ガレージオフ", "リカーオフ"],
+     ["hard off net mall", "hard off", "hardoff", "off mall", "netmall", "hobby off", "mode off", "off house", "garage off", "liquor off"]),
+    ("BOOTH", "channel", [], ["booth", "booth.pm"]),
+    ("BASE", "channel", [], ["base", "thebase"]),
+    ("Mercari", "channel", ["メルカリ"], ["mercari"]),
+    ("Yahoo Auctions", "channel", ["ヤフオク", "ヤフオク!"], ["yahoo auctions", "yahoo auction", "yahoo_auctions", "yafuoku"]),
     # --- item types / genres
     ("film camera", "type", ["フィルムカメラ"], ["film camera"]),
     ("camera", "type", ["カメラ"], ["camera", "cameras"]),
@@ -116,12 +146,27 @@ PHRASES: list[tuple[str, str]] = [
     ("年復刻", " reissue"), ("復刻", "reissue"), ("収録", "included"),
     ("USA製", "made in USA"), ("日本製", "made in Japan"),
     ("A賞", "Prize A"), ("ハイ", "High"), ("ロー", "Low"),
+    # Hard Off / Off Mall wording
+    ("通電確認済み", "powers on"), ("通電確認のみ", "power-on checked only"), ("通電確認済", "powers on"),
+    ("動作未確認", "untested"), ("通電不可", "does not power on"), ("液漏れ", "battery corrosion"),
+    ("現状渡し", "sold as-is"), ("ACアダプター欠品", "no AC adapter"), ("電池蓋欠品", "no battery cover"),
+    ("本体のみ", "body only"), ("読み込み不可", "does not read"), ("ベルト劣化", "belt worn out"),
+    ("音出し確認済み", "sound tested"), ("再生確認済み", "playback tested"), ("ソフト付き", "with game"),
+    ("箱説付き", "with box and manual"), ("箱説なし", "no box or manual"), ("店舗", "store"),
+    # apparel
+    ("表記", "tagged size"), ("サイズ", "size"), ("着丈", "length"), ("身幅", "chest width"),
+    ("両面", "two-sided"), ("首元ヨレ", "stretched collar"), ("毛玉", "pilling"), ("黄ばみ", "yellowing"),
+    ("シミ", "stain"), ("穴あき", "hole"), ("刺繍", "embroidered"), ("目無し", "no side tag"),
+    ("ボロ", "boro"), ("藍染", "indigo dyed"),
+    # indie goods
+    ("新刊", "new release"), ("既刊", "back issue"), ("頒布", "distributed"), ("ポストカード付き", "with postcard"),
+    ("海外発送不可", "no overseas shipping"), ("受注生産", "made to order"), ("オリジナル", "original"),
 ]
 
 # Mercari's 6 listing grades (Yahoo Auctions uses the same wording) plus common title shorthand.
 # Longest key wins; matched against NFKC text with whitespace and "、" removed.
 CONDITION_TABLE: list[tuple[str, str]] = [
-    ("全体的に状態が悪い", "junk"), ("ジャンク", "junk"), ("部品取り", "junk"), ("故障品", "junk"), ("動作不良", "junk"),
+    ("全体的に状態が悪い", "junk"), ("ジャンク", "junk"), ("通電不可", "junk"), ("部品取り", "junk"), ("故障品", "junk"), ("動作不良", "junk"),
     ("未使用に近い", "like_new"), ("極美品", "like_new"), ("超美品", "like_new"), ("美品", "like_new"),
     ("新品未使用", "new"), ("新品未開封", "new"), ("未開封", "new"), ("未組立", "new"), ("未使用", "new"), ("新品", "new"),
     ("やや傷や汚れあり", "fair"), ("傷や汚れあり", "fair"), ("やや傷あり", "fair"), ("傷あり", "fair"),
@@ -137,24 +182,35 @@ ACCESSORY_ALWAYS = ["空箱", "箱のみ", "本体なし", "説明書のみ"]
 
 # Flaw words scanned in title + description (longest first; negation handled in normalize.py).
 FLAWS: list[tuple[str, str]] = [
-    ("ソール剥がれ", "sole separation"), ("液晶漏れ", "LCD bleed"), ("履きジワ", "creasing"),
+    ("ソール剥がれ", "sole separation"), ("液晶漏れ", "LCD bleed"), ("液漏れ", "battery corrosion"),
+    ("首元ヨレ", "stretched collar"), ("毛玉", "pilling"), ("黄ばみ", "yellowing"), ("穴あき", "hole"),
+    ("シミ", "stain"), ("ベルト劣化", "worn belt"), ("履きジワ", "creasing"),
     ("EVF不良", "EVF defect"), ("擦り傷", "scuffs"), ("日焼け", "sun fading"), ("クモリ", "haze"),
     ("曇り", "haze"), ("カビ", "fungus"), ("スレ", "scuffs"), ("擦れ", "scuffs"), ("欠品", "missing parts"),
     ("不良", "defect"), ("ヤケ", "sun fading"), ("タバコ", "smoke odor"), ("凹み", "dent"),
     ("ヘコミ", "dent"), ("反り", "warp"), ("汚れ", "stains"), ("キズ", "scratches"), ("傷", "scratches"),
 ]
-SERIOUS_FLAWS = {"fungus", "haze", "EVF defect", "LCD bleed", "sole separation", "missing parts", "defect", "warp"}
+SERIOUS_FLAWS = {"battery corrosion", "hole", "fungus", "haze", "EVF defect", "LCD bleed", "sole separation", "missing parts", "defect", "warp"}
 
 CITY_POP_ARTISTS = ["山下達郎", "竹内まりや", "大貫妙子", "松原みき", "杏里", "角松敏生", "大滝詠一"]
 
 # Rough packed weights in kg, used only when a listing does not state one.
 DEFAULT_WEIGHT_KG = {"camera": 0.8, "battery_loose": 0.1, "camera_accessory": 0.3,
-                     "sneakers": 1.2, "vinyl": 0.5, "figure": 0.6}
+                     "sneakers": 1.2, "vinyl": 0.5, "figure": 0.6, "apparel": 0.9, "electronics": 0.5,
+                     "electronics_junk": 0.5, "indie_merch": 0.3, "collectibles": 0.3, "alcohol": 1.5,
+                     "perfume": 0.3, "auto_parts": 3.0, "watch": 0.4}
+
+# Hard Off group rank letters -> normalized condition (rank J is always junk / non-returnable).
+HARDOFF_RANK = {"N": "new", "S": "like_new", "A": "like_new", "B": "good", "C": "fair", "J": "junk"}
+# Junk wording: still worth a repair gamble vs parts only.
+JUNK_REPAIRABLE = ["通電確認済", "通電確認のみ", "通電OK", "動作未確認", "ベルト劣化", "ACアダプター欠品", "電池蓋欠品",
+                   "音出し確認", "再生確認"]
+JUNK_PARTS_ONLY = ["通電不可", "液漏れ", "部品取り", "完全故障", "読み込み不可", "基板割れ", "水没"]
 
 STOPWORDS = {
     "used", "secondhand", "second", "hand", "pre", "owned", "preowned", "a", "an", "the", "of", "for", "in", "on",
     "with", "and", "or", "to", "from", "me", "my", "i", "want", "need", "find", "buy", "looking", "look", "get",
     "under", "below", "less", "than", "max", "budget", "usd", "dollars", "dollar", "shipped", "shipping", "ship",
     "japan", "japanese", "jp", "please", "good", "nice", "condition", "size", "cm", "some", "any", "cheap", "best",
-    "item", "items", "by", "at", "is", "that", "like", "new", "mint",
+    "item", "items", "by", "at", "is", "that", "like", "new", "mint", "net", "store", "shop", "artist's",
 }
