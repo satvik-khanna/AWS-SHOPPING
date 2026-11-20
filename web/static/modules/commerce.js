@@ -1,8 +1,9 @@
-/* Module: commerce list (minimal text, hairline rows, icon actions), cost breakdown & approval gate */
+/* Module: sortable commerce list with per-item Buy button, cost breakdown, and Swipe-to-Pay gate */
 (function (root) {
   "use strict";
 
   var CONDITION = { "new": "New", like_new: "Like new", good: "Good", fair: "Fair", junk: "Junk" };
+  var COND_RANK = { "new": 4, like_new: 3, good: 2, fair: 1, junk: 0 };
   var SOURCE = { mercari: "Mercari", yahoo_auctions: "Yahoo", other: "Shop" };
   var GATE_ICONS = { awaiting: "shield-lock", placed: "check-circle", stopped: "x-circle", idle: "inbox" };
   var KINDS = [
@@ -44,29 +45,42 @@
     });
   }
 
-  function renderPicks(state, filterText, handlers) {
+  function sortEntries(entries, sortKey) {
+    var ui = root.JSA.ui;
+    var list = entries.slice();
+    if (sortKey === "price_asc") {
+      list.sort(function (a, b) { return ui.totalOf(a.pick.cost) - ui.totalOf(b.pick.cost); });
+    } else if (sortKey === "price_desc") {
+      list.sort(function (a, b) { return ui.totalOf(b.pick.cost) - ui.totalOf(a.pick.cost); });
+    } else if (sortKey === "cond") {
+      list.sort(function (a, b) { return (COND_RANK[b.pick.listing.condition] || 0) - (COND_RANK[a.pick.listing.condition] || 0); });
+    }
+    return list;
+  }
+
+  function renderPicks(state, filterText, sortKey, handlers) {
     var ui = root.JSA.ui, r = state.result, box = ui.clear(ui.$("picks"));
     var cartId = state.cart && state.cart.listing_id;
-    var filtered = r.picks.map(function (p, i) { return { pick: p, idx: i }; }).filter(function (x) {
+    var entries = r.picks.map(function (p, i) { return { pick: p, idx: i }; }).filter(function (x) {
       if (!filterText) return true;
       var l = x.pick.listing;
       return (l.title_en + " " + l.title_ja + " " + l.seller + " " + l.source).toLowerCase().indexOf(filterText) !== -1;
     });
+    entries = sortEntries(entries, sortKey);
 
-    ui.$("picks-sub").textContent = filtered.length
-      ? filtered.length + " / " + ui.usd0(r.request.max_total_usd)
+    ui.$("picks-sub").textContent = entries.length
+      ? entries.length + " matches · max " + ui.usd0(r.request.max_total_usd)
       : "0 matches";
 
-    if (!filtered.length) {
+    if (!entries.length) {
       box.appendChild(ui.h("div", { class: "none-found" }, "No matches"));
     }
 
-    filtered.forEach(function (entry, pos) {
+    entries.forEach(function (entry, pos) {
       var p = entry.pick, i = entry.idx, l = p.listing, total = ui.totalOf(p.cost);
       var inCart = l.id === cartId;
       var placed = inCart && state.cart && state.cart.status === "placed";
       var url = ui.safeUrl(l.url);
-      var buyeeUrl = l.fields && l.fields.buyee_url ? ui.safeUrl(String(l.fields.buyee_url)) : null;
 
       var actions = ui.h("div", { class: "row-actions" },
         url ? ui.h("a", {
@@ -74,11 +88,6 @@
           class: "btn btn-ghost btn-icon", title: "Open listing", "aria-label": "Open listing",
           onclick: function (e) { e.stopPropagation(); }
         }, ui.icon("link-external", 14)) : null,
-        buyeeUrl ? ui.h("a", {
-          href: buyeeUrl, target: "_blank", rel: "noopener noreferrer",
-          class: "btn btn-ghost btn-icon", title: "Open on Buyee", "aria-label": "Open on Buyee",
-          onclick: function (e) { e.stopPropagation(); }
-        }, ui.icon("package", 14)) : null,
         ui.h("button", {
           type: "button", class: "btn btn-ghost btn-icon", title: "Copy item link", "aria-label": "Copy item link",
           onclick: function (e) { e.stopPropagation(); handlers.onCopyItemLink(l.id); }
@@ -86,7 +95,14 @@
         ui.h("button", {
           type: "button", class: "btn btn-ghost btn-icon btn-danger", title: "Reject " + l.seller, "aria-label": "Reject seller",
           onclick: function (e) { e.stopPropagation(); handlers.onReject(l.seller); }
-        }, ui.icon("blocked", 14))
+        }, ui.icon("blocked", 14)),
+        ui.h("button", {
+          type: "button",
+          class: "btn btn-small " + (placed ? "btn-ghost" : "btn-primary"),
+          disabled: placed,
+          title: "Open tab & prepare checkout via Computer Use",
+          onclick: function (e) { e.stopPropagation(); handlers.onBuy(p, i); }
+        }, placed ? "Paid" : "Buy")
       );
 
       box.appendChild(ui.h("article", {
@@ -96,11 +112,11 @@
         tabindex: "0",
         onclick: function () { handlers.onSelect(i); }
       },
-        ui.h("span", { class: "rank" }, "#" + (i + 1)),
+        ui.h("span", { class: "rank" }, String(pos + 1).padStart(2, "0")),
         ui.h("div", { class: "row-main" },
           ui.h("div", { class: "row-title" },
             ui.h("span", null, l.title_en),
-            inCart ? ui.h("span", { class: "tag-cart" + (placed ? " placed" : ""), title: placed ? "Ordered" : "In cart" },
+            inCart ? ui.h("span", { class: "tag-cart" + (placed ? " placed" : ""), title: placed ? "Ordered" : "Ready to swipe" },
               ui.icon(placed ? "check-circle" : "package", 12)) : null),
           ui.h("div", { class: "row-meta" },
             chip(CONDITION[l.condition] || l.condition, "c-ink"),
@@ -115,13 +131,10 @@
     sk.hidden = !skipped.length;
     if (skipped.length) {
       sk.appendChild(ui.h("span", { class: "skipped-label" }, skipped.length + " filtered"));
-      skipped.slice(0, 4).forEach(function (m) {
-        sk.appendChild(chip(m[1], /budget/i.test(m[2]) ? "c-amber" : "c-red"));
-      });
     }
   }
 
-  function renderCost(state) {
+  function renderCost(state, handlers) {
     var ui = root.JSA.ui, r = state.result, panel = ui.clear(ui.$("cost-panel"));
     var pick = r.picks[state.selectedIdx] || r.picks[0];
     if (!pick) { panel.hidden = true; return; }
@@ -152,8 +165,7 @@
       ui.h("div", { class: "row-meta" },
         chip(CONDITION[l.condition] || l.condition, "c-ink"),
         ui.h("span", null, SOURCE[l.source] || l.source),
-        ui.h("span", null, l.seller),
-        ui.h("span", null, "Rank " + Number(pick.score).toFixed(2)))));
+        ui.h("span", null, l.seller))));
 
     panel.appendChild(ui.h("div", { class: "cost-head" },
       ui.h("span", { class: "cost-title" }, "Landed (" + req.ship_to + ")"),
@@ -163,50 +175,62 @@
       totalEl));
     panel.appendChild(lines);
     panel.appendChild(ui.h("div", { class: "item-detail-actions" },
+      handlers && handlers.onBuy ? ui.h("button", { type: "button", class: "btn btn-primary", onclick: function () { handlers.onBuy(pick, state.selectedIdx); } }, "Buy via Agent") : null,
       url ? ui.h("a", { href: url, target: "_blank", rel: "noopener noreferrer", class: "btn btn-small" }, ui.icon("link-external", 12), "Listing") : null,
       buyeeUrl ? ui.h("a", { href: buyeeUrl, target: "_blank", rel: "noopener noreferrer", class: "btn btn-small" }, ui.icon("package", 12), "Buyee") : null));
     ui.tweenUsd(totalEl, total);
   }
 
-  function renderGate(state, handlers) {
+  function renderGate(state, vaultProfile, handlers) {
     var ui = root.JSA.ui, r = state.result, cart = state.cart, g = ui.$("gate");
     ui.clear(g);
-    if (!cart) {
+    if (!cart || !state.buyReady) {
       g.className = "gate idle";
-      g.appendChild(ui.h("div", { class: "gate-body" }, ui.icon("inbox", 16), ui.h("span", { class: "gate-kicker" }, "No cart")));
+      g.hidden = !cart;
+      if (cart) {
+        g.appendChild(ui.h("div", { class: "gate-body" },
+          ui.icon("package", 14),
+          ui.h("span", { class: "gate-sub" }, "Click Buy on any item to open Chrome tab & prepare Swipe to Pay.")));
+      }
       return;
     }
+    g.hidden = false;
     var pick = r.picks.filter(function (p) { return p.listing.id === cart.listing_id; })[0] || null;
+    var total = pick ? ui.totalOf(pick.cost) : null;
     var kind = cart.status === "awaiting_approval" ? "awaiting" : (cart.status === "placed" ? "placed" : "stopped");
     g.className = "gate " + kind;
 
-    var actions = [];
     if (kind === "awaiting") {
-      actions.push(ui.h("button", {
-        type: "button", class: "btn btn-ghost btn-icon", title: "Copy token", "aria-label": "Copy approval token",
-        onclick: function () { handlers.onCopyToken(cart.approval_token); }
-      }, ui.icon("copy", 14)));
-      if (pick) {
-        actions.push(ui.h("button", {
-          type: "button", class: "btn btn-ghost btn-icon btn-danger", id: "reject", title: "Reject " + pick.listing.seller, "aria-label": "Reject seller",
-          onclick: function () { handlers.onReject(pick.listing.seller); }
-        }, ui.icon("blocked", 14)));
-      }
-      actions.push(ui.h("button", {
-        type: "button", class: "btn btn-primary", id: "approve",
-        onclick: function (e) { handlers.onApprove(e.currentTarget); }
-      }, ui.icon("check", 14), "Approve"));
-    } else if (kind === "placed" && state.usedToken) {
+      var cardText = vaultProfile && vaultProfile.card ? (vaultProfile.card.brand + " •••• " + vaultProfile.card.last4) : "Saved card";
+      var swipeEl = root.JSA.swipe.create({
+        label: "Swipe to pay " + (total !== null ? ui.usd(total) : "") + " (" + cardText + ")",
+        onConfirm: function (btn) { handlers.onApprove(btn); }
+      });
+      g.appendChild(ui.h("div", { class: "gate-body gate-swipe" },
+        ui.h("div", { class: "gate-swipe-top" },
+          ui.h("div", { class: "gate-icon", "aria-hidden": "true" }, ui.icon("shield-lock", 15)),
+          ui.h("div", { class: "gate-item" },
+            ui.h("span", { class: "gate-kicker" }, "Ready to pay"),
+            pick ? ui.h("span", { class: "gate-sub" }, " · " + pick.listing.title_en) : null),
+          pick ? ui.h("button", {
+            type: "button", class: "btn btn-ghost btn-icon btn-danger", id: "reject", title: "Reject " + pick.listing.seller,
+            onclick: function () { handlers.onReject(pick.listing.seller); }
+          }, ui.icon("blocked", 14)) : null),
+        swipeEl));
+      return;
+    }
+
+    var actions = [];
+    if (kind === "placed" && state.usedToken) {
       actions.push(ui.h("button", {
         type: "button", class: "btn btn-small", id: "replay", title: "Test token replay",
         onclick: function (e) { handlers.onReplay(e.currentTarget); }
       }, ui.icon("sync", 14), "Replay"));
     }
-
     g.appendChild(ui.h("div", { class: "gate-body" },
-      ui.h("div", { class: "gate-icon", "aria-hidden": "true" }, ui.icon(GATE_ICONS[kind], 16)),
+      ui.h("div", { class: "gate-icon", "aria-hidden": "true" }, ui.icon(GATE_ICONS[kind], 15)),
       ui.h("div", { class: "gate-item" },
-        ui.h("span", { class: "gate-kicker" }, kind === "awaiting" ? "Approve order" : (kind === "placed" ? "Placed" : "Blocked")),
+        ui.h("span", { class: "gate-kicker" }, kind === "placed" ? "Order placed" : "Blocked"),
         pick ? ui.h("span", { class: "gate-sub" }, " · " + pick.listing.title_en) : null,
         state.gateEvent ? ui.h("div", { class: "ev" }, state.gateEvent) : null),
       ui.h("div", { class: "gate-actions" }, actions)));

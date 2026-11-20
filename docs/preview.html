@@ -9,33 +9,35 @@
    Shibubu Design Tokens + GitHub Primer Octicons v19.42.0 (MIT). Zero external assets. */
 
 :root {
-  /* Our Shibubu + GitHub Primer base tokens (Light default) */
-  --bg-app: #ffffff;
+  /* Dia UI-style palette (from ui-mockup) — warm paper #FBFAF6, crisp ink, rainbow working accent */
+  --bg-app: #fbfaf6;
   --surface-1: #ffffff;
-  --surface-2: #f6f7f8;
-  --surface-3: #eaedf1;
-  --surface-press: #dfe4ea;
-  --border: #e5e8ec;
-  --border-strong: #c2c9d2;
-  --text-primary: #202731;
-  --text-secondary: #515d6b;
-  --text-tertiary: #6c7682;
+  --surface-2: #f3f2ee;
+  --surface-3: #e8e6e0;
+  --surface-press: #dcd9d0;
+  --border: rgba(17, 17, 17, 0.1);
+  --border-strong: rgba(17, 17, 17, 0.22);
+  --text-primary: #111111;
+  --text-secondary: rgba(17, 17, 17, 0.56);
+  --text-tertiary: rgba(17, 17, 17, 0.4);
+  --rainbow: linear-gradient(90deg, #c679c4, #fa3d1d, #ffb005, #e1e1fe, #0358f7, #c679c4);
 
-  --ink-fill: #202731;
-  --ink-fill-hover: #323b47;
+  --ink-fill: #111111;
+  --ink-fill-hover: #2c2c2c;
   --on-ink: #ffffff;
 
-  --danger: #ab271e; --danger-soft: #fdecea;
+  --danger: #d12e16; --danger-soft: #fdecea;
   --warning: #8a5700; --warning-soft: #fdf3dc;
   --success: #17633a; --success-soft: #e6f4ec;
-  --focus-ring: #202731;
-  --scrim: rgba(17, 21, 27, 0.36);
+  --focus-ring: #0358f7;
+  --scrim: rgba(17, 17, 17, 0.36);
 
-  --seg-0: #202731; --seg-1: #515d6b; --seg-2: #8a5700;
+  --seg-0: #111111; --seg-1: #515d6b; --seg-2: #8a5700;
   --seg-3: #17633a; --seg-4: #8c959f; --seg-5: #b9c1cb;
 
-  --radius-sm: 6px; --radius-md: 8px; --radius-lg: 12px;
+  --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px;
   --hairline: 1px;
+  --font-serif: Georgia, "Instrument Serif", "Times New Roman", serif;
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Noto Sans JP", sans-serif;
   --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
   --ease-out: cubic-bezier(0.33, 1, 0.68, 1);
@@ -43,26 +45,26 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg-app: #11151b; --surface-1: #11151b; --surface-2: #191e25; --surface-3: #232a33; --surface-press: #2c3540;
-    --border: #2a313c; --border-strong: #444f5e;
-    --text-primary: #f1f5f9; --text-secondary: #b8c2ce; --text-tertiary: #8c97a6;
-    --ink-fill: #f1f5f9; --ink-fill-hover: #dce4ee; --on-ink: #11151b;
+    --bg-app: #1b1b1b; --surface-1: #232323; --surface-2: #2b2b2b; --surface-3: #343434; --surface-press: #3e3e3e;
+    --border: rgba(248, 248, 248, 0.12); --border-strong: rgba(248, 248, 248, 0.24);
+    --text-primary: #f8f8f8; --text-secondary: rgba(248, 248, 248, 0.58); --text-tertiary: rgba(248, 248, 248, 0.4);
+    --ink-fill: #f8f8f8; --ink-fill-hover: #e2e2e2; --on-ink: #111111;
     --danger: #ff9d94; --danger-soft: #3a1f21;
     --warning: #e7bd70; --warning-soft: #352915;
     --success: #7ddaa5; --success-soft: #173024;
-    --focus-ring: #f1f5f9; --scrim: rgba(0, 0, 0, 0.55);
+    --focus-ring: #91b5ff; --scrim: rgba(0, 0, 0, 0.58);
     --seg-0: #e2e8f0; --seg-1: #94a3b8; --seg-2: #e7bd70; --seg-3: #7ddaa5; --seg-4: #64748b; --seg-5: #475569;
   }
 }
 :root[data-theme="dark"] {
-  --bg-app: #11151b; --surface-1: #11151b; --surface-2: #191e25; --surface-3: #232a33; --surface-press: #2c3540;
-  --border: #2a313c; --border-strong: #444f5e;
-  --text-primary: #f1f5f9; --text-secondary: #b8c2ce; --text-tertiary: #8c97a6;
-  --ink-fill: #f1f5f9; --ink-fill-hover: #dce4ee; --on-ink: #11151b;
+  --bg-app: #1b1b1b; --surface-1: #232323; --surface-2: #2b2b2b; --surface-3: #343434; --surface-press: #3e3e3e;
+  --border: rgba(248, 248, 248, 0.12); --border-strong: rgba(248, 248, 248, 0.24);
+  --text-primary: #f8f8f8; --text-secondary: rgba(248, 248, 248, 0.58); --text-tertiary: rgba(248, 248, 248, 0.4);
+  --ink-fill: #f8f8f8; --ink-fill-hover: #e2e2e2; --on-ink: #111111;
   --danger: #ff9d94; --danger-soft: #3a1f21;
   --warning: #e7bd70; --warning-soft: #352915;
   --success: #7ddaa5; --success-soft: #173024;
-  --focus-ring: #f1f5f9; --scrim: rgba(0, 0, 0, 0.55);
+  --focus-ring: #91b5ff; --scrim: rgba(0, 0, 0, 0.58);
   --seg-0: #e2e8f0; --seg-1: #94a3b8; --seg-2: #e7bd70; --seg-3: #7ddaa5; --seg-4: #64748b; --seg-5: #475569;
 }
 
@@ -84,7 +86,40 @@ a { color: inherit; text-decoration: none; }
 .top { flex: none; background: var(--bg-app); border-bottom: var(--hairline) solid var(--border); z-index: 20; }
 .top-inner { max-width: 720px; margin: 0 auto; height: 44px; padding: 0 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .brand { display: flex; align-items: center; gap: 4px; }
-.top h1 { margin: 0; font-size: 14px; font-weight: 600; letter-spacing: -0.01em; }
+.top h1 { margin: 0; font-family: var(--font-serif); font-size: 18px; font-weight: 400; letter-spacing: -0.01em; }
+.dia-orb { width: 14px; height: 14px; border-radius: 50%; flex: none; background: conic-gradient(from 200deg, #c679c4, #fa3d1d, #ffb005, #e1e1fe, #0358f7, #c679c4); }
+.user-pill { font-family: var(--font-mono); font-size: 11px; border-radius: 999px; background: var(--surface-2); }
+.sort-select { margin-left: auto; height: 24px; padding: 0 6px; border-radius: 999px; border: var(--hairline) solid var(--border); background: var(--surface-2); color: var(--text-primary); font-size: 12px; cursor: pointer; }
+.quick-filter { width: 116px; height: 24px; padding: 0 8px; border-radius: 999px; border: var(--hairline) solid var(--border); background: var(--surface-2); color: var(--text-primary); font-size: 12px; }
+
+/* Swipe-to-Pay slider */
+.gate-swipe { flex-direction: column; align-items: stretch; gap: 8px; }
+.gate-swipe-top { display: flex; align-items: center; gap: 8px; }
+.swipe-track {
+  position: relative; height: 38px; border-radius: 999px;
+  background: var(--surface-2); border: var(--hairline) solid var(--border-strong);
+  overflow: hidden; display: flex; align-items: center; justify-content: center; user-select: none; touch-action: none;
+}
+.swipe-fill { position: absolute; left: 0; top: 0; bottom: 0; width: 38px; border-radius: 999px; background: var(--ink-fill); opacity: 0.14; pointer-events: none; transition: width 160ms var(--ease-out); }
+.swipe-track.dragging .swipe-fill, .swipe-track.dragging .swipe-thumb { transition: none; }
+.swipe-label { font-size: 12px; font-weight: 600; color: var(--text-primary); pointer-events: none; transition: opacity 140ms var(--ease-out); }
+.swipe-thumb {
+  position: absolute; left: 4px; top: 3px; width: 30px; height: 30px; border-radius: 50%; border: 0;
+  background: var(--ink-fill); color: var(--on-ink); display: grid; place-items: center; cursor: grab;
+  transition: transform 200ms var(--ease-out);
+}
+.swipe-thumb:active { cursor: grabbing; }
+.swipe-track.confirmed { border-color: var(--success); background: var(--success-soft); }
+.swipe-track.confirmed .swipe-thumb { background: var(--success); color: #fff; }
+
+/* Vault page */
+.vault-users { display: flex; flex-wrap: wrap; gap: 6px; padding-bottom: 8px; border-bottom: var(--hairline) solid var(--border); }
+.vault-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+
+/* Rainbow working ring around composer (Dia-style) */
+.composer-ring { border-radius: 22px; padding: 1.5px; background: var(--border-strong); transition: background 240ms var(--ease-out); }
+.composer-ring.working { background: var(--rainbow); background-size: 200% 100%; animation: flowRing 2.6s linear infinite; }
+@keyframes flowRing { to { background-position: -200% 0; } }
 .top-actions { display: flex; align-items: center; gap: 4px; }
 .mode { display: inline-flex; align-items: center; gap: 4px; height: 22px; padding: 0 7px; border-radius: 999px; background: var(--surface-2); color: var(--text-secondary); font-size: 12px; font-weight: 500; }
 .mode.live { background: var(--danger-soft); color: var(--danger); }
@@ -311,7 +346,7 @@ a { color: inherit; text-decoration: none; }
 @keyframes ping { from { transform: scale(0.3); opacity: 1; } to { transform: scale(1.4); opacity: 0; } }
 
 /* Bottom pinned composer */
-.composer { border: var(--hairline) solid var(--border-strong); border-radius: var(--radius-lg); padding: 4px 6px 4px 10px; background: var(--bg-app); }
+.composer { border: 0; border-radius: 20.5px; padding: 4px 6px 4px 12px; background: var(--surface-1); }
 .composer-wrap { flex: none; padding: 6px 0 10px; background: var(--bg-app); }
 .error { margin: 0 0 6px; padding: 6px 10px; border-radius: var(--radius-sm); background: var(--danger-soft); color: var(--danger); font-size: 12px; }
 .composer-row { display: flex; align-items: center; gap: 6px; }
@@ -357,9 +392,11 @@ a { color: inherit; text-decoration: none; }
           <path d="M7.78 12.53a.75.75 0 0 1-1.06 0L2.47 8.28a.75.75 0 0 1 0-1.06l4.25-4.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042L4.81 7h7.44a.75.75 0 0 1 0 1.5H4.81l2.97 2.97a.75.75 0 0 1 0 1.06Z"></path>
         </svg>
       </button>
+      <span class="dia-orb" aria-hidden="true"></span>
       <h1 id="page-title">Shopping Agent</h1>
     </div>
     <div class="top-actions">
+      <button type="button" id="user-pill" class="btn btn-ghost btn-small user-pill" data-nav-page="vault" title="User sign-ins & card vault">default · •••• 4242</button>
       <button type="button" id="search-focus" class="btn btn-ghost btn-icon" aria-label="Search" title="Search (/)">
         <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
           <path d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z"></path>
@@ -389,6 +426,7 @@ a { color: inherit; text-decoration: none; }
 
   <nav class="drawer-section" aria-label="Views">
     <button type="button" class="drawer-item active" data-nav-page="shop">Shop</button>
+    <button type="button" class="drawer-item" data-nav-page="vault">Vault (Sign-in &amp; Card)</button>
     <button type="button" class="drawer-item" data-nav-page="orders">Orders</button>
     <button type="button" class="drawer-item" data-nav-page="store">Store link</button>
     <button type="button" class="drawer-item" data-nav-page="connect">Add link</button>
@@ -472,6 +510,12 @@ a { color: inherit; text-decoration: none; }
       <div class="results-bar">
         <span class="agent-lead" id="picks-sub"></span>
         <div id="skipped" class="skipped" hidden></div>
+        <select id="sort-by" class="sort-select" aria-label="Sort products" title="Sort">
+          <option value="best">Best match</option>
+          <option value="price_asc">Price ↑</option>
+          <option value="price_desc">Price ↓</option>
+          <option value="cond">Condition</option>
+        </select>
         <input id="quick-filter" class="quick-filter" type="search" placeholder="Filter…" aria-label="Filter results">
       </div>
       <div class="scroll-region" id="picks-scroll">
@@ -483,6 +527,7 @@ a { color: inherit; text-decoration: none; }
 
     <div class="composer-wrap">
       <p class="error" id="error" role="alert" hidden></p>
+      <div id="composer-ring" class="composer-ring">
       <form id="form" class="composer" autocomplete="off">
         <div class="composer-row">
           <label class="sr-only" for="query">Search</label>
@@ -510,6 +555,7 @@ a { color: inherit; text-decoration: none; }
           </button>
         </div>
       </form>
+      </div>
     </div>
   </section>
 
@@ -553,6 +599,11 @@ a { color: inherit; text-decoration: none; }
       <ol id="trail" class="trail"></ol>
     </div>
   </section>
+
+  <!-- Page 7: Per-user Sign-in & Card Vault -->
+  <section id="page-vault" class="page" hidden>
+    <div class="scroll-region" id="vault-view"></div>
+  </section>
 </main>
 
 <div id="toast" class="toast" role="status" hidden></div>
@@ -560,14 +611,14 @@ a { color: inherit; text-decoration: none; }
 
 <script>
 (function(){
-  var SAMPLES = {"fujifilm x100v": {"request": {"query": "Fujifilm X100V", "max_total_usd": 900, "ship_to": "US-CA", "user_id": "default", "condition_min": null}, "preferences": {"user_id": "default", "sizes": {}, "condition_min": null, "rejected_sellers": ["camera_taro"], "past_purchases": ["mercari:m007", "mercari:m005", "mercari:m009", "yahoo_auctions:y002"], "notes": ["bought mercari:m007: genuine leather case LC-X100V black for X100V from parts_jp", "bought mercari:m005: FUJIFILM X100V black good condition with original box shutter count 8500 from fuji_fan_osaka", "bought mercari:m009: FUJIFILM X100V silver some scratches slight lens haze from cam_recycle_55", "bought yahoo_auctions:y002: FUJIFILM X100V black scratches from kanto_resale"]}, "picks": [{"listing": {"id": "mercari:m005", "source": "mercari", "url": "https://jp.mercari.com/item/m005", "title_ja": "FUJIFILM X100V ブラック 良品 元箱付き シャッター数8500", "title_en": "FUJIFILM X100V black good condition with original box shutter count 8500", "price_jpy": 109800, "condition": "good", "seller": "fuji_fan_osaka", "ships_abroad": false, "weight_kg": 0.8, "category": "camera", "fields": {"color": "black", "shutter_count": "8500", "box": "yes", "year": "2021", "tested": "working", "domestic_shipping": "seller pays", "condition_ja": "目立った傷や汚れなし", "buyee_url": "https://buyee.jp/mercari/item/m005"}, "photos": []}, "cost": {"listing_id": "mercari:m005", "lines": [{"label": "item price (JPY 109,800 @ 159.93)", "amount_usd": 686.55, "citation": {"source": "fixtures/rules.json#fx_jpy_per_usd", "as_of": "2026-11-13", "url": "https://www.federalreserve.gov/releases/h10/current/"}}, {"label": "Buyee service fee", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_service_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "Buyee standard plan", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_plan_fee_jpy.standard", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "payment fee", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#payment_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "domestic shipping (JP)", "amount_usd": 4.69, "citation": {"source": "fixtures/rules.json#domestic_shipping_jpy", "as_of": "2026-11-20", "url": "https://help.jp.mercari.com/guide/articles/136/"}}, {"label": "international shipping Japan Post EMS 1.00 kg (4-8 days)", "amount_usd": 33.14, "citation": {"source": "fixtures/rules.json#intl_shipping_us.ems", "as_of": "2026-11-20", "url": "https://www.post.japanpost.jp/send/oversea/charge/list-ems/all_en.html"}}, {"label": "US duty MFN camera HTS 8525.89.40.00 (de minimis suspended)", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#us_duty_mfn_by_category.camera", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/"}}, {"label": "US Japan 12.5% floor top-up (HTS 9903.05.49)", "amount_usd": 85.82, "citation": {"source": "fixtures/rules.json#us_japan_floor_rate", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/reststop/search?keyword=9903.05.49"}}], "fx_jpy_per_usd": 159.93, "blocked_reason": null, "total_usd": 816.46}, "score": 0.4089, "reason": "matches Fujifilm, x100v; $816 landed, $84 under budget; condition good (no notable marks) (seller grade: 目立った傷や汚れなし); box included (as you prefer); tested working. Watch out: you already bought this one"}, {"listing": {"id": "yahoo_auctions:y002", "source": "yahoo_auctions", "url": "https://page.auctions.yahoo.co.jp/jp/auction/y002", "title_ja": "FUJIFILM X100V ブラック 傷あり", "title_en": "FUJIFILM X100V black scratches", "price_jpy": 98000, "condition": "fair", "seller": "kanto_resale", "ships_abroad": false, "weight_kg": 0.8, "category": "camera", "fields": {"color": "black", "box": "no", "domestic_shipping": "buyer pays", "flaws": "scuffs, scratches", "condition_ja": "傷や汚れあり", "buyee_url": "https://buyee.jp/item/jdirectitems/auction/y002"}, "photos": []}, "cost": {"listing_id": "yahoo_auctions:y002", "lines": [{"label": "item price (JPY 98,000 @ 159.93)", "amount_usd": 612.77, "citation": {"source": "fixtures/rules.json#fx_jpy_per_usd", "as_of": "2026-11-13", "url": "https://www.federalreserve.gov/releases/h10/current/"}}, {"label": "Buyee service fee", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_service_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "Buyee standard plan", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_plan_fee_jpy.standard", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "payment fee", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#payment_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "domestic shipping (JP)", "amount_usd": 4.69, "citation": {"source": "fixtures/rules.json#domestic_shipping_jpy", "as_of": "2026-11-20", "url": "https://help.jp.mercari.com/guide/articles/136/"}}, {"label": "international shipping Japan Post EMS 1.00 kg (4-8 days)", "amount_usd": 33.14, "citation": {"source": "fixtures/rules.json#intl_shipping_us.ems", "as_of": "2026-11-20", "url": "https://www.post.japanpost.jp/send/oversea/charge/list-ems/all_en.html"}}, {"label": "US duty MFN camera HTS 8525.89.40.00 (de minimis suspended)", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#us_duty_mfn_by_category.camera", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/"}}, {"label": "US Japan 12.5% floor top-up (HTS 9903.05.49)", "amount_usd": 76.6, "citation": {"source": "fixtures/rules.json#us_japan_floor_rate", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/reststop/search?keyword=9903.05.49"}}], "fx_jpy_per_usd": 159.93, "blocked_reason": null, "total_usd": 733.46}, "score": 0.3748, "reason": "matches Fujifilm, x100v; $733 landed, $167 under budget; condition fair (some wear) (seller grade: 傷や汚れあり). Watch out: flaws noted: scuffs, scratches; you already bought this one"}, {"listing": {"id": "mercari:m009", "source": "mercari", "url": "https://jp.mercari.com/item/m009", "title_ja": "FUJIFILM X100V シルバー やや傷あり レンズに薄クモリ", "title_en": "FUJIFILM X100V silver some scratches slight lens haze", "price_jpy": 95000, "condition": "fair", "seller": "cam_recycle_55", "ships_abroad": false, "weight_kg": 0.8, "category": "camera", "fields": {"color": "silver", "box": "no", "flaws": "haze, scratches", "condition_ja": "やや傷や汚れあり", "buyee_url": "https://buyee.jp/mercari/item/m009"}, "photos": []}, "cost": {"listing_id": "mercari:m009", "lines": [{"label": "item price (JPY 95,000 @ 159.93)", "amount_usd": 594.01, "citation": {"source": "fixtures/rules.json#fx_jpy_per_usd", "as_of": "2026-11-13", "url": "https://www.federalreserve.gov/releases/h10/current/"}}, {"label": "Buyee service fee", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_service_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "Buyee standard plan", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_plan_fee_jpy.standard", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "payment fee", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#payment_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "domestic shipping (JP)", "amount_usd": 4.69, "citation": {"source": "fixtures/rules.json#domestic_shipping_jpy", "as_of": "2026-11-20", "url": "https://help.jp.mercari.com/guide/articles/136/"}}, {"label": "international shipping Japan Post EMS 1.00 kg (4-8 days)", "amount_usd": 33.14, "citation": {"source": "fixtures/rules.json#intl_shipping_us.ems", "as_of": "2026-11-20", "url": "https://www.post.japanpost.jp/send/oversea/charge/list-ems/all_en.html"}}, {"label": "US duty MFN camera HTS 8525.89.40.00 (de minimis suspended)", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#us_duty_mfn_by_category.camera", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/"}}, {"label": "US Japan 12.5% floor top-up (HTS 9903.05.49)", "amount_usd": 74.25, "citation": {"source": "fixtures/rules.json#us_japan_floor_rate", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/reststop/search?keyword=9903.05.49"}}], "fx_jpy_per_usd": 159.93, "blocked_reason": null, "total_usd": 712.35}, "score": 0.3188, "reason": "matches Fujifilm, x100v; $712 landed, $188 under budget; condition fair (some wear) (seller grade: やや傷や汚れあり). Watch out: flaws noted: haze, scratches; you already bought this one"}], "cart": {"status": "awaiting_approval", "listing_id": "mercari:m005", "approval_token": "demo-token-001", "cart_url": "https://buyee.jp/cart#sim-a99b6625", "detail": "[session a99b662579dc4c63] cart filled on sim-buyee; nothing paid. approve(token) to place", "session_id": "a99b662579dc4c63"}, "trail": ["recalled preferences for default: 4 past purchases, 1 rejected sellers", "source: fixtures: 10 listings for ['X100V', '富士フイルム X100V']", "found 9 listings", "skip mercari:m003: landed $1543.11 > budget $900", "skip mercari:m004: banned: battery_loose: standalone lithium batteries cannot be shipped overseas via any shipping method (https://buyee.jp/helpcenter/guide/lithium-battery)", "skip other:hardoff-3012: landed $944.48 > budget $900", "ranker: offline ranking", "pick mercari:m005 $816.46 score=0.41: matches Fujifilm, x100v; $816 landed, $84 under budget; condition good (no notable marks) (seller grade: 目立った傷や汚れなし); box included (as you prefer); tested working. Watch out: you already bought this one", "pick yahoo_auctions:y002 $733.46 score=0.37: matches Fujifilm, x100v; $733 landed, $167 under budget; condition fair (some wear) (seller grade: 傷や汚れあり). Watch out: flaws noted: scuffs, scratches; you already bought this one", "pick mercari:m009 $712.35 score=0.32: matches Fujifilm, x100v; $712 landed, $188 under budget; condition fair (some wear) (seller grade: やや傷や汚れあり). Watch out: flaws noted: haze, scratches; you already bought this one", "cart awaiting_approval for mercari:m005"], "meta": {"live": false, "wiring": {"mode": "standalone-preview"}}}, "seiko sarb033": {"request": {"query": "Seiko SARB033", "max_total_usd": 600, "ship_to": "US-CA", "user_id": "default", "condition_min": null}, "preferences": {"user_id": "default", "sizes": {}, "condition_min": null, "rejected_sellers": ["camera_taro"], "past_purchases": ["mercari:m007", "mercari:m005", "mercari:m009", "yahoo_auctions:y002"], "notes": ["bought mercari:m007: genuine leather case LC-X100V black for X100V from parts_jp", "bought mercari:m005: FUJIFILM X100V black good condition with original box shutter count 8500 from fuji_fan_osaka", "bought mercari:m009: FUJIFILM X100V silver some scratches slight lens haze from cam_recycle_55", "bought yahoo_auctions:y002: FUJIFILM X100V black scratches from kanto_resale"]}, "picks": [], "cart": null, "trail": ["recalled preferences for default: 4 past purchases, 1 rejected sellers", "source: fixtures: 0 listings for ['SARB033', 'seiko SARB033']", "found 0 listings", "ranker: offline ranking", "no candidate within budget"], "meta": {"live": false, "wiring": {"mode": "standalone-preview"}}}, "game boy micro": {"request": {"query": "Game Boy Micro", "max_total_usd": 250, "ship_to": "US-CA", "user_id": "default", "condition_min": null}, "preferences": {"user_id": "default", "sizes": {}, "condition_min": null, "rejected_sellers": ["camera_taro"], "past_purchases": ["mercari:m007", "mercari:m005", "mercari:m009", "yahoo_auctions:y002"], "notes": ["bought mercari:m007: genuine leather case LC-X100V black for X100V from parts_jp", "bought mercari:m005: FUJIFILM X100V black good condition with original box shutter count 8500 from fuji_fan_osaka", "bought mercari:m009: FUJIFILM X100V silver some scratches slight lens haze from cam_recycle_55", "bought yahoo_auctions:y002: FUJIFILM X100V black scratches from kanto_resale"]}, "picks": [{"listing": {"id": "other:hardoff-3006", "source": "other", "url": "https://netmall.hardoff.co.jp/product/3006/", "title_ja": "任天堂 ゲームボーイ 初代 箱説付き 動作確認済み", "title_en": "Nintendo Game Boy 初代 with box and manual tested working", "price_jpy": 12800, "condition": "good", "seller": "ホビーオフ 福岡店", "ships_abroad": false, "weight_kg": 0.6, "category": "electronics", "fields": {"tested": "working", "flaws": "scratches", "rank": "B", "marketplace": "Off Mall (Hard Off Net Mall)", "store_name": "ホビーオフ 福岡店", "hardoff_brand": "HOBBY OFF"}, "photos": []}, "cost": {"listing_id": "other:hardoff-3006", "lines": [{"label": "item price (JPY 12,800 @ 159.93)", "amount_usd": 80.04, "citation": {"source": "fixtures/rules.json#fx_jpy_per_usd", "as_of": "2026-11-13", "url": "https://www.federalreserve.gov/releases/h10/current/"}}, {"label": "Buyee service fee", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_service_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "Buyee standard plan", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_plan_fee_jpy.standard", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "payment fee", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#payment_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "domestic shipping (JP)", "amount_usd": 4.69, "citation": {"source": "fixtures/rules.json#domestic_shipping_jpy", "as_of": "2026-11-20", "url": "https://help.jp.mercari.com/guide/articles/136/"}}, {"label": "international shipping Japan Post EMS 0.80 kg (4-8 days)", "amount_usd": 29.64, "citation": {"source": "fixtures/rules.json#intl_shipping_us.ems", "as_of": "2026-11-20", "url": "https://www.post.japanpost.jp/send/oversea/charge/list-ems/all_en.html"}}, {"label": "US duty MFN default HTS - (de minimis suspended)", "amount_usd": 4.0, "citation": {"source": "fixtures/rules.json#us_duty_mfn_by_category.default", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/"}}, {"label": "US Japan 12.5% floor top-up (HTS 9903.05.49)", "amount_usd": 6.0, "citation": {"source": "fixtures/rules.json#us_japan_floor_rate", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/reststop/search?keyword=9903.05.49"}}], "fx_jpy_per_usd": 159.93, "blocked_reason": null, "total_usd": 130.63}, "score": 0.4866, "reason": "matches Game Boy; $131 landed, $119 under budget; condition good (no notable marks); HOBBY OFF store via Off Mall (ホビーオフ 福岡店), rank B; tested working. Watch out: not described as micro; flaws noted: scratches"}, {"listing": {"id": "other:hardoff-3004", "source": "other", "url": "https://netmall.hardoff.co.jp/product/3004/", "title_ja": "Nintendo 任天堂 初代 ゲームボーイ DMG-01 本体のみ ジャンク 通電確認のみ", "title_en": "Nintendo Nintendo 初代 Game Boy DMG-01 body only junk power-on checked only", "price_jpy": 1650, "condition": "junk", "seller": "ホビーオフ 町田店", "ships_abroad": false, "weight_kg": 0.4, "category": "electronics_junk", "fields": {"junk_risk": "repairable", "junk_reason": "通電確認のみ", "condition_source": "from title wording", "rank": "J", "returns": "none (junk rank J: no returns or warranty, even via Buyee)", "marketplace": "Off Mall (Hard Off Net Mall)", "store_name": "ホビーオフ 町田店", "hardoff_brand": "HOBBY OFF"}, "photos": []}, "cost": {"listing_id": "other:hardoff-3004", "lines": [{"label": "item price (JPY 1,650 @ 159.93)", "amount_usd": 10.32, "citation": {"source": "fixtures/rules.json#fx_jpy_per_usd", "as_of": "2026-11-13", "url": "https://www.federalreserve.gov/releases/h10/current/"}}, {"label": "Buyee service fee", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_service_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "Buyee standard plan", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_plan_fee_jpy.standard", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "payment fee", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#payment_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "domestic shipping (JP)", "amount_usd": 4.69, "citation": {"source": "fixtures/rules.json#domestic_shipping_jpy", "as_of": "2026-11-20", "url": "https://help.jp.mercari.com/guide/articles/136/"}}, {"label": "international shipping Japan Post EMS 0.60 kg (4-8 days)", "amount_usd": 26.14, "citation": {"source": "fixtures/rules.json#intl_shipping_us.ems", "as_of": "2026-11-20", "url": "https://www.post.japanpost.jp/send/oversea/charge/list-ems/all_en.html"}}, {"label": "US duty MFN default HTS - (de minimis suspended)", "amount_usd": 0.52, "citation": {"source": "fixtures/rules.json#us_duty_mfn_by_category.default", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/"}}, {"label": "US Japan 12.5% floor top-up (HTS 9903.05.49)", "amount_usd": 0.77, "citation": {"source": "fixtures/rules.json#us_japan_floor_rate", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/reststop/search?keyword=9903.05.49"}}], "fx_jpy_per_usd": 159.93, "blocked_reason": null, "total_usd": 48.7}, "score": 0.0708, "reason": "matches Game Boy; $49 landed, $201 under budget; condition junk / for parts; HOBBY OFF store via Off Mall (ホビーオフ 町田店), rank J. Watch out: not described as micro; sold as junk / for parts; no returns or warranty on junk, even via Buyee"}, {"listing": {"id": "other:hardoff-3005", "source": "other", "url": "https://netmall.hardoff.co.jp/product/3005/", "title_ja": "任天堂 ゲームボーイポケット ジャンク 通電不可", "title_en": "Nintendo Game Boy ポケット junk does not power on", "price_jpy": 880, "condition": "junk", "seller": "ホビーオフ 仙台店", "ships_abroad": false, "weight_kg": 0.3, "category": "electronics_junk", "fields": {"junk_risk": "parts only", "junk_reason": "通電不可、液漏れ、部品取り", "flaws": "battery corrosion", "condition_source": "from title wording", "rank": "J", "returns": "none (junk rank J: no returns or warranty, even via Buyee)", "marketplace": "Off Mall (Hard Off Net Mall)", "store_name": "ホビーオフ 仙台店", "hardoff_brand": "HOBBY OFF"}, "photos": []}, "cost": {"listing_id": "other:hardoff-3005", "lines": [{"label": "item price (JPY 880 @ 159.93)", "amount_usd": 5.5, "citation": {"source": "fixtures/rules.json#fx_jpy_per_usd", "as_of": "2026-11-13", "url": "https://www.federalreserve.gov/releases/h10/current/"}}, {"label": "Buyee service fee", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_service_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "Buyee standard plan", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_plan_fee_jpy.standard", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "payment fee", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#payment_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "domestic shipping (JP)", "amount_usd": 4.69, "citation": {"source": "fixtures/rules.json#domestic_shipping_jpy", "as_of": "2026-11-20", "url": "https://help.jp.mercari.com/guide/articles/136/"}}, {"label": "international shipping Japan Post EMS 0.50 kg (4-8 days)", "amount_usd": 24.39, "citation": {"source": "fixtures/rules.json#intl_shipping_us.ems", "as_of": "2026-11-20", "url": "https://www.post.japanpost.jp/send/oversea/charge/list-ems/all_en.html"}}, {"label": "US duty MFN default HTS - (de minimis suspended)", "amount_usd": 0.28, "citation": {"source": "fixtures/rules.json#us_duty_mfn_by_category.default", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/"}}, {"label": "US Japan 12.5% floor top-up (HTS 9903.05.49)", "amount_usd": 0.41, "citation": {"source": "fixtures/rules.json#us_japan_floor_rate", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/reststop/search?keyword=9903.05.49"}}], "fx_jpy_per_usd": 159.93, "blocked_reason": null, "total_usd": 41.53}, "score": -0.0449, "reason": "matches Game Boy; $42 landed, $208 under budget; condition junk / for parts; HOBBY OFF store via Off Mall (ホビーオフ 仙台店), rank J. Watch out: not described as micro; sold as junk / for parts; no returns or warranty on junk, even via Buyee; flaws noted: battery corrosion"}], "cart": {"status": "awaiting_approval", "listing_id": "other:hardoff-3006", "approval_token": "demo-token-001", "cart_url": "https://buyee.jp/cart#sim-eb17569d", "detail": "[session eb17569d3afad41d] cart filled on sim-buyee; nothing paid. approve(token) to place; 1 warning(s) in listing text", "session_id": "eb17569d3afad41d"}, "trail": ["recalled preferences for default: 4 past purchases, 1 rejected sellers", "source: fixtures: 3 listings for ['ゲームボーイ', 'micro ゲームボーイ']", "found 3 listings", "ranker: offline ranking", "pick other:hardoff-3006 $130.63 score=0.49: matches Game Boy; $131 landed, $119 under budget; condition good (no notable marks); HOBBY OFF store via Off Mall (ホビーオフ 福岡店), rank B; tested working. Watch out: not described as micro; flaws noted: scratches", "pick other:hardoff-3004 $48.7 score=0.07: matches Game Boy; $49 landed, $201 under budget; condition junk / for parts; HOBBY OFF store via Off Mall (ホビーオフ 町田店), rank J. Watch out: not described as micro; sold as junk / for parts; no returns or warranty on junk, even via Buyee", "pick other:hardoff-3005 $41.53 score=-0.04: matches Game Boy; $42 landed, $208 under budget; condition junk / for parts; HOBBY OFF store via Off Mall (ホビーオフ 仙台店), rank J. Watch out: not described as micro; sold as junk / for parts; no returns or warranty on junk, even via Buyee; flaws noted: battery corrosion", "cart awaiting_approval for other:hardoff-3006"], "meta": {"live": false, "wiring": {"mode": "standalone-preview"}}}};
+  var SAMPLES = {"fujifilm x100v": {"request": {"query": "Fujifilm X100V", "max_total_usd": 900, "ship_to": "US-CA", "user_id": "default", "condition_min": null}, "preferences": {"user_id": "default", "sizes": {}, "condition_min": null, "rejected_sellers": ["camera_taro"], "past_purchases": ["mercari:m007", "mercari:m005", "mercari:m009", "yahoo_auctions:y002", "mercari:m001"], "notes": ["bought mercari:m007: genuine leather case LC-X100V black for X100V from parts_jp", "bought mercari:m005: FUJIFILM X100V black good condition with original box shutter count 8500 from fuji_fan_osaka", "bought mercari:m009: FUJIFILM X100V silver some scratches slight lens haze from cam_recycle_55", "bought yahoo_auctions:y002: FUJIFILM X100V black scratches from kanto_resale", "bought mercari:m001: Fujifilm X100V silver excellent condition from camera_taro"]}, "picks": [{"listing": {"id": "mercari:m005", "source": "mercari", "url": "https://jp.mercari.com/item/m005", "title_ja": "FUJIFILM X100V ブラック 良品 元箱付き シャッター数8500", "title_en": "FUJIFILM X100V black good condition with original box shutter count 8500", "price_jpy": 109800, "condition": "good", "seller": "fuji_fan_osaka", "ships_abroad": false, "weight_kg": 0.8, "category": "camera", "fields": {"color": "black", "shutter_count": "8500", "box": "yes", "year": "2021", "tested": "working", "domestic_shipping": "seller pays", "condition_ja": "目立った傷や汚れなし", "buyee_url": "https://buyee.jp/mercari/item/m005"}, "photos": []}, "cost": {"listing_id": "mercari:m005", "lines": [{"label": "item price (JPY 109,800 @ 159.93)", "amount_usd": 686.55, "citation": {"source": "fixtures/rules.json#fx_jpy_per_usd", "as_of": "2026-11-13", "url": "https://www.federalreserve.gov/releases/h10/current/"}}, {"label": "Buyee service fee", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_service_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "Buyee standard plan", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_plan_fee_jpy.standard", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "payment fee", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#payment_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "domestic shipping (JP)", "amount_usd": 4.69, "citation": {"source": "fixtures/rules.json#domestic_shipping_jpy", "as_of": "2026-11-20", "url": "https://help.jp.mercari.com/guide/articles/136/"}}, {"label": "international shipping Japan Post EMS 1.00 kg (4-8 days)", "amount_usd": 33.14, "citation": {"source": "fixtures/rules.json#intl_shipping_us.ems", "as_of": "2026-11-20", "url": "https://www.post.japanpost.jp/send/oversea/charge/list-ems/all_en.html"}}, {"label": "US duty MFN camera HTS 8525.89.40.00 (de minimis suspended)", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#us_duty_mfn_by_category.camera", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/"}}, {"label": "US Japan 12.5% floor top-up (HTS 9903.05.49)", "amount_usd": 85.82, "citation": {"source": "fixtures/rules.json#us_japan_floor_rate", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/reststop/search?keyword=9903.05.49"}}], "fx_jpy_per_usd": 159.93, "blocked_reason": null, "total_usd": 816.46}, "score": 0.4089, "reason": "matches Fujifilm, x100v; $816 landed, $84 under budget; condition good (no notable marks) (seller grade: 目立った傷や汚れなし); box included (as you prefer); tested working. Watch out: you already bought this one"}, {"listing": {"id": "yahoo_auctions:y002", "source": "yahoo_auctions", "url": "https://page.auctions.yahoo.co.jp/jp/auction/y002", "title_ja": "FUJIFILM X100V ブラック 傷あり", "title_en": "FUJIFILM X100V black scratches", "price_jpy": 98000, "condition": "fair", "seller": "kanto_resale", "ships_abroad": false, "weight_kg": 0.8, "category": "camera", "fields": {"color": "black", "box": "no", "domestic_shipping": "buyer pays", "flaws": "scuffs, scratches", "condition_ja": "傷や汚れあり", "buyee_url": "https://buyee.jp/item/jdirectitems/auction/y002"}, "photos": []}, "cost": {"listing_id": "yahoo_auctions:y002", "lines": [{"label": "item price (JPY 98,000 @ 159.93)", "amount_usd": 612.77, "citation": {"source": "fixtures/rules.json#fx_jpy_per_usd", "as_of": "2026-11-13", "url": "https://www.federalreserve.gov/releases/h10/current/"}}, {"label": "Buyee service fee", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_service_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "Buyee standard plan", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_plan_fee_jpy.standard", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "payment fee", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#payment_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "domestic shipping (JP)", "amount_usd": 4.69, "citation": {"source": "fixtures/rules.json#domestic_shipping_jpy", "as_of": "2026-11-20", "url": "https://help.jp.mercari.com/guide/articles/136/"}}, {"label": "international shipping Japan Post EMS 1.00 kg (4-8 days)", "amount_usd": 33.14, "citation": {"source": "fixtures/rules.json#intl_shipping_us.ems", "as_of": "2026-11-20", "url": "https://www.post.japanpost.jp/send/oversea/charge/list-ems/all_en.html"}}, {"label": "US duty MFN camera HTS 8525.89.40.00 (de minimis suspended)", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#us_duty_mfn_by_category.camera", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/"}}, {"label": "US Japan 12.5% floor top-up (HTS 9903.05.49)", "amount_usd": 76.6, "citation": {"source": "fixtures/rules.json#us_japan_floor_rate", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/reststop/search?keyword=9903.05.49"}}], "fx_jpy_per_usd": 159.93, "blocked_reason": null, "total_usd": 733.46}, "score": 0.3748, "reason": "matches Fujifilm, x100v; $733 landed, $167 under budget; condition fair (some wear) (seller grade: 傷や汚れあり). Watch out: flaws noted: scuffs, scratches; you already bought this one"}, {"listing": {"id": "mercari:m009", "source": "mercari", "url": "https://jp.mercari.com/item/m009", "title_ja": "FUJIFILM X100V シルバー やや傷あり レンズに薄クモリ", "title_en": "FUJIFILM X100V silver some scratches slight lens haze", "price_jpy": 95000, "condition": "fair", "seller": "cam_recycle_55", "ships_abroad": false, "weight_kg": 0.8, "category": "camera", "fields": {"color": "silver", "box": "no", "flaws": "haze, scratches", "condition_ja": "やや傷や汚れあり", "buyee_url": "https://buyee.jp/mercari/item/m009"}, "photos": []}, "cost": {"listing_id": "mercari:m009", "lines": [{"label": "item price (JPY 95,000 @ 159.93)", "amount_usd": 594.01, "citation": {"source": "fixtures/rules.json#fx_jpy_per_usd", "as_of": "2026-11-13", "url": "https://www.federalreserve.gov/releases/h10/current/"}}, {"label": "Buyee service fee", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_service_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "Buyee standard plan", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_plan_fee_jpy.standard", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "payment fee", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#payment_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "domestic shipping (JP)", "amount_usd": 4.69, "citation": {"source": "fixtures/rules.json#domestic_shipping_jpy", "as_of": "2026-11-20", "url": "https://help.jp.mercari.com/guide/articles/136/"}}, {"label": "international shipping Japan Post EMS 1.00 kg (4-8 days)", "amount_usd": 33.14, "citation": {"source": "fixtures/rules.json#intl_shipping_us.ems", "as_of": "2026-11-20", "url": "https://www.post.japanpost.jp/send/oversea/charge/list-ems/all_en.html"}}, {"label": "US duty MFN camera HTS 8525.89.40.00 (de minimis suspended)", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#us_duty_mfn_by_category.camera", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/"}}, {"label": "US Japan 12.5% floor top-up (HTS 9903.05.49)", "amount_usd": 74.25, "citation": {"source": "fixtures/rules.json#us_japan_floor_rate", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/reststop/search?keyword=9903.05.49"}}], "fx_jpy_per_usd": 159.93, "blocked_reason": null, "total_usd": 712.35}, "score": 0.3188, "reason": "matches Fujifilm, x100v; $712 landed, $188 under budget; condition fair (some wear) (seller grade: やや傷や汚れあり). Watch out: flaws noted: haze, scratches; you already bought this one"}], "cart": {"status": "awaiting_approval", "listing_id": "mercari:m005", "approval_token": "demo-token-001", "cart_url": "https://buyee.jp/cart#sim-9bb10f7b", "detail": "[session 9bb10f7ba41aecd3] cart filled on sim-buyee; nothing paid. approve(token) to place", "session_id": "9bb10f7ba41aecd3"}, "trail": ["recalled preferences for default: 5 past purchases, 1 rejected sellers", "source: fixtures: 10 listings for ['X100V', '富士フイルム X100V']", "found 9 listings", "skip mercari:m003: landed $1543.11 > budget $900", "skip mercari:m004: banned: battery_loose: standalone lithium batteries cannot be shipped overseas via any shipping method (https://buyee.jp/helpcenter/guide/lithium-battery)", "skip other:hardoff-3012: landed $944.48 > budget $900", "ranker: offline ranking", "pick mercari:m005 $816.46 score=0.41: matches Fujifilm, x100v; $816 landed, $84 under budget; condition good (no notable marks) (seller grade: 目立った傷や汚れなし); box included (as you prefer); tested working. Watch out: you already bought this one", "pick yahoo_auctions:y002 $733.46 score=0.37: matches Fujifilm, x100v; $733 landed, $167 under budget; condition fair (some wear) (seller grade: 傷や汚れあり). Watch out: flaws noted: scuffs, scratches; you already bought this one", "pick mercari:m009 $712.35 score=0.32: matches Fujifilm, x100v; $712 landed, $188 under budget; condition fair (some wear) (seller grade: やや傷や汚れあり). Watch out: flaws noted: haze, scratches; you already bought this one", "cart awaiting_approval for mercari:m005"], "meta": {"live": false, "wiring": {"mode": "standalone-preview"}}}, "seiko sarb033": {"request": {"query": "Seiko SARB033", "max_total_usd": 600, "ship_to": "US-CA", "user_id": "default", "condition_min": null}, "preferences": {"user_id": "default", "sizes": {}, "condition_min": null, "rejected_sellers": ["camera_taro"], "past_purchases": ["mercari:m007", "mercari:m005", "mercari:m009", "yahoo_auctions:y002", "mercari:m001"], "notes": ["bought mercari:m007: genuine leather case LC-X100V black for X100V from parts_jp", "bought mercari:m005: FUJIFILM X100V black good condition with original box shutter count 8500 from fuji_fan_osaka", "bought mercari:m009: FUJIFILM X100V silver some scratches slight lens haze from cam_recycle_55", "bought yahoo_auctions:y002: FUJIFILM X100V black scratches from kanto_resale", "bought mercari:m001: Fujifilm X100V silver excellent condition from camera_taro"]}, "picks": [], "cart": null, "trail": ["recalled preferences for default: 5 past purchases, 1 rejected sellers", "source: fixtures: 0 listings for ['SARB033', 'seiko SARB033']", "found 0 listings", "ranker: offline ranking", "no candidate within budget"], "meta": {"live": false, "wiring": {"mode": "standalone-preview"}}}, "game boy micro": {"request": {"query": "Game Boy Micro", "max_total_usd": 250, "ship_to": "US-CA", "user_id": "default", "condition_min": null}, "preferences": {"user_id": "default", "sizes": {}, "condition_min": null, "rejected_sellers": ["camera_taro"], "past_purchases": ["mercari:m007", "mercari:m005", "mercari:m009", "yahoo_auctions:y002", "mercari:m001"], "notes": ["bought mercari:m007: genuine leather case LC-X100V black for X100V from parts_jp", "bought mercari:m005: FUJIFILM X100V black good condition with original box shutter count 8500 from fuji_fan_osaka", "bought mercari:m009: FUJIFILM X100V silver some scratches slight lens haze from cam_recycle_55", "bought yahoo_auctions:y002: FUJIFILM X100V black scratches from kanto_resale", "bought mercari:m001: Fujifilm X100V silver excellent condition from camera_taro"]}, "picks": [{"listing": {"id": "other:hardoff-3006", "source": "other", "url": "https://netmall.hardoff.co.jp/product/3006/", "title_ja": "任天堂 ゲームボーイ 初代 箱説付き 動作確認済み", "title_en": "Nintendo Game Boy 初代 with box and manual tested working", "price_jpy": 12800, "condition": "good", "seller": "ホビーオフ 福岡店", "ships_abroad": false, "weight_kg": 0.6, "category": "electronics", "fields": {"tested": "working", "flaws": "scratches", "rank": "B", "marketplace": "Off Mall (Hard Off Net Mall)", "store_name": "ホビーオフ 福岡店", "hardoff_brand": "HOBBY OFF"}, "photos": []}, "cost": {"listing_id": "other:hardoff-3006", "lines": [{"label": "item price (JPY 12,800 @ 159.93)", "amount_usd": 80.04, "citation": {"source": "fixtures/rules.json#fx_jpy_per_usd", "as_of": "2026-11-13", "url": "https://www.federalreserve.gov/releases/h10/current/"}}, {"label": "Buyee service fee", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_service_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "Buyee standard plan", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_plan_fee_jpy.standard", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "payment fee", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#payment_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "domestic shipping (JP)", "amount_usd": 4.69, "citation": {"source": "fixtures/rules.json#domestic_shipping_jpy", "as_of": "2026-11-20", "url": "https://help.jp.mercari.com/guide/articles/136/"}}, {"label": "international shipping Japan Post EMS 0.80 kg (4-8 days)", "amount_usd": 29.64, "citation": {"source": "fixtures/rules.json#intl_shipping_us.ems", "as_of": "2026-11-20", "url": "https://www.post.japanpost.jp/send/oversea/charge/list-ems/all_en.html"}}, {"label": "US duty MFN default HTS - (de minimis suspended)", "amount_usd": 4.0, "citation": {"source": "fixtures/rules.json#us_duty_mfn_by_category.default", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/"}}, {"label": "US Japan 12.5% floor top-up (HTS 9903.05.49)", "amount_usd": 6.0, "citation": {"source": "fixtures/rules.json#us_japan_floor_rate", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/reststop/search?keyword=9903.05.49"}}], "fx_jpy_per_usd": 159.93, "blocked_reason": null, "total_usd": 130.63}, "score": 0.4866, "reason": "matches Game Boy; $131 landed, $119 under budget; condition good (no notable marks); HOBBY OFF store via Off Mall (ホビーオフ 福岡店), rank B; tested working. Watch out: not described as micro; flaws noted: scratches"}, {"listing": {"id": "other:hardoff-3004", "source": "other", "url": "https://netmall.hardoff.co.jp/product/3004/", "title_ja": "Nintendo 任天堂 初代 ゲームボーイ DMG-01 本体のみ ジャンク 通電確認のみ", "title_en": "Nintendo Nintendo 初代 Game Boy DMG-01 body only junk power-on checked only", "price_jpy": 1650, "condition": "junk", "seller": "ホビーオフ 町田店", "ships_abroad": false, "weight_kg": 0.4, "category": "electronics_junk", "fields": {"junk_risk": "repairable", "junk_reason": "通電確認のみ", "condition_source": "from title wording", "rank": "J", "returns": "none (junk rank J: no returns or warranty, even via Buyee)", "marketplace": "Off Mall (Hard Off Net Mall)", "store_name": "ホビーオフ 町田店", "hardoff_brand": "HOBBY OFF"}, "photos": []}, "cost": {"listing_id": "other:hardoff-3004", "lines": [{"label": "item price (JPY 1,650 @ 159.93)", "amount_usd": 10.32, "citation": {"source": "fixtures/rules.json#fx_jpy_per_usd", "as_of": "2026-11-13", "url": "https://www.federalreserve.gov/releases/h10/current/"}}, {"label": "Buyee service fee", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_service_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "Buyee standard plan", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_plan_fee_jpy.standard", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "payment fee", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#payment_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "domestic shipping (JP)", "amount_usd": 4.69, "citation": {"source": "fixtures/rules.json#domestic_shipping_jpy", "as_of": "2026-11-20", "url": "https://help.jp.mercari.com/guide/articles/136/"}}, {"label": "international shipping Japan Post EMS 0.60 kg (4-8 days)", "amount_usd": 26.14, "citation": {"source": "fixtures/rules.json#intl_shipping_us.ems", "as_of": "2026-11-20", "url": "https://www.post.japanpost.jp/send/oversea/charge/list-ems/all_en.html"}}, {"label": "US duty MFN default HTS - (de minimis suspended)", "amount_usd": 0.52, "citation": {"source": "fixtures/rules.json#us_duty_mfn_by_category.default", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/"}}, {"label": "US Japan 12.5% floor top-up (HTS 9903.05.49)", "amount_usd": 0.77, "citation": {"source": "fixtures/rules.json#us_japan_floor_rate", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/reststop/search?keyword=9903.05.49"}}], "fx_jpy_per_usd": 159.93, "blocked_reason": null, "total_usd": 48.7}, "score": 0.0708, "reason": "matches Game Boy; $49 landed, $201 under budget; condition junk / for parts; HOBBY OFF store via Off Mall (ホビーオフ 町田店), rank J. Watch out: not described as micro; sold as junk / for parts; no returns or warranty on junk, even via Buyee"}, {"listing": {"id": "other:hardoff-3005", "source": "other", "url": "https://netmall.hardoff.co.jp/product/3005/", "title_ja": "任天堂 ゲームボーイポケット ジャンク 通電不可", "title_en": "Nintendo Game Boy ポケット junk does not power on", "price_jpy": 880, "condition": "junk", "seller": "ホビーオフ 仙台店", "ships_abroad": false, "weight_kg": 0.3, "category": "electronics_junk", "fields": {"junk_risk": "parts only", "junk_reason": "通電不可、液漏れ、部品取り", "flaws": "battery corrosion", "condition_source": "from title wording", "rank": "J", "returns": "none (junk rank J: no returns or warranty, even via Buyee)", "marketplace": "Off Mall (Hard Off Net Mall)", "store_name": "ホビーオフ 仙台店", "hardoff_brand": "HOBBY OFF"}, "photos": []}, "cost": {"listing_id": "other:hardoff-3005", "lines": [{"label": "item price (JPY 880 @ 159.93)", "amount_usd": 5.5, "citation": {"source": "fixtures/rules.json#fx_jpy_per_usd", "as_of": "2026-11-13", "url": "https://www.federalreserve.gov/releases/h10/current/"}}, {"label": "Buyee service fee", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_service_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "Buyee standard plan", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_plan_fee_jpy.standard", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "payment fee", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#payment_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "domestic shipping (JP)", "amount_usd": 4.69, "citation": {"source": "fixtures/rules.json#domestic_shipping_jpy", "as_of": "2026-11-20", "url": "https://help.jp.mercari.com/guide/articles/136/"}}, {"label": "international shipping Japan Post EMS 0.50 kg (4-8 days)", "amount_usd": 24.39, "citation": {"source": "fixtures/rules.json#intl_shipping_us.ems", "as_of": "2026-11-20", "url": "https://www.post.japanpost.jp/send/oversea/charge/list-ems/all_en.html"}}, {"label": "US duty MFN default HTS - (de minimis suspended)", "amount_usd": 0.28, "citation": {"source": "fixtures/rules.json#us_duty_mfn_by_category.default", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/"}}, {"label": "US Japan 12.5% floor top-up (HTS 9903.05.49)", "amount_usd": 0.41, "citation": {"source": "fixtures/rules.json#us_japan_floor_rate", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/reststop/search?keyword=9903.05.49"}}], "fx_jpy_per_usd": 159.93, "blocked_reason": null, "total_usd": 41.53}, "score": -0.0449, "reason": "matches Game Boy; $42 landed, $208 under budget; condition junk / for parts; HOBBY OFF store via Off Mall (ホビーオフ 仙台店), rank J. Watch out: not described as micro; sold as junk / for parts; no returns or warranty on junk, even via Buyee; flaws noted: battery corrosion"}], "cart": {"status": "awaiting_approval", "listing_id": "other:hardoff-3006", "approval_token": "demo-token-001", "cart_url": "https://buyee.jp/cart#sim-d188a9e5", "detail": "[session d188a9e5d2fdfe03] cart filled on sim-buyee; nothing paid. approve(token) to place; 1 warning(s) in listing text", "session_id": "d188a9e5d2fdfe03"}, "trail": ["recalled preferences for default: 5 past purchases, 1 rejected sellers", "source: fixtures: 3 listings for ['ゲームボーイ', 'micro ゲームボーイ']", "found 3 listings", "ranker: offline ranking", "pick other:hardoff-3006 $130.63 score=0.49: matches Game Boy; $131 landed, $119 under budget; condition good (no notable marks); HOBBY OFF store via Off Mall (ホビーオフ 福岡店), rank B; tested working. Watch out: not described as micro; flaws noted: scratches", "pick other:hardoff-3004 $48.7 score=0.07: matches Game Boy; $49 landed, $201 under budget; condition junk / for parts; HOBBY OFF store via Off Mall (ホビーオフ 町田店), rank J. Watch out: not described as micro; sold as junk / for parts; no returns or warranty on junk, even via Buyee", "pick other:hardoff-3005 $41.53 score=-0.04: matches Game Boy; $42 landed, $208 under budget; condition junk / for parts; HOBBY OFF store via Off Mall (ホビーオフ 仙台店), rank J. Watch out: not described as micro; sold as junk / for parts; no returns or warranty on junk, even via Buyee; flaws noted: battery corrosion", "cart awaiting_approval for other:hardoff-3006"], "meta": {"live": false, "wiring": {"mode": "standalone-preview"}}}};
   var DEFAULT_KEY = "fujifilm x100v";
   var origFetch = window.fetch;
   window.fetch = function(path, opts) {
     if (path === "/api/meta") {
       return Promise.resolve(new Response(JSON.stringify({live:false, wiring:{mode:"standalone-preview"}}), {status:200, headers:{"Content-Type":"application/json"}}));
     }
-    if (path === "/api/run" || path === "/api/reject") {
+    if (path === "/api/run" || path === "/api/reject" || path === "/api/buy") {
       var body = JSON.parse((opts && opts.body) || "{}");
       var q = String(body.query || "").trim().toLowerCase();
       var key = Object.keys(SAMPLES).find(function(k){ return q.indexOf(k) !== -1; }) || DEFAULT_KEY;
@@ -577,17 +628,22 @@ a { color: inherit; text-decoration: none; }
         data.picks = data.picks.filter(function(p){ return p.listing.seller !== body.seller; });
         data.trail.unshift("rejected seller " + body.seller + ": preview mode");
       }
+      if (path === "/api/buy" && body.listing_id) {
+        data.cart = { status: "awaiting_approval", listing_id: body.listing_id, approval_token: "demo-token-001", detail: "Chrome tab ready · swipe to pay" };
+        data.trail.push("chrome computer-use checkout ready for " + body.listing_id);
+      }
+      var delay = path === "/api/buy" ? 120 : 480;
       return new Promise(function(resolve){
         setTimeout(function(){
           resolve(new Response(JSON.stringify(data), {status:200, headers:{"Content-Type":"application/json"}}));
-        }, 750);
+        }, delay);
       });
     }
     if (path === "/api/approve") {
       return new Promise(function(resolve){
         setTimeout(function(){
-          resolve(new Response(JSON.stringify({cart:{status:"placed", detail:"Approved"}, trail:["approval accepted"]}), {status:200, headers:{"Content-Type":"application/json"}}));
-        }, 260);
+          resolve(new Response(JSON.stringify({cart:{status:"placed", detail:"Paid via Swipe"}, trail:["swipe payment approved"]}), {status:200, headers:{"Content-Type":"application/json"}}));
+        }, 220);
       });
     }
     return origFetch.apply(this, arguments);
@@ -762,14 +818,15 @@ a { color: inherit; text-decoration: none; }
 (function (root) {
   "use strict";
 
-  var PAGES = ["shop", "item", "orders", "store", "connect", "memory"];
+  var PAGES = ["shop", "item", "orders", "store", "connect", "memory", "vault"];
   var TITLES = {
     shop: "Shopping Agent",
     item: "Item detail",
     orders: "Orders",
     store: "Store link",
     connect: "Add link",
-    memory: "Memory & trace"
+    memory: "Memory & trace",
+    vault: "User vault"
   };
 
   function initRouter(onChange) {
@@ -805,6 +862,233 @@ a { color: inherit; text-decoration: none; }
 
   root.JSA = root.JSA || {};
   root.JSA.router = { init: initRouter };
+})(window);
+
+/* Module: Per-user Vault — remembers site sign-ins, shipping address, and masked card info per user_id
+   so the agent never asks the user to sign in or re-enter payment details on every purchase. */
+(function (root) {
+  "use strict";
+
+  var STORAGE_KEY = "jsa-user-vault-v1";
+  var DEFAULT_PROFILES = {
+    "default": {
+      userId: "default",
+      name: "Default User",
+      email: "buyer@example.com",
+      shipTo: "US-CA",
+      address: "548 Market St, San Francisco, CA 94104",
+      card: { brand: "Visa", last4: "4242", exp: "08/29", holder: "A. BUYER" },
+      logins: [
+        { site: "buyee.jp", account: "buyer@example.com", saved: true },
+        { site: "jp.mercari.com", account: "@buyer_jp", saved: true },
+        { site: "auctions.yahoo.co.jp", account: "buyer_yj", saved: true }
+      ]
+    }
+  };
+
+  function loadAll() {
+    try {
+      var raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+      if (raw && typeof raw === "object" && raw.profiles) return raw;
+    } catch (e) {}
+    return { active: "default", profiles: JSON.parse(JSON.stringify(DEFAULT_PROFILES)) };
+  }
+
+  function saveAll(db) {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); } catch (e) {}
+  }
+
+  function initVault(onUserChange) {
+    var ui = root.JSA.ui;
+    var db = loadAll();
+
+    function activeProfile() {
+      return db.profiles[db.active] || db.profiles["default"];
+    }
+
+    function render() {
+      var p = activeProfile();
+      var pill = ui.$("user-pill");
+      if (pill) pill.textContent = p.userId + " · •••• " + (p.card && p.card.last4 ? p.card.last4 : "----");
+
+      var box = ui.$("vault-view");
+      if (!box) return;
+      ui.clear(box);
+
+      // User switcher row
+      var keys = Object.keys(db.profiles);
+      box.appendChild(ui.h("div", { class: "section-kicker" }, "User profile"));
+      var switcher = ui.h("div", { class: "vault-users" },
+        keys.map(function (k) {
+          return ui.h("button", {
+            type: "button",
+            class: "btn btn-small" + (k === db.active ? " btn-primary" : ""),
+            onclick: function () {
+              db.active = k;
+              saveAll(db);
+              render();
+              if (onUserChange) onUserChange(activeProfile());
+            }
+          }, k);
+        }),
+        ui.h("button", {
+          type: "button", class: "btn btn-small btn-ghost",
+          onclick: function () {
+            var id = "user-" + (keys.length + 1);
+            db.profiles[id] = {
+              userId: id, name: "User " + (keys.length + 1), email: id + "@example.com",
+              shipTo: "US-CA", address: "San Francisco, CA",
+              card: { brand: "Mastercard", last4: "8812", exp: "11/28", holder: "NEW USER" },
+              logins: [{ site: "buyee.jp", account: id + "@example.com", saved: true }]
+            };
+            db.active = id;
+            saveAll(db);
+            render();
+            if (onUserChange) onUserChange(activeProfile());
+            ui.toast("Created profile " + id);
+          }
+        }, "+ New user"));
+      box.appendChild(switcher);
+
+      // Saved Sign-ins
+      box.appendChild(ui.h("div", { class: "section-kicker" }, "Saved sign-ins (auto-login)"));
+      (p.logins || []).forEach(function (lg, idx) {
+        box.appendChild(ui.h("div", { class: "flat-row" },
+          ui.icon(lg.saved ? "shield-check" : "shield-lock", 14),
+          ui.h("div", { class: "row-main" },
+            ui.h("div", { class: "row-title" }, lg.site),
+            ui.h("div", { class: "row-meta" }, lg.account)),
+          ui.h("button", {
+            type: "button", class: "btn btn-small",
+            onclick: function () {
+              lg.saved = !lg.saved;
+              saveAll(db);
+              render();
+            }
+          }, lg.saved ? "Saved" : "Off")));
+      });
+
+      // Saved Card & Shipping form
+      box.appendChild(ui.h("div", { class: "section-kicker" }, "Card & shipping (for Swipe to Pay)"));
+      var form = ui.h("form", {
+        class: "connect-form",
+        onsubmit: function (e) {
+          e.preventDefault();
+          p.card = {
+            brand: form.querySelector("[name=brand]").value.trim() || "Visa",
+            last4: (form.querySelector("[name=last4]").value.replace(/\D/g, "").slice(-4) || "4242"),
+            exp: form.querySelector("[name=exp]").value.trim() || "08/29",
+            holder: form.querySelector("[name=holder]").value.trim() || p.name
+          };
+          p.shipTo = form.querySelector("[name=shipTo]").value.trim() || "US-CA";
+          p.address = form.querySelector("[name=address]").value.trim() || p.address;
+          saveAll(db);
+          render();
+          if (onUserChange) onUserChange(activeProfile());
+          ui.toast("Vault saved for " + p.userId);
+        }
+      },
+        ui.h("div", { class: "vault-grid" },
+          ui.h("label", { class: "field" }, ui.h("span", null, "Brand"), ui.h("input", { name: "brand", value: p.card.brand })),
+          ui.h("label", { class: "field" }, ui.h("span", null, "Last 4"), ui.h("input", { name: "last4", maxlength: "4", value: p.card.last4 })),
+          ui.h("label", { class: "field" }, ui.h("span", null, "Exp"), ui.h("input", { name: "exp", maxlength: "5", value: p.card.exp })),
+          ui.h("label", { class: "field" }, ui.h("span", null, "Ship to"), ui.h("input", { name: "shipTo", value: p.shipTo }))),
+        ui.h("label", { class: "field" }, ui.h("span", null, "Cardholder"), ui.h("input", { name: "holder", value: p.card.holder })),
+        ui.h("label", { class: "field" }, ui.h("span", null, "Address"), ui.h("input", { name: "address", value: p.address })),
+        ui.h("button", { type: "submit", class: "btn btn-primary" }, "Save vault"));
+      box.appendChild(form);
+    }
+
+    render();
+    return {
+      get: activeProfile,
+      render: render
+    };
+  }
+
+  root.JSA = root.JSA || {};
+  root.JSA.vault = { init: initVault };
+})(window);
+
+/* Module: Swipe-to-Pay slider control (pointer + touch + keyboard accessible) */
+(function (root) {
+  "use strict";
+
+  function createSwipePay(opts) {
+    var ui = root.JSA.ui;
+    var label = opts.label || "Slide to pay";
+    var onConfirm = opts.onConfirm;
+    var disabled = false, dragging = false, startX = 0, curX = 0, maxX = 0;
+
+    var fill = ui.h("div", { class: "swipe-fill" });
+    var text = ui.h("span", { class: "swipe-label" }, label);
+    var thumb = ui.h("button", {
+      type: "button",
+      id: "approve",
+      class: "swipe-thumb",
+      "aria-label": label + " (swipe right or press Enter)"
+    }, ui.icon("arrow-right", 14));
+    var track = ui.h("div", { class: "swipe-track", role: "group", "aria-label": label }, fill, text, thumb);
+
+    function setPos(px) {
+      curX = Math.max(0, Math.min(maxX, px));
+      thumb.style.transform = "translateX(" + curX + "px)";
+      fill.style.width = (curX + 34) + "px";
+      text.style.opacity = String(Math.max(0, 1 - (maxX ? curX / (maxX * 0.7) : 0)));
+    }
+
+    function complete() {
+      if (disabled) return;
+      disabled = true;
+      track.classList.add("confirmed");
+      thumb.disabled = true;
+      text.textContent = "Paying\u2026";
+      text.style.opacity = "1";
+      if (onConfirm) onConfirm(thumb);
+    }
+
+    thumb.addEventListener("pointerdown", function (e) {
+      if (disabled) return;
+      dragging = true;
+      maxX = Math.max(40, track.clientWidth - thumb.offsetWidth - 8);
+      startX = e.clientX - curX;
+      track.classList.add("dragging");
+      thumb.setPointerCapture(e.pointerId);
+    });
+
+    thumb.addEventListener("pointermove", function (e) {
+      if (!dragging || disabled) return;
+      setPos(e.clientX - startX);
+    });
+
+    function endDrag() {
+      if (!dragging) return;
+      dragging = false;
+      track.classList.remove("dragging");
+      if (maxX > 0 && curX >= maxX * 0.82) {
+        setPos(maxX);
+        complete();
+      } else {
+        setPos(0);
+      }
+    }
+
+    thumb.addEventListener("pointerup", endDrag);
+    thumb.addEventListener("pointercancel", endDrag);
+    thumb.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        maxX = Math.max(40, track.clientWidth - thumb.offsetWidth - 8);
+        setPos(maxX);
+        complete();
+      }
+    });
+
+    return track;
+  }
+
+  root.JSA = root.JSA || {};
+  root.JSA.swipe = { create: createSwipePay };
 })(window);
 
 /* Module: search bar, instant filter, natural-language query parser, and recent history */
@@ -1013,11 +1297,12 @@ a { color: inherit; text-decoration: none; }
   root.JSA.links = { init: initLinks };
 })(window);
 
-/* Module: commerce list (minimal text, hairline rows, icon actions), cost breakdown & approval gate */
+/* Module: sortable commerce list with per-item Buy button, cost breakdown, and Swipe-to-Pay gate */
 (function (root) {
   "use strict";
 
   var CONDITION = { "new": "New", like_new: "Like new", good: "Good", fair: "Fair", junk: "Junk" };
+  var COND_RANK = { "new": 4, like_new: 3, good: 2, fair: 1, junk: 0 };
   var SOURCE = { mercari: "Mercari", yahoo_auctions: "Yahoo", other: "Shop" };
   var GATE_ICONS = { awaiting: "shield-lock", placed: "check-circle", stopped: "x-circle", idle: "inbox" };
   var KINDS = [
@@ -1059,29 +1344,42 @@ a { color: inherit; text-decoration: none; }
     });
   }
 
-  function renderPicks(state, filterText, handlers) {
+  function sortEntries(entries, sortKey) {
+    var ui = root.JSA.ui;
+    var list = entries.slice();
+    if (sortKey === "price_asc") {
+      list.sort(function (a, b) { return ui.totalOf(a.pick.cost) - ui.totalOf(b.pick.cost); });
+    } else if (sortKey === "price_desc") {
+      list.sort(function (a, b) { return ui.totalOf(b.pick.cost) - ui.totalOf(a.pick.cost); });
+    } else if (sortKey === "cond") {
+      list.sort(function (a, b) { return (COND_RANK[b.pick.listing.condition] || 0) - (COND_RANK[a.pick.listing.condition] || 0); });
+    }
+    return list;
+  }
+
+  function renderPicks(state, filterText, sortKey, handlers) {
     var ui = root.JSA.ui, r = state.result, box = ui.clear(ui.$("picks"));
     var cartId = state.cart && state.cart.listing_id;
-    var filtered = r.picks.map(function (p, i) { return { pick: p, idx: i }; }).filter(function (x) {
+    var entries = r.picks.map(function (p, i) { return { pick: p, idx: i }; }).filter(function (x) {
       if (!filterText) return true;
       var l = x.pick.listing;
       return (l.title_en + " " + l.title_ja + " " + l.seller + " " + l.source).toLowerCase().indexOf(filterText) !== -1;
     });
+    entries = sortEntries(entries, sortKey);
 
-    ui.$("picks-sub").textContent = filtered.length
-      ? filtered.length + " / " + ui.usd0(r.request.max_total_usd)
+    ui.$("picks-sub").textContent = entries.length
+      ? entries.length + " matches · max " + ui.usd0(r.request.max_total_usd)
       : "0 matches";
 
-    if (!filtered.length) {
+    if (!entries.length) {
       box.appendChild(ui.h("div", { class: "none-found" }, "No matches"));
     }
 
-    filtered.forEach(function (entry, pos) {
+    entries.forEach(function (entry, pos) {
       var p = entry.pick, i = entry.idx, l = p.listing, total = ui.totalOf(p.cost);
       var inCart = l.id === cartId;
       var placed = inCart && state.cart && state.cart.status === "placed";
       var url = ui.safeUrl(l.url);
-      var buyeeUrl = l.fields && l.fields.buyee_url ? ui.safeUrl(String(l.fields.buyee_url)) : null;
 
       var actions = ui.h("div", { class: "row-actions" },
         url ? ui.h("a", {
@@ -1089,11 +1387,6 @@ a { color: inherit; text-decoration: none; }
           class: "btn btn-ghost btn-icon", title: "Open listing", "aria-label": "Open listing",
           onclick: function (e) { e.stopPropagation(); }
         }, ui.icon("link-external", 14)) : null,
-        buyeeUrl ? ui.h("a", {
-          href: buyeeUrl, target: "_blank", rel: "noopener noreferrer",
-          class: "btn btn-ghost btn-icon", title: "Open on Buyee", "aria-label": "Open on Buyee",
-          onclick: function (e) { e.stopPropagation(); }
-        }, ui.icon("package", 14)) : null,
         ui.h("button", {
           type: "button", class: "btn btn-ghost btn-icon", title: "Copy item link", "aria-label": "Copy item link",
           onclick: function (e) { e.stopPropagation(); handlers.onCopyItemLink(l.id); }
@@ -1101,7 +1394,14 @@ a { color: inherit; text-decoration: none; }
         ui.h("button", {
           type: "button", class: "btn btn-ghost btn-icon btn-danger", title: "Reject " + l.seller, "aria-label": "Reject seller",
           onclick: function (e) { e.stopPropagation(); handlers.onReject(l.seller); }
-        }, ui.icon("blocked", 14))
+        }, ui.icon("blocked", 14)),
+        ui.h("button", {
+          type: "button",
+          class: "btn btn-small " + (placed ? "btn-ghost" : "btn-primary"),
+          disabled: placed,
+          title: "Open tab & prepare checkout via Computer Use",
+          onclick: function (e) { e.stopPropagation(); handlers.onBuy(p, i); }
+        }, placed ? "Paid" : "Buy")
       );
 
       box.appendChild(ui.h("article", {
@@ -1111,11 +1411,11 @@ a { color: inherit; text-decoration: none; }
         tabindex: "0",
         onclick: function () { handlers.onSelect(i); }
       },
-        ui.h("span", { class: "rank" }, "#" + (i + 1)),
+        ui.h("span", { class: "rank" }, String(pos + 1).padStart(2, "0")),
         ui.h("div", { class: "row-main" },
           ui.h("div", { class: "row-title" },
             ui.h("span", null, l.title_en),
-            inCart ? ui.h("span", { class: "tag-cart" + (placed ? " placed" : ""), title: placed ? "Ordered" : "In cart" },
+            inCart ? ui.h("span", { class: "tag-cart" + (placed ? " placed" : ""), title: placed ? "Ordered" : "Ready to swipe" },
               ui.icon(placed ? "check-circle" : "package", 12)) : null),
           ui.h("div", { class: "row-meta" },
             chip(CONDITION[l.condition] || l.condition, "c-ink"),
@@ -1130,13 +1430,10 @@ a { color: inherit; text-decoration: none; }
     sk.hidden = !skipped.length;
     if (skipped.length) {
       sk.appendChild(ui.h("span", { class: "skipped-label" }, skipped.length + " filtered"));
-      skipped.slice(0, 4).forEach(function (m) {
-        sk.appendChild(chip(m[1], /budget/i.test(m[2]) ? "c-amber" : "c-red"));
-      });
     }
   }
 
-  function renderCost(state) {
+  function renderCost(state, handlers) {
     var ui = root.JSA.ui, r = state.result, panel = ui.clear(ui.$("cost-panel"));
     var pick = r.picks[state.selectedIdx] || r.picks[0];
     if (!pick) { panel.hidden = true; return; }
@@ -1167,8 +1464,7 @@ a { color: inherit; text-decoration: none; }
       ui.h("div", { class: "row-meta" },
         chip(CONDITION[l.condition] || l.condition, "c-ink"),
         ui.h("span", null, SOURCE[l.source] || l.source),
-        ui.h("span", null, l.seller),
-        ui.h("span", null, "Rank " + Number(pick.score).toFixed(2)))));
+        ui.h("span", null, l.seller))));
 
     panel.appendChild(ui.h("div", { class: "cost-head" },
       ui.h("span", { class: "cost-title" }, "Landed (" + req.ship_to + ")"),
@@ -1178,50 +1474,62 @@ a { color: inherit; text-decoration: none; }
       totalEl));
     panel.appendChild(lines);
     panel.appendChild(ui.h("div", { class: "item-detail-actions" },
+      handlers && handlers.onBuy ? ui.h("button", { type: "button", class: "btn btn-primary", onclick: function () { handlers.onBuy(pick, state.selectedIdx); } }, "Buy via Agent") : null,
       url ? ui.h("a", { href: url, target: "_blank", rel: "noopener noreferrer", class: "btn btn-small" }, ui.icon("link-external", 12), "Listing") : null,
       buyeeUrl ? ui.h("a", { href: buyeeUrl, target: "_blank", rel: "noopener noreferrer", class: "btn btn-small" }, ui.icon("package", 12), "Buyee") : null));
     ui.tweenUsd(totalEl, total);
   }
 
-  function renderGate(state, handlers) {
+  function renderGate(state, vaultProfile, handlers) {
     var ui = root.JSA.ui, r = state.result, cart = state.cart, g = ui.$("gate");
     ui.clear(g);
-    if (!cart) {
+    if (!cart || !state.buyReady) {
       g.className = "gate idle";
-      g.appendChild(ui.h("div", { class: "gate-body" }, ui.icon("inbox", 16), ui.h("span", { class: "gate-kicker" }, "No cart")));
+      g.hidden = !cart;
+      if (cart) {
+        g.appendChild(ui.h("div", { class: "gate-body" },
+          ui.icon("package", 14),
+          ui.h("span", { class: "gate-sub" }, "Click Buy on any item to open Chrome tab & prepare Swipe to Pay.")));
+      }
       return;
     }
+    g.hidden = false;
     var pick = r.picks.filter(function (p) { return p.listing.id === cart.listing_id; })[0] || null;
+    var total = pick ? ui.totalOf(pick.cost) : null;
     var kind = cart.status === "awaiting_approval" ? "awaiting" : (cart.status === "placed" ? "placed" : "stopped");
     g.className = "gate " + kind;
 
-    var actions = [];
     if (kind === "awaiting") {
-      actions.push(ui.h("button", {
-        type: "button", class: "btn btn-ghost btn-icon", title: "Copy token", "aria-label": "Copy approval token",
-        onclick: function () { handlers.onCopyToken(cart.approval_token); }
-      }, ui.icon("copy", 14)));
-      if (pick) {
-        actions.push(ui.h("button", {
-          type: "button", class: "btn btn-ghost btn-icon btn-danger", id: "reject", title: "Reject " + pick.listing.seller, "aria-label": "Reject seller",
-          onclick: function () { handlers.onReject(pick.listing.seller); }
-        }, ui.icon("blocked", 14)));
-      }
-      actions.push(ui.h("button", {
-        type: "button", class: "btn btn-primary", id: "approve",
-        onclick: function (e) { handlers.onApprove(e.currentTarget); }
-      }, ui.icon("check", 14), "Approve"));
-    } else if (kind === "placed" && state.usedToken) {
+      var cardText = vaultProfile && vaultProfile.card ? (vaultProfile.card.brand + " •••• " + vaultProfile.card.last4) : "Saved card";
+      var swipeEl = root.JSA.swipe.create({
+        label: "Swipe to pay " + (total !== null ? ui.usd(total) : "") + " (" + cardText + ")",
+        onConfirm: function (btn) { handlers.onApprove(btn); }
+      });
+      g.appendChild(ui.h("div", { class: "gate-body gate-swipe" },
+        ui.h("div", { class: "gate-swipe-top" },
+          ui.h("div", { class: "gate-icon", "aria-hidden": "true" }, ui.icon("shield-lock", 15)),
+          ui.h("div", { class: "gate-item" },
+            ui.h("span", { class: "gate-kicker" }, "Ready to pay"),
+            pick ? ui.h("span", { class: "gate-sub" }, " · " + pick.listing.title_en) : null),
+          pick ? ui.h("button", {
+            type: "button", class: "btn btn-ghost btn-icon btn-danger", id: "reject", title: "Reject " + pick.listing.seller,
+            onclick: function () { handlers.onReject(pick.listing.seller); }
+          }, ui.icon("blocked", 14)) : null),
+        swipeEl));
+      return;
+    }
+
+    var actions = [];
+    if (kind === "placed" && state.usedToken) {
       actions.push(ui.h("button", {
         type: "button", class: "btn btn-small", id: "replay", title: "Test token replay",
         onclick: function (e) { handlers.onReplay(e.currentTarget); }
       }, ui.icon("sync", 14), "Replay"));
     }
-
     g.appendChild(ui.h("div", { class: "gate-body" },
-      ui.h("div", { class: "gate-icon", "aria-hidden": "true" }, ui.icon(GATE_ICONS[kind], 16)),
+      ui.h("div", { class: "gate-icon", "aria-hidden": "true" }, ui.icon(GATE_ICONS[kind], 15)),
       ui.h("div", { class: "gate-item" },
-        ui.h("span", { class: "gate-kicker" }, kind === "awaiting" ? "Approve order" : (kind === "placed" ? "Placed" : "Blocked")),
+        ui.h("span", { class: "gate-kicker" }, kind === "placed" ? "Order placed" : "Blocked"),
         pick ? ui.h("span", { class: "gate-sub" }, " · " + pick.listing.title_en) : null,
         state.gateEvent ? ui.h("div", { class: "ev" }, state.gateEvent) : null),
       ui.h("div", { class: "gate-actions" }, actions)));
@@ -1367,21 +1675,23 @@ a { color: inherit; text-decoration: none; }
   root.JSA.pages = { renderOrders: renderOrders, renderStore: renderStore, initConnect: initConnect, loadStores: loadStores };
 })(window);
 
-/* Module: Agent's browser (from ui-mockup) + live plan strip, wired to real search & results.
-   Safe DOM construction (textContent only, no innerHTML on untrusted data). */
+/* Module: Agent's browser (Dia-style Chrome Computer Use viewport)
+   Opens a new Chrome tab on Buy, auto signs-in from User Vault, fills shipping & card,
+   and pauses right before Pay so the user only needs to swipe. */
 (function (root) {
   "use strict";
 
   var STEPS = [
-    "Recall",
-    "Search JP",
-    "Landed cost",
-    "Rank",
-    "Fill cart"
+    "New Chrome tab",
+    "Auto sign-in (Vault)",
+    "Open listing",
+    "Fill shipping & card",
+    "Ready to swipe"
   ];
 
   function initAgent(onStop) {
     var ui = root.JSA.ui;
+    var ring = ui.$("composer-ring");
     var strip = ui.$("agent-plan");
     var stepsEl = ui.$("plan-steps");
     var dot = ui.$("plan-dot");
@@ -1394,7 +1704,7 @@ a { color: inherit; text-decoration: none; }
     var cursorEl = ui.$("ab-cursor");
     var captionEl = ui.$("ab-caption");
     var notifyToggle = ui.$("notify-toggle");
-    var timers = [], clock = null, startAt = 0, aborted = false, browserOpen = true;
+    var timers = [], clock = null, startAt = 0, aborted = false, browserOpen = false;
 
     function setBrowserVisible(on) {
       browserOpen = on;
@@ -1437,65 +1747,6 @@ a { color: inherit; text-decoration: none; }
       }
     }
 
-    function renderSearchStage(q) {
-      showStage("jp.mercari.com/search?keyword=" + encodeURIComponent(q), [
-        ui.h("div", { class: "ab-site" },
-          ui.h("div", { class: "ab-top" },
-            ui.h("span", { class: "ab-logo ab-mercari" }, "mercari"),
-            ui.h("div", { class: "ab-input", id: "ab-q" }, q)),
-          ui.h("div", { class: "ab-grid" },
-            [0, 1, 2].map(function (i) {
-              return ui.h("div", { class: "ab-tile", id: "ab-tile-" + i },
-                ui.h("div", { class: "ab-thumb" }, ui.icon("package", 16)),
-                ui.h("div", { class: "ab-sk" }),
-                ui.h("div", { class: "ab-sk ab-sk-sm" }));
-            })))
-      ], "Searching Japanese marketplaces for " + q + "\u2026");
-      setTimeout(function () { pointAt("ab-tile-0", true); }, 80);
-    }
-
-    function renderTranslateStage(q) {
-      showStage("jp.mercari.com/item/...", [
-        ui.h("div", { class: "ab-site" },
-          ui.h("div", { class: "ab-top" },
-            ui.h("span", { class: "ab-logo ab-mercari" }, "mercari"),
-            ui.h("div", { class: "ab-input" }, q)),
-          ui.h("div", { class: "ab-detail" },
-            ui.h("div", { class: "ab-thumb ab-thumb-lg" }, ui.icon("package", 20)),
-            ui.h("div", { class: "ab-detail-copy" },
-              ui.h("div", { class: "ab-tr" }, q + " · translating JP listing"),
-              ui.h("div", { class: "ab-jp" }, "状態・付属品・国内送料を抽出中…"),
-              ui.h("span", { class: "ab-fakebtn", id: "ab-buy" }, "購入手続きへ"))))
-      ], "Translating listing & extracting landed cost rules\u2026");
-      setTimeout(function () { pointAt("ab-buy", false); }, 80);
-    }
-
-    function renderCartStage(result) {
-      var pick = result && result.picks && result.picks[0];
-      if (!pick) {
-        showStage("buyee.jp/cart", [
-          ui.h("div", { class: "ab-site" },
-            ui.h("div", { class: "ab-top" }, ui.h("span", { class: "ab-logo ab-buyee" }, "buyee"), ui.h("div", { class: "ab-input" }, "Cart")),
-            ui.h("div", { class: "ab-paused" }, "No item within budget. Cart left empty."))
-        ], "No candidate within budget. Nothing added.");
-        return;
-      }
-      var l = pick.listing;
-      var placed = result.cart && result.cart.status === "placed";
-      showStage("buyee.jp/cart", [
-        ui.h("div", { class: "ab-site" },
-          ui.h("div", { class: "ab-top" },
-            ui.h("span", { class: "ab-logo ab-buyee" }, "buyee"),
-            ui.h("div", { class: "ab-input" }, "Cart · 1 item")),
-          ui.h("div", { class: "ab-cartrow", id: "ab-cart-row" },
-            ui.h("span", { class: "ab-cart-title" }, l.title_en),
-            ui.h("strong", null, ui.usd(ui.totalOf(pick.cost)))),
-          ui.h("div", { class: "ab-paused" + (placed ? " placed" : "") },
-            placed ? "Order placed (approved)." : "Paused before payment. Waiting for your approval."))
-      ], placed ? "Order placed." : "Cart filled. Paused before payment.");
-      setTimeout(function () { pointAt("ab-cart-row", true); }, 60);
-    }
-
     function clearTimers() {
       timers.forEach(clearTimeout);
       timers = [];
@@ -1503,45 +1754,108 @@ a { color: inherit; text-decoration: none; }
       clock = null;
     }
 
-    function start(query) {
+    function startSearch() {
+      if (ring) ring.classList.add("working");
+    }
+
+    function finishSearch() {
+      if (ring) ring.classList.remove("working");
+    }
+
+    function runComputerUseBuy(pick, profile, onReady) {
       aborted = false;
       clearTimers();
+      var l = pick.listing, total = ui.totalOf(pick.cost);
+      var cardStr = profile && profile.card ? (profile.card.brand + " •••• " + profile.card.last4) : "Visa •••• 4242";
+      var acct = (profile && profile.email) || "buyer@example.com";
+      var addr = (profile && profile.address) || "San Francisco, CA";
+
+      if (ring) ring.classList.add("working");
       if (strip) strip.hidden = false;
       setBrowserVisible(true);
-      if (dot) { dot.className = "live-dot live"; dot.textContent = "Live"; }
+      if (dot) { dot.className = "live-dot live"; dot.textContent = "Chrome · Live"; }
       if (stopBtn) stopBtn.disabled = false;
       startAt = Date.now();
       if (elapsedEl) elapsedEl.textContent = "0s";
       clock = setInterval(function () {
         if (elapsedEl) elapsedEl.textContent = Math.round((Date.now() - startAt) / 1000) + "s";
       }, 250);
+
+      // Step 0: Open new Chrome tab + Vault auto sign-in
       renderSteps(0);
-      renderSearchStage(query || "item");
-      timers.push(setTimeout(function () { renderSteps(1); }, 120));
-      timers.push(setTimeout(function () { renderSteps(2); renderTranslateStage(query || "item"); }, 260));
-      timers.push(setTimeout(function () { renderSteps(3); }, 420));
+      showStage("chrome://newtab → buyee.jp/login", [
+        ui.h("div", { class: "ab-site" },
+          ui.h("div", { class: "ab-top" },
+            ui.h("span", { class: "ab-logo ab-buyee" }, "buyee"),
+            ui.h("div", { class: "ab-input" }, "Auto sign-in (" + profile.userId + ")")),
+          ui.h("div", { class: "ab-cartrow", id: "ab-login" },
+            ui.h("span", null, "Session vault · " + acct),
+            ui.h("strong", null, "Signed in")))
+      ], "Opened Chrome tab & restored session from User Vault");
+      setTimeout(function () { pointAt("ab-login", true); }, 80);
+
+      // Step 1: Navigate to listing & add to cart
+      timers.push(setTimeout(function () {
+        if (aborted) return;
+        renderSteps(2);
+        showStage("buyee.jp/item/" + encodeURIComponent(l.id), [
+          ui.h("div", { class: "ab-site" },
+            ui.h("div", { class: "ab-top" },
+              ui.h("span", { class: "ab-logo ab-mercari" }, l.source),
+              ui.h("div", { class: "ab-input" }, l.title_en)),
+            ui.h("div", { class: "ab-cartrow" },
+              ui.h("span", { class: "ab-cart-title" }, l.title_en),
+              ui.h("strong", null, ui.usd(total))),
+            ui.h("span", { class: "ab-fakebtn", id: "ab-add" }, "Add to Buyee cart"))
+        ], "Clicking Add to cart via Computer Use\u2026");
+        setTimeout(function () { pointAt("ab-add", true); }, 80);
+      }, 450));
+
+      // Step 2: Fill shipping & saved card, pause right before Pay
+      timers.push(setTimeout(function () {
+        if (aborted) return;
+        renderSteps(3);
+        showStage("buyee.jp/checkout/confirm", [
+          ui.h("div", { class: "ab-site" },
+            ui.h("div", { class: "ab-top" },
+              ui.h("span", { class: "ab-logo ab-buyee" }, "buyee checkout"),
+              ui.h("div", { class: "ab-input" }, cardStr + " · " + addr)),
+            ui.h("div", { class: "ab-cartrow", id: "ab-pay-ready" },
+              ui.h("span", { class: "ab-cart-title" }, l.title_en),
+              ui.h("strong", null, ui.usd(total))),
+            ui.h("div", { class: "ab-paused" }, "Paused before Pay · swipe below to purchase."))
+        ], "Checkout filled. Swipe to pay.");
+        setTimeout(function () { pointAt("ab-pay-ready", false); }, 80);
+      }, 900));
+
+      timers.push(setTimeout(function () {
+        if (aborted) return;
+        clearTimers();
+        renderSteps(STEPS.length);
+        if (ring) ring.classList.remove("working");
+        if (dot) { dot.className = "live-dot paused"; dot.textContent = "Ready"; }
+        if (stopBtn) stopBtn.disabled = true;
+        notify("Ready — swipe to pay " + ui.usd(total));
+        if (onReady) onReady();
+      }, 1250));
     }
 
-    function finish(result, summaryMsg) {
-      clearTimers();
-      renderSteps(STEPS.length);
-      renderCartStage(result);
-      if (dot) { dot.className = "live-dot paused"; dot.textContent = "Paused"; }
-      if (stopBtn) stopBtn.disabled = true;
-      if (summaryMsg) notify(summaryMsg);
-    }
-
-    function updateCart(result) {
-      renderCartStage(result);
-      if (result && result.cart && result.cart.status === "placed" && dot) {
-        dot.className = "live-dot paused";
-        dot.textContent = "Done";
-      }
+    function markPaid(pick) {
+      var l = pick ? pick.listing : { title_en: "Order" };
+      showStage("buyee.jp/checkout/complete", [
+        ui.h("div", { class: "ab-site" },
+          ui.h("div", { class: "ab-top" },
+            ui.h("span", { class: "ab-logo ab-buyee" }, "buyee"),
+            ui.h("div", { class: "ab-input" }, "Order confirmed")),
+          ui.h("div", { class: "ab-paused placed" }, "Paid & ordered: " + l.title_en))
+      ], "Order placed.");
+      if (dot) { dot.className = "live-dot paused"; dot.textContent = "Paid"; }
     }
 
     function stop() {
       aborted = true;
       clearTimers();
+      if (ring) ring.classList.remove("working");
       if (dot) { dot.className = "live-dot stopped"; dot.textContent = "Stopped"; }
       if (stopBtn) stopBtn.disabled = true;
       if (captionEl) captionEl.textContent = "Stopped. Nothing paid.";
@@ -1567,9 +1881,10 @@ a { color: inherit; text-decoration: none; }
     }
 
     return {
-      start: start,
-      finish: finish,
-      updateCart: updateCart,
+      startSearch: startSearch,
+      finishSearch: finishSearch,
+      runComputerUseBuy: runComputerUseBuy,
+      markPaid: markPaid,
       stop: stop,
       notify: notify,
       isAborted: function () { return aborted; }
@@ -1580,12 +1895,16 @@ a { color: inherit; text-decoration: none; }
   root.JSA.agent = { init: initAgent };
 })(window);
 
-/* Orchestrator: wires 6-page router, icons, menu, search, links, commerce, and secondary pages. */
+/* Orchestrator: wires Dia-style UI, 7-page router, User Vault, Sortable list + Buy -> Chrome Computer Use -> Swipe-to-Pay. */
 (function (root) {
   "use strict";
 
   var ui = root.JSA.ui;
-  var state = { result: null, cart: null, usedToken: null, gateEvent: null, busy: false, selectedIdx: 0, targetItemId: "", activeStoreSlug: "tokyo-camera" };
+  var state = {
+    result: null, cart: null, usedToken: null, gateEvent: null,
+    busy: false, selectedIdx: 0, targetItemId: "", activeStoreSlug: "tokyo-camera",
+    sortKey: "best", buyReady: false
+  };
 
   function api(path, body) {
     return fetch(path, {
@@ -1620,7 +1939,10 @@ a { color: inherit; text-decoration: none; }
 
   function requestBody() {
     var r = state.result.request;
-    return { query: r.query, budget: r.max_total_usd, ship_to: r.ship_to, user_id: r.user_id, condition_min: r.condition_min };
+    return {
+      query: r.query, budget: r.max_total_usd, ship_to: r.ship_to,
+      user_id: vaultMod.get().userId, condition_min: r.condition_min
+    };
   }
 
   function copyText(text, label) {
@@ -1631,29 +1953,56 @@ a { color: inherit; text-decoration: none; }
     }
   }
 
+  function startBuyFlow(pick, idx) {
+    if (state.busy || !state.result) return;
+    state.selectedIdx = idx;
+    state.buyReady = false;
+    routerMod.go("shop");
+    renderAll();
+
+    var body = requestBody();
+    body.listing_id = pick.listing.id;
+    var profile = vaultMod.get();
+    var apiDone = api("/api/buy", body).catch(function () { return state.result; });
+
+    agentMod.runComputerUseBuy(pick, profile, function () {
+      apiDone.then(function (res) {
+        if (agentMod.isAborted()) return;
+        if (res && res.cart) {
+          state.result = res;
+          state.cart = res.cart;
+          state.usedToken = null;
+          state.gateEvent = null;
+        }
+        state.buyReady = true;
+        renderAll();
+      });
+    });
+  }
+
   function renderAll() {
     var c = root.JSA.commerce, p = root.JSA.pages;
     if (state.result) {
       c.renderPrefs(state.result);
       c.renderTrail(state.result);
-      c.renderPicks(state, searchMod.getFilter(), {
+      c.renderPicks(state, searchMod.getFilter(), state.sortKey, {
         onSelect: function (i) {
           state.selectedIdx = i;
-          c.renderCost(state);
+          c.renderCost(state, { onBuy: startBuyFlow });
           routerMod.go("item");
         },
+        onBuy: startBuyFlow,
         onReject: rejectSeller,
         onCopyItemLink: function (listingId) {
           var r = state.result.request;
           linksMod.copyLink(linksMod.buildDeepLink({ q: r.query, budget: r.max_total_usd, ship_to: r.ship_to, cond: r.condition_min || "", item: listingId }));
         }
       });
-      c.renderCost(state);
-      c.renderGate(state, {
+      c.renderCost(state, { onBuy: startBuyFlow });
+      c.renderGate(state, vaultMod.get(), {
         onApprove: approve,
         onReject: rejectSeller,
-        onReplay: replayToken,
-        onCopyToken: function (tok) { copyText(tok, "Token copied"); }
+        onReplay: replayToken
       });
     }
     p.renderOrders(state, { onApprove: approve });
@@ -1666,19 +2015,19 @@ a { color: inherit; text-decoration: none; }
       },
       onOpenItem: function (i) {
         state.selectedIdx = i;
-        c.renderCost(state);
+        c.renderCost(state, { onBuy: startBuyFlow });
         routerMod.go("item");
       }
     });
   }
 
   function show(result, stayOnPage) {
-    if (agentMod.isAborted()) return;
     state.result = result;
     state.cart = result.cart;
     state.usedToken = null;
     state.gateEvent = null;
     state.selectedIdx = 0;
+    state.buyReady = false;
     var openItem = false;
     if (state.targetItemId && result.picks) {
       var idx = result.picks.findIndex(function (p) { return p.listing.id === state.targetItemId; });
@@ -1688,10 +2037,9 @@ a { color: inherit; text-decoration: none; }
     ui.$("empty").hidden = true;
     ui.$("skeleton").hidden = true;
     ui.$("results").hidden = false;
+    agentMod.finishSearch();
     renderAll();
     renderMeta(result.meta);
-    var count = (result.picks && result.picks.length) || 0;
-    agentMod.finish(result, count ? (count + " matches ready · nothing paid") : "No matches within budget");
     if (openItem) routerMod.go("item");
     else if (!stayOnPage) routerMod.go("shop");
   }
@@ -1702,17 +2050,18 @@ a { color: inherit; text-decoration: none; }
     showError("");
     var parsed = searchMod.parseQuery(ui.$("query").value, ui.$("budget").value);
     ui.$("budget").value = parsed.budget;
+    var profile = vaultMod.get();
     var body = {
-      query: parsed.query, budget: parsed.budget, ship_to: ui.$("ship_to").value,
-      condition_min: ui.$("condition_min").value || null
+      query: parsed.query, budget: parsed.budget, ship_to: ui.$("ship_to").value || profile.shipTo,
+      user_id: profile.userId, condition_min: ui.$("condition_min").value || null
     };
     searchMod.record(body.query, body.budget, body.ship_to);
     ui.$("user-turn").hidden = false;
     ui.$("user-bubble").textContent = body.query + " · $" + body.budget;
     if (!stayOnPage) routerMod.go("shop");
     setBusy(true);
-    agentMod.start(body.query);
-    api("/api/run", body).then(function (res) { show(res, stayOnPage); }, function (e) { agentMod.stop(); showError(e.message); }).then(function () { setBusy(false); });
+    agentMod.startSearch();
+    api("/api/run", body).then(function (res) { show(res, stayOnPage); }, function (e) { agentMod.finishSearch(); showError(e.message); }).then(function () { setBusy(false); });
   }
 
   function rejectSeller(seller) {
@@ -1722,24 +2071,27 @@ a { color: inherit; text-decoration: none; }
     body.seller = seller;
     routerMod.go("shop");
     setBusy(true);
-    agentMod.start(body.query);
-    api("/api/reject", body).then(function (res) { show(res, false); }, function (e) { agentMod.stop(); showError(e.message); }).then(function () { setBusy(false); });
+    agentMod.startSearch();
+    api("/api/reject", body).then(function (res) { show(res, false); }, function (e) { agentMod.finishSearch(); showError(e.message); }).then(function () { setBusy(false); });
   }
 
   function approve(btn) {
     var token = state.cart && state.cart.approval_token;
     if (!token || state.busy) return;
     showError("");
-    btn.disabled = true;
+    if (btn) btn.disabled = true;
     api("/api/approve", { token: token }).then(function (r) {
       state.usedToken = token;
       r.cart.listing_id = r.cart.listing_id || state.cart.listing_id;
       state.cart = r.cart;
       state.result.trail = state.result.trail.concat(r.trail || []);
       renderAll();
-      agentMod.updateCart(state.result);
-      if (r.cart.status === "placed") agentMod.notify("Order placed");
-    }, function (e) { showError(e.message); btn.disabled = false; });
+      if (r.cart.status === "placed") {
+        var pick = state.result.picks.filter(function (p) { return p.listing.id === state.cart.listing_id; })[0];
+        agentMod.markPaid(pick);
+        agentMod.notify("Paid · order placed");
+      }
+    }, function (e) { showError(e.message); if (btn) btn.disabled = false; });
   }
 
   function replayToken(btn) {
@@ -1763,14 +2115,27 @@ a { color: inherit; text-decoration: none; }
   }
 
   // Init modules
+  var vaultMod = root.JSA.vault.init(function (profile) {
+    if (profile && profile.shipTo) ui.$("ship_to").value = profile.shipTo;
+    renderAll();
+  });
   var agentMod = root.JSA.agent.init(function () { setBusy(false); });
   var menuMod = root.JSA.menu.init({});
   var routerMod = root.JSA.router.init(function (page) {
     menuMod.close();
+    if (page === "vault") vaultMod.render();
     if (page === "orders" || page === "store") renderAll();
   });
   var searchMod = root.JSA.search.init(function () { menuMod.close(); runSearch(); });
   searchMod.onFilterChange(function () { if (state.result) renderAll(); });
+
+  var sortEl = ui.$("sort-by");
+  if (sortEl) {
+    sortEl.addEventListener("change", function () {
+      state.sortKey = sortEl.value;
+      if (state.result) renderAll();
+    });
+  }
 
   root.JSA.pages.initConnect(function (store) {
     state.activeStoreSlug = store.slug;

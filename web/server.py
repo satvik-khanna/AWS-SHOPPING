@@ -118,6 +118,30 @@ class Session:
             self.deps.memory.reject_seller(req.user_id, seller)
             return self._run(req, lead=[f"rejected seller {seller}: remembered for {req.user_id}, searching again"])
 
+    def buy(self, body: dict) -> dict:
+        listing_id = body.get("listing_id")
+        if not isinstance(listing_id, str) or not listing_id.strip():
+            raise BadRequest("listing_id is required")
+        req = parse_request(body)
+        with self.lock:
+            out = self._run(req)
+            picks = out.get("picks") or []
+            target = next((p for p in picks if p["listing"]["id"] == listing_id.strip()), None)
+            if target is not None and (not out.get("cart") or out["cart"].get("listing_id") != listing_id.strip()):
+                from dataclasses import asdict as _asdict
+                l_data = target["listing"]
+                listing = Listing(**l_data)
+                if self.active_token:
+                    self.revoked.add(self.active_token)
+                    self.in_cart.pop(self.active_token, None)
+                cart = self.deps.checkout.fill_cart(listing, req)
+                out["cart"] = _asdict(cart)
+                if cart.approval_token:
+                    self.active_token = cart.approval_token
+                    self.in_cart[cart.approval_token] = (req.user_id, listing)
+                out["trail"].append(f"cart prepared for {listing.id} (awaiting swipe approval)")
+            return out
+
     def approve(self, body: dict) -> dict:
         token = body.get("token")
         if not isinstance(token, str) or not token:
@@ -147,7 +171,7 @@ class Session:
 def make_handler(session: Session, allowed_hosts: tuple[str, ...] | None, quiet: bool = False):
     static = {f"/static/{p.relative_to(STATIC).as_posix()}": p for p in STATIC.rglob("*") if p.is_file() and p.suffix in MIME}
     static["/"] = static["/index.html"] = STATIC / "index.html"
-    posts = {"/api/run": session.run, "/api/approve": session.approve, "/api/reject": session.reject}
+    posts = {"/api/run": session.run, "/api/buy": session.buy, "/api/approve": session.approve, "/api/reject": session.reject}
 
     class Handler(BaseHTTPRequestHandler):
         server_version = "shopper-web"

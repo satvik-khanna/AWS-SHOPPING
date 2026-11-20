@@ -2,33 +2,35 @@
    Shibubu Design Tokens + GitHub Primer Octicons v19.42.0 (MIT). Zero external assets. */
 
 :root {
-  /* Our Shibubu + GitHub Primer base tokens (Light default) */
-  --bg-app: #ffffff;
+  /* Dia UI-style palette (from ui-mockup) — warm paper #FBFAF6, crisp ink, rainbow working accent */
+  --bg-app: #fbfaf6;
   --surface-1: #ffffff;
-  --surface-2: #f6f7f8;
-  --surface-3: #eaedf1;
-  --surface-press: #dfe4ea;
-  --border: #e5e8ec;
-  --border-strong: #c2c9d2;
-  --text-primary: #202731;
-  --text-secondary: #515d6b;
-  --text-tertiary: #6c7682;
+  --surface-2: #f3f2ee;
+  --surface-3: #e8e6e0;
+  --surface-press: #dcd9d0;
+  --border: rgba(17, 17, 17, 0.1);
+  --border-strong: rgba(17, 17, 17, 0.22);
+  --text-primary: #111111;
+  --text-secondary: rgba(17, 17, 17, 0.56);
+  --text-tertiary: rgba(17, 17, 17, 0.4);
+  --rainbow: linear-gradient(90deg, #c679c4, #fa3d1d, #ffb005, #e1e1fe, #0358f7, #c679c4);
 
-  --ink-fill: #202731;
-  --ink-fill-hover: #323b47;
+  --ink-fill: #111111;
+  --ink-fill-hover: #2c2c2c;
   --on-ink: #ffffff;
 
-  --danger: #ab271e; --danger-soft: #fdecea;
+  --danger: #d12e16; --danger-soft: #fdecea;
   --warning: #8a5700; --warning-soft: #fdf3dc;
   --success: #17633a; --success-soft: #e6f4ec;
-  --focus-ring: #202731;
-  --scrim: rgba(17, 21, 27, 0.36);
+  --focus-ring: #0358f7;
+  --scrim: rgba(17, 17, 17, 0.36);
 
-  --seg-0: #202731; --seg-1: #515d6b; --seg-2: #8a5700;
+  --seg-0: #111111; --seg-1: #515d6b; --seg-2: #8a5700;
   --seg-3: #17633a; --seg-4: #8c959f; --seg-5: #b9c1cb;
 
-  --radius-sm: 6px; --radius-md: 8px; --radius-lg: 12px;
+  --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px;
   --hairline: 1px;
+  --font-serif: Georgia, "Instrument Serif", "Times New Roman", serif;
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Noto Sans JP", sans-serif;
   --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
   --ease-out: cubic-bezier(0.33, 1, 0.68, 1);
@@ -36,26 +38,26 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg-app: #11151b; --surface-1: #11151b; --surface-2: #191e25; --surface-3: #232a33; --surface-press: #2c3540;
-    --border: #2a313c; --border-strong: #444f5e;
-    --text-primary: #f1f5f9; --text-secondary: #b8c2ce; --text-tertiary: #8c97a6;
-    --ink-fill: #f1f5f9; --ink-fill-hover: #dce4ee; --on-ink: #11151b;
+    --bg-app: #1b1b1b; --surface-1: #232323; --surface-2: #2b2b2b; --surface-3: #343434; --surface-press: #3e3e3e;
+    --border: rgba(248, 248, 248, 0.12); --border-strong: rgba(248, 248, 248, 0.24);
+    --text-primary: #f8f8f8; --text-secondary: rgba(248, 248, 248, 0.58); --text-tertiary: rgba(248, 248, 248, 0.4);
+    --ink-fill: #f8f8f8; --ink-fill-hover: #e2e2e2; --on-ink: #111111;
     --danger: #ff9d94; --danger-soft: #3a1f21;
     --warning: #e7bd70; --warning-soft: #352915;
     --success: #7ddaa5; --success-soft: #173024;
-    --focus-ring: #f1f5f9; --scrim: rgba(0, 0, 0, 0.55);
+    --focus-ring: #91b5ff; --scrim: rgba(0, 0, 0, 0.58);
     --seg-0: #e2e8f0; --seg-1: #94a3b8; --seg-2: #e7bd70; --seg-3: #7ddaa5; --seg-4: #64748b; --seg-5: #475569;
   }
 }
 :root[data-theme="dark"] {
-  --bg-app: #11151b; --surface-1: #11151b; --surface-2: #191e25; --surface-3: #232a33; --surface-press: #2c3540;
-  --border: #2a313c; --border-strong: #444f5e;
-  --text-primary: #f1f5f9; --text-secondary: #b8c2ce; --text-tertiary: #8c97a6;
-  --ink-fill: #f1f5f9; --ink-fill-hover: #dce4ee; --on-ink: #11151b;
+  --bg-app: #1b1b1b; --surface-1: #232323; --surface-2: #2b2b2b; --surface-3: #343434; --surface-press: #3e3e3e;
+  --border: rgba(248, 248, 248, 0.12); --border-strong: rgba(248, 248, 248, 0.24);
+  --text-primary: #f8f8f8; --text-secondary: rgba(248, 248, 248, 0.58); --text-tertiary: rgba(248, 248, 248, 0.4);
+  --ink-fill: #f8f8f8; --ink-fill-hover: #e2e2e2; --on-ink: #111111;
   --danger: #ff9d94; --danger-soft: #3a1f21;
   --warning: #e7bd70; --warning-soft: #352915;
   --success: #7ddaa5; --success-soft: #173024;
-  --focus-ring: #f1f5f9; --scrim: rgba(0, 0, 0, 0.55);
+  --focus-ring: #91b5ff; --scrim: rgba(0, 0, 0, 0.58);
   --seg-0: #e2e8f0; --seg-1: #94a3b8; --seg-2: #e7bd70; --seg-3: #7ddaa5; --seg-4: #64748b; --seg-5: #475569;
 }
 
@@ -77,7 +79,40 @@ a { color: inherit; text-decoration: none; }
 .top { flex: none; background: var(--bg-app); border-bottom: var(--hairline) solid var(--border); z-index: 20; }
 .top-inner { max-width: 720px; margin: 0 auto; height: 44px; padding: 0 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .brand { display: flex; align-items: center; gap: 4px; }
-.top h1 { margin: 0; font-size: 14px; font-weight: 600; letter-spacing: -0.01em; }
+.top h1 { margin: 0; font-family: var(--font-serif); font-size: 18px; font-weight: 400; letter-spacing: -0.01em; }
+.dia-orb { width: 14px; height: 14px; border-radius: 50%; flex: none; background: conic-gradient(from 200deg, #c679c4, #fa3d1d, #ffb005, #e1e1fe, #0358f7, #c679c4); }
+.user-pill { font-family: var(--font-mono); font-size: 11px; border-radius: 999px; background: var(--surface-2); }
+.sort-select { margin-left: auto; height: 24px; padding: 0 6px; border-radius: 999px; border: var(--hairline) solid var(--border); background: var(--surface-2); color: var(--text-primary); font-size: 12px; cursor: pointer; }
+.quick-filter { width: 116px; height: 24px; padding: 0 8px; border-radius: 999px; border: var(--hairline) solid var(--border); background: var(--surface-2); color: var(--text-primary); font-size: 12px; }
+
+/* Swipe-to-Pay slider */
+.gate-swipe { flex-direction: column; align-items: stretch; gap: 8px; }
+.gate-swipe-top { display: flex; align-items: center; gap: 8px; }
+.swipe-track {
+  position: relative; height: 38px; border-radius: 999px;
+  background: var(--surface-2); border: var(--hairline) solid var(--border-strong);
+  overflow: hidden; display: flex; align-items: center; justify-content: center; user-select: none; touch-action: none;
+}
+.swipe-fill { position: absolute; left: 0; top: 0; bottom: 0; width: 38px; border-radius: 999px; background: var(--ink-fill); opacity: 0.14; pointer-events: none; transition: width 160ms var(--ease-out); }
+.swipe-track.dragging .swipe-fill, .swipe-track.dragging .swipe-thumb { transition: none; }
+.swipe-label { font-size: 12px; font-weight: 600; color: var(--text-primary); pointer-events: none; transition: opacity 140ms var(--ease-out); }
+.swipe-thumb {
+  position: absolute; left: 4px; top: 3px; width: 30px; height: 30px; border-radius: 50%; border: 0;
+  background: var(--ink-fill); color: var(--on-ink); display: grid; place-items: center; cursor: grab;
+  transition: transform 200ms var(--ease-out);
+}
+.swipe-thumb:active { cursor: grabbing; }
+.swipe-track.confirmed { border-color: var(--success); background: var(--success-soft); }
+.swipe-track.confirmed .swipe-thumb { background: var(--success); color: #fff; }
+
+/* Vault page */
+.vault-users { display: flex; flex-wrap: wrap; gap: 6px; padding-bottom: 8px; border-bottom: var(--hairline) solid var(--border); }
+.vault-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+
+/* Rainbow working ring around composer (Dia-style) */
+.composer-ring { border-radius: 22px; padding: 1.5px; background: var(--border-strong); transition: background 240ms var(--ease-out); }
+.composer-ring.working { background: var(--rainbow); background-size: 200% 100%; animation: flowRing 2.6s linear infinite; }
+@keyframes flowRing { to { background-position: -200% 0; } }
 .top-actions { display: flex; align-items: center; gap: 4px; }
 .mode { display: inline-flex; align-items: center; gap: 4px; height: 22px; padding: 0 7px; border-radius: 999px; background: var(--surface-2); color: var(--text-secondary); font-size: 12px; font-weight: 500; }
 .mode.live { background: var(--danger-soft); color: var(--danger); }
@@ -304,7 +339,7 @@ a { color: inherit; text-decoration: none; }
 @keyframes ping { from { transform: scale(0.3); opacity: 1; } to { transform: scale(1.4); opacity: 0; } }
 
 /* Bottom pinned composer */
-.composer { border: var(--hairline) solid var(--border-strong); border-radius: var(--radius-lg); padding: 4px 6px 4px 10px; background: var(--bg-app); }
+.composer { border: 0; border-radius: 20.5px; padding: 4px 6px 4px 12px; background: var(--surface-1); }
 .composer-wrap { flex: none; padding: 6px 0 10px; background: var(--bg-app); }
 .error { margin: 0 0 6px; padding: 6px 10px; border-radius: var(--radius-sm); background: var(--danger-soft); color: var(--danger); font-size: 12px; }
 .composer-row { display: flex; align-items: center; gap: 6px; }

@@ -2,14 +2,15 @@
 (function (root) {
   "use strict";
 
-  var PAGES = ["shop", "item", "orders", "store", "connect", "memory"];
+  var PAGES = ["shop", "item", "orders", "store", "connect", "memory", "vault"];
   var TITLES = {
     shop: "Shopping Agent",
     item: "Item detail",
     orders: "Orders",
     store: "Store link",
     connect: "Add link",
-    memory: "Memory & trace"
+    memory: "Memory & trace",
+    vault: "User vault"
   };
 
   function initRouter(onChange) {

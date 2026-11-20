@@ -1,9 +1,13 @@
-/* Orchestrator: wires 6-page router, icons, menu, search, links, commerce, and secondary pages. */
+/* Orchestrator: wires Dia-style UI, 7-page router, User Vault, Sortable list + Buy -> Chrome Computer Use -> Swipe-to-Pay. */
 (function (root) {
   "use strict";
 
   var ui = root.JSA.ui;
-  var state = { result: null, cart: null, usedToken: null, gateEvent: null, busy: false, selectedIdx: 0, targetItemId: "", activeStoreSlug: "tokyo-camera" };
+  var state = {
+    result: null, cart: null, usedToken: null, gateEvent: null,
+    busy: false, selectedIdx: 0, targetItemId: "", activeStoreSlug: "tokyo-camera",
+    sortKey: "best", buyReady: false
+  };
 
   function api(path, body) {
     return fetch(path, {
@@ -38,7 +42,10 @@
 
   function requestBody() {
     var r = state.result.request;
-    return { query: r.query, budget: r.max_total_usd, ship_to: r.ship_to, user_id: r.user_id, condition_min: r.condition_min };
+    return {
+      query: r.query, budget: r.max_total_usd, ship_to: r.ship_to,
+      user_id: vaultMod.get().userId, condition_min: r.condition_min
+    };
   }
 
   function copyText(text, label) {
@@ -49,29 +56,56 @@
     }
   }
 
+  function startBuyFlow(pick, idx) {
+    if (state.busy || !state.result) return;
+    state.selectedIdx = idx;
+    state.buyReady = false;
+    routerMod.go("shop");
+    renderAll();
+
+    var body = requestBody();
+    body.listing_id = pick.listing.id;
+    var profile = vaultMod.get();
+    var apiDone = api("/api/buy", body).catch(function () { return state.result; });
+
+    agentMod.runComputerUseBuy(pick, profile, function () {
+      apiDone.then(function (res) {
+        if (agentMod.isAborted()) return;
+        if (res && res.cart) {
+          state.result = res;
+          state.cart = res.cart;
+          state.usedToken = null;
+          state.gateEvent = null;
+        }
+        state.buyReady = true;
+        renderAll();
+      });
+    });
+  }
+
   function renderAll() {
     var c = root.JSA.commerce, p = root.JSA.pages;
     if (state.result) {
       c.renderPrefs(state.result);
       c.renderTrail(state.result);
-      c.renderPicks(state, searchMod.getFilter(), {
+      c.renderPicks(state, searchMod.getFilter(), state.sortKey, {
         onSelect: function (i) {
           state.selectedIdx = i;
-          c.renderCost(state);
+          c.renderCost(state, { onBuy: startBuyFlow });
           routerMod.go("item");
         },
+        onBuy: startBuyFlow,
         onReject: rejectSeller,
         onCopyItemLink: function (listingId) {
           var r = state.result.request;
           linksMod.copyLink(linksMod.buildDeepLink({ q: r.query, budget: r.max_total_usd, ship_to: r.ship_to, cond: r.condition_min || "", item: listingId }));
         }
       });
-      c.renderCost(state);
-      c.renderGate(state, {
+      c.renderCost(state, { onBuy: startBuyFlow });
+      c.renderGate(state, vaultMod.get(), {
         onApprove: approve,
         onReject: rejectSeller,
-        onReplay: replayToken,
-        onCopyToken: function (tok) { copyText(tok, "Token copied"); }
+        onReplay: replayToken
       });
     }
     p.renderOrders(state, { onApprove: approve });
@@ -84,19 +118,19 @@
       },
       onOpenItem: function (i) {
         state.selectedIdx = i;
-        c.renderCost(state);
+        c.renderCost(state, { onBuy: startBuyFlow });
         routerMod.go("item");
       }
     });
   }
 
   function show(result, stayOnPage) {
-    if (agentMod.isAborted()) return;
     state.result = result;
     state.cart = result.cart;
     state.usedToken = null;
     state.gateEvent = null;
     state.selectedIdx = 0;
+    state.buyReady = false;
     var openItem = false;
     if (state.targetItemId && result.picks) {
       var idx = result.picks.findIndex(function (p) { return p.listing.id === state.targetItemId; });
@@ -106,10 +140,9 @@
     ui.$("empty").hidden = true;
     ui.$("skeleton").hidden = true;
     ui.$("results").hidden = false;
+    agentMod.finishSearch();
     renderAll();
     renderMeta(result.meta);
-    var count = (result.picks && result.picks.length) || 0;
-    agentMod.finish(result, count ? (count + " matches ready · nothing paid") : "No matches within budget");
     if (openItem) routerMod.go("item");
     else if (!stayOnPage) routerMod.go("shop");
   }
@@ -120,17 +153,18 @@
     showError("");
     var parsed = searchMod.parseQuery(ui.$("query").value, ui.$("budget").value);
     ui.$("budget").value = parsed.budget;
+    var profile = vaultMod.get();
     var body = {
-      query: parsed.query, budget: parsed.budget, ship_to: ui.$("ship_to").value,
-      condition_min: ui.$("condition_min").value || null
+      query: parsed.query, budget: parsed.budget, ship_to: ui.$("ship_to").value || profile.shipTo,
+      user_id: profile.userId, condition_min: ui.$("condition_min").value || null
     };
     searchMod.record(body.query, body.budget, body.ship_to);
     ui.$("user-turn").hidden = false;
     ui.$("user-bubble").textContent = body.query + " · $" + body.budget;
     if (!stayOnPage) routerMod.go("shop");
     setBusy(true);
-    agentMod.start(body.query);
-    api("/api/run", body).then(function (res) { show(res, stayOnPage); }, function (e) { agentMod.stop(); showError(e.message); }).then(function () { setBusy(false); });
+    agentMod.startSearch();
+    api("/api/run", body).then(function (res) { show(res, stayOnPage); }, function (e) { agentMod.finishSearch(); showError(e.message); }).then(function () { setBusy(false); });
   }
 
   function rejectSeller(seller) {
@@ -140,24 +174,27 @@
     body.seller = seller;
     routerMod.go("shop");
     setBusy(true);
-    agentMod.start(body.query);
-    api("/api/reject", body).then(function (res) { show(res, false); }, function (e) { agentMod.stop(); showError(e.message); }).then(function () { setBusy(false); });
+    agentMod.startSearch();
+    api("/api/reject", body).then(function (res) { show(res, false); }, function (e) { agentMod.finishSearch(); showError(e.message); }).then(function () { setBusy(false); });
   }
 
   function approve(btn) {
     var token = state.cart && state.cart.approval_token;
     if (!token || state.busy) return;
     showError("");
-    btn.disabled = true;
+    if (btn) btn.disabled = true;
     api("/api/approve", { token: token }).then(function (r) {
       state.usedToken = token;
       r.cart.listing_id = r.cart.listing_id || state.cart.listing_id;
       state.cart = r.cart;
       state.result.trail = state.result.trail.concat(r.trail || []);
       renderAll();
-      agentMod.updateCart(state.result);
-      if (r.cart.status === "placed") agentMod.notify("Order placed");
-    }, function (e) { showError(e.message); btn.disabled = false; });
+      if (r.cart.status === "placed") {
+        var pick = state.result.picks.filter(function (p) { return p.listing.id === state.cart.listing_id; })[0];
+        agentMod.markPaid(pick);
+        agentMod.notify("Paid · order placed");
+      }
+    }, function (e) { showError(e.message); if (btn) btn.disabled = false; });
   }
 
   function replayToken(btn) {
@@ -181,14 +218,27 @@
   }
 
   // Init modules
+  var vaultMod = root.JSA.vault.init(function (profile) {
+    if (profile && profile.shipTo) ui.$("ship_to").value = profile.shipTo;
+    renderAll();
+  });
   var agentMod = root.JSA.agent.init(function () { setBusy(false); });
   var menuMod = root.JSA.menu.init({});
   var routerMod = root.JSA.router.init(function (page) {
     menuMod.close();
+    if (page === "vault") vaultMod.render();
     if (page === "orders" || page === "store") renderAll();
   });
   var searchMod = root.JSA.search.init(function () { menuMod.close(); runSearch(); });
   searchMod.onFilterChange(function () { if (state.result) renderAll(); });
+
+  var sortEl = ui.$("sort-by");
+  if (sortEl) {
+    sortEl.addEventListener("change", function () {
+      state.sortKey = sortEl.value;
+      if (state.result) renderAll();
+    });
+  }
 
   root.JSA.pages.initConnect(function (store) {
     state.activeStoreSlug = store.slug;

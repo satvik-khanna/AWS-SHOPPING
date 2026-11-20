@@ -20,9 +20,11 @@
           <path d="M7.78 12.53a.75.75 0 0 1-1.06 0L2.47 8.28a.75.75 0 0 1 0-1.06l4.25-4.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042L4.81 7h7.44a.75.75 0 0 1 0 1.5H4.81l2.97 2.97a.75.75 0 0 1 0 1.06Z"></path>
         </svg>
       </button>
+      <span class="dia-orb" aria-hidden="true"></span>
       <h1 id="page-title">Shopping Agent</h1>
     </div>
     <div class="top-actions">
+      <button type="button" id="user-pill" class="btn btn-ghost btn-small user-pill" data-nav-page="vault" title="User sign-ins & card vault">default · •••• 4242</button>
       <button type="button" id="search-focus" class="btn btn-ghost btn-icon" aria-label="Search" title="Search (/)">
         <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
           <path d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z"></path>
@@ -52,6 +54,7 @@
 
   <nav class="drawer-section" aria-label="Views">
     <button type="button" class="drawer-item active" data-nav-page="shop">Shop</button>
+    <button type="button" class="drawer-item" data-nav-page="vault">Vault (Sign-in &amp; Card)</button>
     <button type="button" class="drawer-item" data-nav-page="orders">Orders</button>
     <button type="button" class="drawer-item" data-nav-page="store">Store link</button>
     <button type="button" class="drawer-item" data-nav-page="connect">Add link</button>
@@ -135,6 +138,12 @@
       <div class="results-bar">
         <span class="agent-lead" id="picks-sub"></span>
         <div id="skipped" class="skipped" hidden></div>
+        <select id="sort-by" class="sort-select" aria-label="Sort products" title="Sort">
+          <option value="best">Best match</option>
+          <option value="price_asc">Price ↑</option>
+          <option value="price_desc">Price ↓</option>
+          <option value="cond">Condition</option>
+        </select>
         <input id="quick-filter" class="quick-filter" type="search" placeholder="Filter…" aria-label="Filter results">
       </div>
       <div class="scroll-region" id="picks-scroll">
@@ -146,6 +155,7 @@
 
     <div class="composer-wrap">
       <p class="error" id="error" role="alert" hidden></p>
+      <div id="composer-ring" class="composer-ring">
       <form id="form" class="composer" autocomplete="off">
         <div class="composer-row">
           <label class="sr-only" for="query">Search</label>
@@ -173,6 +183,7 @@
           </button>
         </div>
       </form>
+      </div>
     </div>
   </section>
 
@@ -216,6 +227,11 @@
       <ol id="trail" class="trail"></ol>
     </div>
   </section>
+
+  <!-- Page 7: Per-user Sign-in & Card Vault -->
+  <section id="page-vault" class="page" hidden>
+    <div class="scroll-region" id="vault-view"></div>
+  </section>
 </main>
 
 <div id="toast" class="toast" role="status" hidden></div>
@@ -223,6 +239,8 @@
 <script src="/static/modules/icons.js"></script>
 <script src="/static/modules/menu.js"></script>
 <script src="/static/modules/router.js"></script>
+<script src="/static/modules/vault.js"></script>
+<script src="/static/modules/swipe.js"></script>
 <script src="/static/modules/search.js"></script>
 <script src="/static/modules/links.js"></script>
 <script src="/static/modules/commerce.js"></script>

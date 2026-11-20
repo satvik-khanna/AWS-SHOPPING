@@ -1,18 +1,20 @@
-/* Module: Agent's browser (from ui-mockup) + live plan strip, wired to real search & results.
-   Safe DOM construction (textContent only, no innerHTML on untrusted data). */
+/* Module: Agent's browser (Dia-style Chrome Computer Use viewport)
+   Opens a new Chrome tab on Buy, auto signs-in from User Vault, fills shipping & card,
+   and pauses right before Pay so the user only needs to swipe. */
 (function (root) {
   "use strict";
 
   var STEPS = [
-    "Recall",
-    "Search JP",
-    "Landed cost",
-    "Rank",
-    "Fill cart"
+    "New Chrome tab",
+    "Auto sign-in (Vault)",
+    "Open listing",
+    "Fill shipping & card",
+    "Ready to swipe"
   ];
 
   function initAgent(onStop) {
     var ui = root.JSA.ui;
+    var ring = ui.$("composer-ring");
     var strip = ui.$("agent-plan");
     var stepsEl = ui.$("plan-steps");
     var dot = ui.$("plan-dot");
@@ -25,7 +27,7 @@
     var cursorEl = ui.$("ab-cursor");
     var captionEl = ui.$("ab-caption");
     var notifyToggle = ui.$("notify-toggle");
-    var timers = [], clock = null, startAt = 0, aborted = false, browserOpen = true;
+    var timers = [], clock = null, startAt = 0, aborted = false, browserOpen = false;
 
     function setBrowserVisible(on) {
       browserOpen = on;
@@ -68,65 +70,6 @@
       }
     }
 
-    function renderSearchStage(q) {
-      showStage("jp.mercari.com/search?keyword=" + encodeURIComponent(q), [
-        ui.h("div", { class: "ab-site" },
-          ui.h("div", { class: "ab-top" },
-            ui.h("span", { class: "ab-logo ab-mercari" }, "mercari"),
-            ui.h("div", { class: "ab-input", id: "ab-q" }, q)),
-          ui.h("div", { class: "ab-grid" },
-            [0, 1, 2].map(function (i) {
-              return ui.h("div", { class: "ab-tile", id: "ab-tile-" + i },
-                ui.h("div", { class: "ab-thumb" }, ui.icon("package", 16)),
-                ui.h("div", { class: "ab-sk" }),
-                ui.h("div", { class: "ab-sk ab-sk-sm" }));
-            })))
-      ], "Searching Japanese marketplaces for " + q + "\u2026");
-      setTimeout(function () { pointAt("ab-tile-0", true); }, 80);
-    }
-
-    function renderTranslateStage(q) {
-      showStage("jp.mercari.com/item/...", [
-        ui.h("div", { class: "ab-site" },
-          ui.h("div", { class: "ab-top" },
-            ui.h("span", { class: "ab-logo ab-mercari" }, "mercari"),
-            ui.h("div", { class: "ab-input" }, q)),
-          ui.h("div", { class: "ab-detail" },
-            ui.h("div", { class: "ab-thumb ab-thumb-lg" }, ui.icon("package", 20)),
-            ui.h("div", { class: "ab-detail-copy" },
-              ui.h("div", { class: "ab-tr" }, q + " · translating JP listing"),
-              ui.h("div", { class: "ab-jp" }, "状態・付属品・国内送料を抽出中…"),
-              ui.h("span", { class: "ab-fakebtn", id: "ab-buy" }, "購入手続きへ"))))
-      ], "Translating listing & extracting landed cost rules\u2026");
-      setTimeout(function () { pointAt("ab-buy", false); }, 80);
-    }
-
-    function renderCartStage(result) {
-      var pick = result && result.picks && result.picks[0];
-      if (!pick) {
-        showStage("buyee.jp/cart", [
-          ui.h("div", { class: "ab-site" },
-            ui.h("div", { class: "ab-top" }, ui.h("span", { class: "ab-logo ab-buyee" }, "buyee"), ui.h("div", { class: "ab-input" }, "Cart")),
-            ui.h("div", { class: "ab-paused" }, "No item within budget. Cart left empty."))
-        ], "No candidate within budget. Nothing added.");
-        return;
-      }
-      var l = pick.listing;
-      var placed = result.cart && result.cart.status === "placed";
-      showStage("buyee.jp/cart", [
-        ui.h("div", { class: "ab-site" },
-          ui.h("div", { class: "ab-top" },
-            ui.h("span", { class: "ab-logo ab-buyee" }, "buyee"),
-            ui.h("div", { class: "ab-input" }, "Cart · 1 item")),
-          ui.h("div", { class: "ab-cartrow", id: "ab-cart-row" },
-            ui.h("span", { class: "ab-cart-title" }, l.title_en),
-            ui.h("strong", null, ui.usd(ui.totalOf(pick.cost)))),
-          ui.h("div", { class: "ab-paused" + (placed ? " placed" : "") },
-            placed ? "Order placed (approved)." : "Paused before payment. Waiting for your approval."))
-      ], placed ? "Order placed." : "Cart filled. Paused before payment.");
-      setTimeout(function () { pointAt("ab-cart-row", true); }, 60);
-    }
-
     function clearTimers() {
       timers.forEach(clearTimeout);
       timers = [];
@@ -134,45 +77,108 @@
       clock = null;
     }
 
-    function start(query) {
+    function startSearch() {
+      if (ring) ring.classList.add("working");
+    }
+
+    function finishSearch() {
+      if (ring) ring.classList.remove("working");
+    }
+
+    function runComputerUseBuy(pick, profile, onReady) {
       aborted = false;
       clearTimers();
+      var l = pick.listing, total = ui.totalOf(pick.cost);
+      var cardStr = profile && profile.card ? (profile.card.brand + " •••• " + profile.card.last4) : "Visa •••• 4242";
+      var acct = (profile && profile.email) || "buyer@example.com";
+      var addr = (profile && profile.address) || "San Francisco, CA";
+
+      if (ring) ring.classList.add("working");
       if (strip) strip.hidden = false;
       setBrowserVisible(true);
-      if (dot) { dot.className = "live-dot live"; dot.textContent = "Live"; }
+      if (dot) { dot.className = "live-dot live"; dot.textContent = "Chrome · Live"; }
       if (stopBtn) stopBtn.disabled = false;
       startAt = Date.now();
       if (elapsedEl) elapsedEl.textContent = "0s";
       clock = setInterval(function () {
         if (elapsedEl) elapsedEl.textContent = Math.round((Date.now() - startAt) / 1000) + "s";
       }, 250);
+
+      // Step 0: Open new Chrome tab + Vault auto sign-in
       renderSteps(0);
-      renderSearchStage(query || "item");
-      timers.push(setTimeout(function () { renderSteps(1); }, 120));
-      timers.push(setTimeout(function () { renderSteps(2); renderTranslateStage(query || "item"); }, 260));
-      timers.push(setTimeout(function () { renderSteps(3); }, 420));
+      showStage("chrome://newtab → buyee.jp/login", [
+        ui.h("div", { class: "ab-site" },
+          ui.h("div", { class: "ab-top" },
+            ui.h("span", { class: "ab-logo ab-buyee" }, "buyee"),
+            ui.h("div", { class: "ab-input" }, "Auto sign-in (" + profile.userId + ")")),
+          ui.h("div", { class: "ab-cartrow", id: "ab-login" },
+            ui.h("span", null, "Session vault · " + acct),
+            ui.h("strong", null, "Signed in")))
+      ], "Opened Chrome tab & restored session from User Vault");
+      setTimeout(function () { pointAt("ab-login", true); }, 80);
+
+      // Step 1: Navigate to listing & add to cart
+      timers.push(setTimeout(function () {
+        if (aborted) return;
+        renderSteps(2);
+        showStage("buyee.jp/item/" + encodeURIComponent(l.id), [
+          ui.h("div", { class: "ab-site" },
+            ui.h("div", { class: "ab-top" },
+              ui.h("span", { class: "ab-logo ab-mercari" }, l.source),
+              ui.h("div", { class: "ab-input" }, l.title_en)),
+            ui.h("div", { class: "ab-cartrow" },
+              ui.h("span", { class: "ab-cart-title" }, l.title_en),
+              ui.h("strong", null, ui.usd(total))),
+            ui.h("span", { class: "ab-fakebtn", id: "ab-add" }, "Add to Buyee cart"))
+        ], "Clicking Add to cart via Computer Use\u2026");
+        setTimeout(function () { pointAt("ab-add", true); }, 80);
+      }, 450));
+
+      // Step 2: Fill shipping & saved card, pause right before Pay
+      timers.push(setTimeout(function () {
+        if (aborted) return;
+        renderSteps(3);
+        showStage("buyee.jp/checkout/confirm", [
+          ui.h("div", { class: "ab-site" },
+            ui.h("div", { class: "ab-top" },
+              ui.h("span", { class: "ab-logo ab-buyee" }, "buyee checkout"),
+              ui.h("div", { class: "ab-input" }, cardStr + " · " + addr)),
+            ui.h("div", { class: "ab-cartrow", id: "ab-pay-ready" },
+              ui.h("span", { class: "ab-cart-title" }, l.title_en),
+              ui.h("strong", null, ui.usd(total))),
+            ui.h("div", { class: "ab-paused" }, "Paused before Pay · swipe below to purchase."))
+        ], "Checkout filled. Swipe to pay.");
+        setTimeout(function () { pointAt("ab-pay-ready", false); }, 80);
+      }, 900));
+
+      timers.push(setTimeout(function () {
+        if (aborted) return;
+        clearTimers();
+        renderSteps(STEPS.length);
+        if (ring) ring.classList.remove("working");
+        if (dot) { dot.className = "live-dot paused"; dot.textContent = "Ready"; }
+        if (stopBtn) stopBtn.disabled = true;
+        notify("Ready — swipe to pay " + ui.usd(total));
+        if (onReady) onReady();
+      }, 1250));
     }
 
-    function finish(result, summaryMsg) {
-      clearTimers();
-      renderSteps(STEPS.length);
-      renderCartStage(result);
-      if (dot) { dot.className = "live-dot paused"; dot.textContent = "Paused"; }
-      if (stopBtn) stopBtn.disabled = true;
-      if (summaryMsg) notify(summaryMsg);
-    }
-
-    function updateCart(result) {
-      renderCartStage(result);
-      if (result && result.cart && result.cart.status === "placed" && dot) {
-        dot.className = "live-dot paused";
-        dot.textContent = "Done";
-      }
+    function markPaid(pick) {
+      var l = pick ? pick.listing : { title_en: "Order" };
+      showStage("buyee.jp/checkout/complete", [
+        ui.h("div", { class: "ab-site" },
+          ui.h("div", { class: "ab-top" },
+            ui.h("span", { class: "ab-logo ab-buyee" }, "buyee"),
+            ui.h("div", { class: "ab-input" }, "Order confirmed")),
+          ui.h("div", { class: "ab-paused placed" }, "Paid & ordered: " + l.title_en))
+      ], "Order placed.");
+      if (dot) { dot.className = "live-dot paused"; dot.textContent = "Paid"; }
     }
 
     function stop() {
       aborted = true;
       clearTimers();
+      if (ring) ring.classList.remove("working");
       if (dot) { dot.className = "live-dot stopped"; dot.textContent = "Stopped"; }
       if (stopBtn) stopBtn.disabled = true;
       if (captionEl) captionEl.textContent = "Stopped. Nothing paid.";
@@ -198,9 +204,10 @@
     }
 
     return {
-      start: start,
-      finish: finish,
-      updateCart: updateCart,
+      startSearch: startSearch,
+      finishSearch: finishSearch,
+      runComputerUseBuy: runComputerUseBuy,
+      markPaid: markPaid,
       stop: stop,
       notify: notify,
       isAborted: function () { return aborted; }
