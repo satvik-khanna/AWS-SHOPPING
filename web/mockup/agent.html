@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Shopping Agent Mockup</title>
+<title>Agent Niche</title>
 <!--
   Basic components mockup, styled after diabrowser.com.
   Dia uses licensed fonts (Exposure serif, ABC Oracle sans, ABC Favorit Mono);
@@ -19,7 +19,7 @@
 :root{
   --paper:#FBFAF6; --surface:#FFFFFF; --sunk:#F3F2EE;
   --ink:#111111; --ink-50:rgba(0,0,0,.5); --ink-35:rgba(0,0,0,.35); --line:rgba(0,0,0,.1); --line-2:rgba(0,0,0,.06);
-  --btn:#111111; --btn-ink:#FFFFFF;
+  --btn:#111111; --btn-ink:#FFFFFF; --sky:#D3EAFF;
   --blue:#0358F7; --red:#FA3D1D; --yellow:#FFB005; --pink:#C679C4; --lilac:#E1E1FE;
   --rainbow:linear-gradient(90deg,#c679c4,#fa3d1d,#ffb005,#e1e1fe,#0358f7,#c679c4);
   --serif:"Instrument Serif","Exposure VAR",Georgia,serif;
@@ -29,7 +29,7 @@
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --paper:#1B1B1B; --surface:#232323; --sunk:#2B2B2B;
   --ink:#F8F8F8; --ink-50:rgba(248,248,248,.55); --ink-35:rgba(248,248,248,.38); --line:rgba(248,248,248,.12); --line-2:rgba(248,248,248,.07);
-  --btn:#F8F8F8; --btn-ink:#111111;
+  --btn:#F8F8F8; --btn-ink:#111111; --sky:#0F2744;
 }}
 *{box-sizing:border-box}
 html,body{margin:0}
@@ -37,6 +37,10 @@ body{background:var(--paper);color:var(--ink);font:400 16px/1.5 var(--sans);-web
 button{font:inherit;color:inherit;cursor:pointer}
 :focus-visible{outline:2px solid var(--blue);outline-offset:2px}
 .wrap{max-width:1040px;margin:0 auto;padding:0 16px 120px}
+
+/* page backdrop: light-blue gradient waves drawn by gradient-waves.js, fixed behind the whole page so they stay
+   while you scroll. The CSS gradient underneath is also what shows when WebGL2 is unavailable. */
+.waves{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;background:linear-gradient(180deg,var(--sky),var(--paper) 140%)}
 
 /* header */
 .nav{display:flex;align-items:center;justify-content:space-between;padding:22px 0}
@@ -60,12 +64,16 @@ button{font:inherit;color:inherit;cursor:pointer}
 .btn[disabled]{opacity:.35;cursor:not-allowed}
 
 /* 1. hero + prompt */
-.hero{text-align:center;padding:72px 0 36px}
+.hero{text-align:center;padding:72px 0 36px;transition:padding .6s cubic-bezier(.2,.8,.2,1)}
 .hero h1{font-family:var(--serif);font-weight:400;font-size:clamp(44px,7vw,76px);line-height:1;letter-spacing:-.02em;margin:0}
 .hero h1 em{font-style:italic}
 .hero p{margin:16px auto 0;max-width:460px;color:var(--ink-50);font-size:17px}
 
 .prompt-ring{max-width:760px;margin:0 auto;border-radius:28px;padding:1.5px;background:var(--line);transition:background .3s}
+#ring{max-height:340px;transform-origin:50% 100%;transition:background .3s,max-height .6s cubic-bezier(.2,.8,.2,1),opacity .3s,transform .55s cubic-bezier(.4,0,.2,1),padding .6s}
+body.asked #ring{max-height:0;padding:0;opacity:0;transform:translateY(120px) scale(.85);overflow:hidden;pointer-events:none}
+body.asked .hero{padding-bottom:0}
+body.asked .work{margin-top:48px}
 .prompt-ring.working{background:var(--rainbow);background-size:200% 100%;animation:flow 3s linear infinite}
 @keyframes flow{to{background-position:-200% 0}}
 .prompt{background:var(--surface);border-radius:26.5px;padding:18px 18px 14px;box-shadow:0 1px 2px rgba(0,0,0,.03),0 12px 40px rgba(0,0,0,.04)}
@@ -81,6 +89,16 @@ button{font:inherit;color:inherit;cursor:pointer}
 .examples{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:18px auto 0;max-width:760px}
 .ex{border:0;background:transparent;box-shadow:inset 0 0 0 1px var(--line);border-radius:999px;padding:7px 14px;font-size:14px;color:var(--ink-50)}
 .ex:hover{color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink-35)}
+
+/* docked prompt: once the big prompt box scrolls away, a compact one rides along the bottom */
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:20;padding:0 16px 18px;pointer-events:none;transform:translateY(130%);opacity:0;transition:transform .5s cubic-bezier(.2,.8,.2,1),opacity .3s}
+.dock.show{transform:none;opacity:1}
+.dock .prompt-ring{max-width:620px;border-radius:999px;pointer-events:auto;box-shadow:0 14px 44px rgba(0,0,0,.12)}
+.dock-form{display:flex;align-items:center;gap:8px;background:var(--surface);border-radius:999px;padding:6px 6px 6px 22px}
+.dock-form input{flex:1;min-width:0;height:38px;border:0;outline:none;background:transparent;color:var(--ink);font:400 16px/1.4 var(--sans);text-overflow:ellipsis}
+.dock-form input::placeholder{color:var(--ink-35)}
+.dock-go{flex:none;width:38px;height:38px;padding:0;display:grid;place-items:center;font-size:17px;line-height:1}
+.dock.show ~ .toast{bottom:92px}
 
 /* work area */
 .work{display:grid;grid-template-columns:280px minmax(0,1fr);gap:48px;margin-top:88px}
@@ -162,6 +180,18 @@ button{font:inherit;color:inherit;cursor:pointer}
 .approve-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:28px}
 .approve-row p{margin:0 auto 0 0;min-width:240px;flex:1;color:var(--ink-50)}
 .approve-row p b{color:var(--ink);font-weight:500}
+/* swipe to pay: drag the thumb to the end (or press Enter on it) to approve */
+.swipe{position:relative;flex:0 0 300px;height:50px;border-radius:999px;background:var(--sunk);box-shadow:inset 0 0 0 1px var(--line);overflow:hidden;display:flex;align-items:center;justify-content:center;user-select:none;-webkit-user-select:none;touch-action:none}
+.swipe-fill{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:999px;background:var(--rainbow);background-size:300px 100%;opacity:.45;pointer-events:none;transition:width .25s cubic-bezier(.2,.8,.2,1)}
+.swipe-label{position:relative;padding-left:40px;font-size:15px;font-weight:500;pointer-events:none;transition:opacity .15s;font-variant-numeric:tabular-nums}
+.swipe-thumb{position:absolute;left:4px;top:4px;width:42px;height:42px;border-radius:50%;border:0;padding:0;background:var(--btn);color:var(--btn-ink);display:grid;place-items:center;font-size:18px;line-height:1;cursor:grab;touch-action:none;transition:transform .25s cubic-bezier(.2,.8,.2,1)}
+.swipe-thumb:active{cursor:grabbing}
+.swipe.dragging .swipe-fill,.swipe.dragging .swipe-thumb{transition:none}
+.swipe.confirmed .swipe-fill{opacity:.7}
+.swipe.confirmed .swipe-label{padding-left:0;padding-right:40px}
+.swipe.off{opacity:.35}
+.swipe.off .swipe-thumb{cursor:not-allowed}
+@media (max-width:640px){.swipe{flex-basis:100%}}
 .done-msg{font-family:var(--serif);font-size:26px;line-height:1.2}
 .approve-row .done-note{flex-basis:100%;font-family:var(--mono);font-size:13px}
 .cartrow.sm{padding:5px 10px;margin-bottom:4px;font-size:12px;gap:10px}
@@ -213,7 +243,7 @@ a.src:hover .key{color:var(--ink);text-decoration:underline;text-underline-offse
 }
 
 /* 5. notification */
-.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,24px);opacity:0;pointer-events:none;transition:.3s cubic-bezier(.2,.8,.2,1);
+.toast{position:fixed;z-index:30;left:50%;bottom:24px;transform:translate(-50%,24px);opacity:0;pointer-events:none;transition:.3s cubic-bezier(.2,.8,.2,1);
   width:min(440px,calc(100vw - 32px));background:var(--btn);color:var(--btn-ink);border-radius:22px;padding:14px 14px 14px 18px;display:flex;gap:14px;align-items:center;box-shadow:0 20px 50px rgba(0,0,0,.25)}
 .toast.show{transform:translate(-50%,0);opacity:1;pointer-events:auto}
 .toast .ic{width:10px;height:10px;border-radius:50%;background:var(--rainbow);background-size:300% 100%;flex:none}
@@ -226,11 +256,12 @@ a.src:hover .key{color:var(--ink);text-decoration:underline;text-underline-offse
 </style>
 </head>
 <body>
+<div class="waves" id="waves" aria-hidden="true"></div>
 <div class="wrap">
 
   <header class="nav">
-    <div class="logo">[PLACEHOLDER NAME]</div>
-    <nav class="nav-links"><span>History</span><span>Preferences</span></nav>
+    <div class="logo">Agent Niche</div>
+    <nav class="nav-links"><button class="nav-btn" id="openHistory" type="button" aria-haspopup="dialog">History</button><span>Preferences</span></nav>
   </header>
 
   <!-- 1. Prompt box -->
@@ -286,8 +317,31 @@ a.src:hover .key{color:var(--ink);text-decoration:underline;text-underline-offse
 </div>
 
 <!-- 5. Notification (in-page; a system notification is also sent if you switched tabs) -->
+<!-- 8. History: past searches and the agent's memory graph -->
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle" inert>
+  <div class="drawer-h"><h2 id="drawerTitle">History</h2><button class="drawer-x" id="closeHistory" type="button" aria-label="Close">×</button></div>
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" id="tabSearches" aria-selected="true" type="button">Searches</button>
+    <button class="tab" role="tab" id="tabMemory" aria-selected="false" type="button">Memory</button>
+  </div>
+  <div class="drawer-body" id="drawerBody"></div>
+</aside>
+
+<!-- 7. Docked prompt: shown while the main prompt box is scrolled out of view -->
+<div class="dock" id="dock" inert>
+  <div class="prompt-ring" id="dockRing">
+    <form class="dock-form" id="dockForm">
+      <label class="sr" for="dockAsk">What are you looking for?</label>
+      <input id="dockAsk" type="text" autocomplete="off" enterkeyhint="search" placeholder="Search for something else">
+      <button class="btn btn-dark dock-go" type="submit" aria-label="Start">↑</button>
+    </form>
+  </div>
+</div>
+
 <div class="toast" id="toast" role="status"><span class="ic"></span><div><b id="tt"></b><span id="ts"></span></div><button aria-label="Dismiss" onclick="this.parentElement.classList.remove('show')">×</button></div>
 
+<script src="gradient-waves.js"></script>
 <script>
 (() => {
   const $ = s => document.querySelector(s);
