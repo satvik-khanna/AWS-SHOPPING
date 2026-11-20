@@ -143,13 +143,28 @@
     });
 
     var totalEl = ui.h("span", { class: "cost-total-num" }, ui.usd(total));
+    var url = ui.safeUrl(l.url);
+    var buyeeUrl = l.fields && l.fields.buyee_url ? ui.safeUrl(String(l.fields.buyee_url)) : null;
+
+    panel.appendChild(ui.h("div", { class: "item-detail-head" },
+      ui.h("div", { class: "item-detail-title" }, l.title_en),
+      l.title_ja ? ui.h("div", { class: "item-detail-ja", lang: "ja" }, l.title_ja) : null,
+      ui.h("div", { class: "row-meta" },
+        chip(CONDITION[l.condition] || l.condition, "c-ink"),
+        ui.h("span", null, SOURCE[l.source] || l.source),
+        ui.h("span", null, l.seller),
+        ui.h("span", null, "Rank " + Number(pick.score).toFixed(2)))));
+
     panel.appendChild(ui.h("div", { class: "cost-head" },
-      ui.h("span", { class: "cost-title" }, "#" + (state.selectedIdx + 1) + " Landed (" + req.ship_to + ")"),
+      ui.h("span", { class: "cost-title" }, "Landed (" + req.ship_to + ")"),
       ui.h("span", { class: "cost-sub" },
         room >= 0 ? ui.h("span", { class: "under" }, "-" + ui.usd(room)) : ui.h("span", { class: "over" }, "+" + ui.usd(-room)),
         " · FX " + cost.fx_jpy_per_usd),
       totalEl));
     panel.appendChild(lines);
+    panel.appendChild(ui.h("div", { class: "item-detail-actions" },
+      url ? ui.h("a", { href: url, target: "_blank", rel: "noopener noreferrer", class: "btn btn-small" }, ui.icon("link-external", 12), "Listing") : null,
+      buyeeUrl ? ui.h("a", { href: buyeeUrl, target: "_blank", rel: "noopener noreferrer", class: "btn btn-small" }, ui.icon("package", 12), "Buyee") : null));
     ui.tweenUsd(totalEl, total);
   }
 

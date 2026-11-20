@@ -15,7 +15,12 @@
           <path d="M1 2.75A.75.75 0 0 1 1.75 2h12.5a.75.75 0 0 1 0 1.5H1.75A.75.75 0 0 1 1 2.75Zm0 5A.75.75 0 0 1 1.75 7h12.5a.75.75 0 0 1 0 1.5H1.75A.75.75 0 0 1 1 7.75ZM1.75 12h12.5a.75.75 0 0 1 0 1.5H1.75a.75.75 0 0 1 0-1.5Z"></path>
         </svg>
       </button>
-      <h1>Shopping Agent</h1>
+      <button type="button" id="nav-back" class="btn btn-ghost btn-icon" aria-label="Back" title="Back" hidden>
+        <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+          <path d="M7.78 12.53a.75.75 0 0 1-1.06 0L2.47 8.28a.75.75 0 0 1 0-1.06l4.25-4.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042L4.81 7h7.44a.75.75 0 0 1 0 1.5H4.81l2.97 2.97a.75.75 0 0 1 0 1.06Z"></path>
+        </svg>
+      </button>
+      <h1 id="page-title">Shopping Agent</h1>
     </div>
     <div class="top-actions">
       <button type="button" id="search-focus" class="btn btn-ghost btn-icon" aria-label="Search" title="Search (/)">
@@ -37,13 +42,21 @@
 <div id="scrim" class="scrim" hidden></div>
 <aside id="drawer" class="drawer" aria-hidden="true" aria-label="Navigation menu">
   <div class="drawer-head">
-    <span>Menu</span>
+    <span>Pages</span>
     <button type="button" id="menu-close" class="btn btn-ghost btn-icon" aria-label="Close">
       <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
         <path d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l3.22 3.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-3.22 3.22a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06Z"></path>
       </svg>
     </button>
   </div>
+
+  <nav class="drawer-section" aria-label="Views">
+    <button type="button" class="drawer-item active" data-nav-page="shop">Shop</button>
+    <button type="button" class="drawer-item" data-nav-page="orders">Orders</button>
+    <button type="button" class="drawer-item" data-nav-page="store">Store link</button>
+    <button type="button" class="drawer-item" data-nav-page="connect">Add link</button>
+    <button type="button" class="drawer-item" data-nav-page="memory">Memory &amp; trace <span id="steps-count" class="count-pill">0</span></button>
+  </nav>
 
   <div class="drawer-section">
     <h3>Jump from link</h3>
@@ -66,20 +79,15 @@
     <h3>Recent</h3>
     <ul id="history-list" class="drawer-list"></ul>
   </div>
-
-  <div class="drawer-section">
-    <h3>Memory</h3>
-    <div id="prefs" class="prefs"></div>
-  </div>
-
-  <div class="drawer-section">
-    <h3>Trace <span id="steps-count" class="count-pill">0</span></h3>
-    <ol id="trail" class="trail"></ol>
-  </div>
 </aside>
 
-<main class="chat-shell">
-  <div id="thread" class="thread" aria-live="polite">
+<main class="viewport">
+  <!-- Page 1: Shop (fixed 100dvh; ONLY #picks-scroll scrolls) -->
+  <section id="page-shop" class="page">
+    <div id="user-turn" class="msg msg-user" hidden>
+      <div class="bubble" id="user-bubble"></div>
+    </div>
+
     <div id="empty" class="empty">
       <div class="examples" id="examples" aria-label="Quick searches">
         <button type="button" class="example-chip" data-q="Fujifilm X100V" data-budget="900">Fujifilm X100V · $900</button>
@@ -88,69 +96,109 @@
       </div>
     </div>
 
-    <div id="user-turn" class="msg msg-user" hidden>
-      <div class="bubble" id="user-bubble"></div>
+    <div id="skeleton" class="skeleton" aria-busy="true" aria-label="Loading" hidden>
+      <div class="sk-row"></div>
+      <div class="sk-row"></div>
+      <div class="sk-row"></div>
+      <div class="sk-row"></div>
     </div>
 
-    <div id="skeleton" class="msg msg-agent skeleton" aria-busy="true" aria-label="Loading" hidden>
-      <div class="sk-row"></div>
-      <div class="sk-row"></div>
-      <div class="sk-row"></div>
-      <div class="sk-block"></div>
-    </div>
-
-    <div id="results" class="msg msg-agent" hidden>
+    <div id="results" class="results-pane" hidden>
       <div class="results-bar">
         <span class="agent-lead" id="picks-sub"></span>
+        <div id="skipped" class="skipped" hidden></div>
         <input id="quick-filter" class="quick-filter" type="search" placeholder="Filter…" aria-label="Filter results">
       </div>
-
-      <div id="picks" class="picks"></div>
-      <div id="skipped" class="skipped" hidden></div>
-      <section class="cost-panel" id="cost-panel" aria-label="Landed cost" hidden></section>
-      <div id="gate" class="gate" aria-live="polite"></div>
-    </div>
-  </div>
-
-  <div class="composer-wrap">
-    <p class="error" id="error" role="alert" hidden></p>
-    <form id="form" class="composer" autocomplete="off">
-      <div class="composer-row">
-        <label class="sr-only" for="query">Search</label>
-        <input id="query" name="query" type="text" value="Fujifilm X100V" maxlength="300" placeholder="Search item… (e.g. Fujifilm X100V $900)" required>
-        <label class="ctrl" title="Max budget USD">
-          <span>$</span>
-          <input id="budget" name="budget" type="number" value="900" min="1" step="1" required>
-        </label>
-        <label class="ctrl" title="Ship to">
-          <input id="ship_to" name="ship_to" type="text" value="US-CA" maxlength="40" required>
-        </label>
-        <label class="ctrl" title="Min condition">
-          <select id="condition_min" name="condition_min">
-            <option value="">Any</option>
-            <option value="fair">Fair+</option>
-            <option value="good">Good+</option>
-            <option value="like_new">Like new</option>
-            <option value="new">New</option>
-          </select>
-        </label>
-        <button id="go" type="submit" class="btn btn-primary btn-icon" aria-label="Search" title="Send">
-          <svg class="octicon" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
-            <path d="M8.22 2.97a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042l2.97-2.97H3.75a.75.75 0 0 1 0-1.5h7.44L8.22 4.03a.75.75 0 0 1 0-1.06Z"></path>
-          </svg>
-        </button>
+      <div class="scroll-region" id="picks-scroll">
+        <div id="picks" class="picks"></div>
       </div>
+    </div>
+
+    <div id="gate" class="gate" aria-live="polite"></div>
+
+    <div class="composer-wrap">
+      <p class="error" id="error" role="alert" hidden></p>
+      <form id="form" class="composer" autocomplete="off">
+        <div class="composer-row">
+          <label class="sr-only" for="query">Search</label>
+          <input id="query" name="query" type="text" value="Fujifilm X100V" maxlength="300" placeholder="Search item… (e.g. Fujifilm X100V $900)" required>
+          <label class="ctrl" title="Max budget USD">
+            <span>$</span>
+            <input id="budget" name="budget" type="number" value="900" min="1" step="1" required>
+          </label>
+          <label class="ctrl" title="Ship to">
+            <input id="ship_to" name="ship_to" type="text" value="US-CA" maxlength="40" required>
+          </label>
+          <label class="ctrl" title="Min condition">
+            <select id="condition_min" name="condition_min">
+              <option value="">Any</option>
+              <option value="fair">Fair+</option>
+              <option value="good">Good+</option>
+              <option value="like_new">Like new</option>
+              <option value="new">New</option>
+            </select>
+          </label>
+          <button id="go" type="submit" class="btn btn-primary btn-icon" aria-label="Search" title="Send">
+            <svg class="octicon" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+              <path d="M8.22 2.97a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042l2.97-2.97H3.75a.75.75 0 0 1 0-1.5h7.44L8.22 4.03a.75.75 0 0 1 0-1.06Z"></path>
+            </svg>
+          </button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- Page 2: Item Detail (only breakdown scrolls) -->
+  <section id="page-item" class="page" hidden>
+    <div class="scroll-region">
+      <div class="cost-panel" id="cost-panel" aria-label="Landed cost"></div>
+    </div>
+  </section>
+
+  <!-- Page 3: Orders & Approval History -->
+  <section id="page-orders" class="page" hidden>
+    <div class="scroll-region" id="orders-list"></div>
+  </section>
+
+  <!-- Page 4: Store Link-in-Bio (only catalog scrolls) -->
+  <section id="page-store" class="page" hidden>
+    <div id="store-head" class="store-head"></div>
+    <div class="scroll-region">
+      <div id="store-items" class="picks"></div>
+    </div>
+  </section>
+
+  <!-- Page 5: Connect Store URL -> 1-URL Link -->
+  <section id="page-connect" class="page" hidden>
+    <form id="connect-form" class="connect-form" autocomplete="off">
+      <label class="field"><span>Store name</span><input id="connect-name" type="text" placeholder="Tokyo Camera Archive" required></label>
+      <label class="field"><span>Source URL</span><input id="connect-url" type="url" placeholder="https://linktr.ee/..." required></label>
+      <label class="field"><span>Catalog query</span><input id="connect-query" type="text" value="Fujifilm X100V" required></label>
+      <button type="submit" class="btn btn-primary">Create 1-URL store link</button>
     </form>
-  </div>
+    <div id="connect-result" hidden></div>
+  </section>
+
+  <!-- Page 6: Memory & Agent Trace -->
+  <section id="page-memory" class="page" hidden>
+    <div class="section-kicker">Memory</div>
+    <div id="prefs" class="prefs"></div>
+    <div class="section-kicker">Trace</div>
+    <div class="scroll-region">
+      <ol id="trail" class="trail"></ol>
+    </div>
+  </section>
 </main>
 
 <div id="toast" class="toast" role="status" hidden></div>
 
 <script src="/static/modules/icons.js"></script>
 <script src="/static/modules/menu.js"></script>
+<script src="/static/modules/router.js"></script>
 <script src="/static/modules/search.js"></script>
 <script src="/static/modules/links.js"></script>
 <script src="/static/modules/commerce.js"></script>
+<script src="/static/modules/pages.js"></script>
 <script src="/static/app.js"></script>
 </body>
 </html>

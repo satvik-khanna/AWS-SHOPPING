@@ -1,9 +1,9 @@
-/* Orchestrator: wires icons, menu, search, links, and commerce modules. */
+/* Orchestrator: wires 6-page router, icons, menu, search, links, commerce, and secondary pages. */
 (function (root) {
   "use strict";
 
   var ui = root.JSA.ui;
-  var state = { result: null, cart: null, usedToken: null, gateEvent: null, busy: false, selectedIdx: 0, targetItemId: "" };
+  var state = { result: null, cart: null, usedToken: null, gateEvent: null, busy: false, selectedIdx: 0, targetItemId: "", activeStoreSlug: "tokyo-camera" };
 
   function api(path, body) {
     return fetch(path, {
@@ -41,40 +41,65 @@
     return { query: r.query, budget: r.max_total_usd, ship_to: r.ship_to, user_id: r.user_id, condition_min: r.condition_min };
   }
 
+  function copyText(text, label) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () { ui.toast(label || "Copied"); }).catch(function () {});
+    } else {
+      ui.toast(label || "Copied");
+    }
+  }
+
   function renderAll() {
-    var c = root.JSA.commerce;
-    c.renderPrefs(state.result);
-    c.renderTrail(state.result);
-    c.renderPicks(state, searchMod.getFilter(), {
-      onSelect: function (i) { state.selectedIdx = i; renderAll(); },
-      onReject: rejectSeller,
-      onCopyItemLink: function (listingId) {
-        var r = state.result.request;
-        linksMod.copyLink(linksMod.buildDeepLink({ q: r.query, budget: r.max_total_usd, ship_to: r.ship_to, cond: r.condition_min || "", item: listingId }));
-      }
-    });
-    c.renderCost(state);
-    c.renderGate(state, {
-      onApprove: approve,
-      onReject: rejectSeller,
-      onReplay: replayToken,
-      onCopyToken: function (tok) {
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(tok).then(function () { ui.toast("Token copied"); }).catch(function () {});
+    var c = root.JSA.commerce, p = root.JSA.pages;
+    if (state.result) {
+      c.renderPrefs(state.result);
+      c.renderTrail(state.result);
+      c.renderPicks(state, searchMod.getFilter(), {
+        onSelect: function (i) {
+          state.selectedIdx = i;
+          c.renderCost(state);
+          routerMod.go("item");
+        },
+        onReject: rejectSeller,
+        onCopyItemLink: function (listingId) {
+          var r = state.result.request;
+          linksMod.copyLink(linksMod.buildDeepLink({ q: r.query, budget: r.max_total_usd, ship_to: r.ship_to, cond: r.condition_min || "", item: listingId }));
         }
+      });
+      c.renderCost(state);
+      c.renderGate(state, {
+        onApprove: approve,
+        onReject: rejectSeller,
+        onReplay: replayToken,
+        onCopyToken: function (tok) { copyText(tok, "Token copied"); }
+      });
+    }
+    p.renderOrders(state, { onApprove: approve });
+    p.renderStore(state.activeStoreSlug, state, {
+      onCopy: copyText,
+      onRunStore: function (store) {
+        ui.$("query").value = store.q;
+        ui.$("budget").value = store.budget;
+        runSearch(null, true);
+      },
+      onOpenItem: function (i) {
+        state.selectedIdx = i;
+        c.renderCost(state);
+        routerMod.go("item");
       }
     });
   }
 
-  function show(result) {
+  function show(result, stayOnPage) {
     state.result = result;
     state.cart = result.cart;
     state.usedToken = null;
     state.gateEvent = null;
     state.selectedIdx = 0;
+    var openItem = false;
     if (state.targetItemId && result.picks) {
       var idx = result.picks.findIndex(function (p) { return p.listing.id === state.targetItemId; });
-      if (idx >= 0) state.selectedIdx = idx;
+      if (idx >= 0) { state.selectedIdx = idx; openItem = true; }
       state.targetItemId = "";
     }
     ui.$("empty").hidden = true;
@@ -82,9 +107,11 @@
     ui.$("results").hidden = false;
     renderAll();
     renderMeta(result.meta);
+    if (openItem) routerMod.go("item");
+    else if (!stayOnPage) routerMod.go("shop");
   }
 
-  function runSearch(ev) {
+  function runSearch(ev, stayOnPage) {
     if (ev) ev.preventDefault();
     if (state.busy) return;
     showError("");
@@ -97,8 +124,9 @@
     searchMod.record(body.query, body.budget, body.ship_to);
     ui.$("user-turn").hidden = false;
     ui.$("user-bubble").textContent = body.query + " · $" + body.budget;
+    if (!stayOnPage) routerMod.go("shop");
     setBusy(true);
-    api("/api/run", body).then(show, function (e) { showError(e.message); }).then(function () { setBusy(false); });
+    api("/api/run", body).then(function (res) { show(res, stayOnPage); }, function (e) { showError(e.message); }).then(function () { setBusy(false); });
   }
 
   function rejectSeller(seller) {
@@ -106,8 +134,9 @@
     showError("");
     var body = requestBody();
     body.seller = seller;
+    routerMod.go("shop");
     setBusy(true);
-    api("/api/reject", body).then(show, function (e) { showError(e.message); }).then(function () { setBusy(false); });
+    api("/api/reject", body).then(function (res) { show(res, false); }, function (e) { showError(e.message); }).then(function () { setBusy(false); });
   }
 
   function approve(btn) {
@@ -140,14 +169,26 @@
     var m = ui.clear(ui.$("mode"));
     m.hidden = false;
     m.className = "mode" + (meta.live ? " live" : "");
-    m.setAttribute("title", meta.live ? "Live adapters enabled" : "Offline dry run");
+    m.setAttribute("title", meta.live ? "Live adapters" : "Offline dry run");
     ui.append(m, [ui.icon(meta.live ? "globe" : "shield-check", 14), meta.live ? "Live" : "Dry"]);
   }
 
   // Init modules
   var menuMod = root.JSA.menu.init({});
+  var routerMod = root.JSA.router.init(function (page) {
+    menuMod.close();
+    if (page === "orders" || page === "store") renderAll();
+  });
   var searchMod = root.JSA.search.init(function () { menuMod.close(); runSearch(); });
   searchMod.onFilterChange(function () { if (state.result) renderAll(); });
+
+  root.JSA.pages.initConnect(function (store) {
+    state.activeStoreSlug = store.slug;
+    ui.$("query").value = store.q;
+    ui.$("budget").value = store.budget;
+    routerMod.go("store");
+    runSearch(null, true);
+  }, copyText);
 
   var linksMod = root.JSA.links.init(function (target) {
     if (target.q) ui.$("query").value = target.q;
@@ -162,7 +203,7 @@
     return { selectedListingId: pick ? pick.listing.id : "" };
   });
 
-  ui.$("form").addEventListener("submit", runSearch);
+  ui.$("form").addEventListener("submit", function (e) { runSearch(e, false); });
   document.querySelectorAll(".example-chip").forEach(function (btn) {
     btn.addEventListener("click", function () {
       ui.$("query").value = btn.getAttribute("data-q") || "";
@@ -179,6 +220,7 @@
     state.targetItemId = linksMod.initial.item || "";
   }
 
+  renderAll();
   fetch("/api/meta").then(function (r) { return r.json(); }).then(function (meta) {
     renderMeta(meta);
     if (linksMod.initial && linksMod.initial.run && !meta.live) runSearch();
