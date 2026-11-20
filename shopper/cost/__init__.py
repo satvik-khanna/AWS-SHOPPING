@@ -108,15 +108,18 @@ class RulesCostEngine:
         if not dm["suspended"] and item_usd <= dm["threshold_usd"]:
             return [CostLine(f"duty (under ${dm['threshold_usd']} de minimis)", 0.0, self._cite("us_de_minimis"))]
         if "per_unit_usd" in d:
-            mfn = d["per_unit_usd"] + item_usd * d["approx_rate"]
+            ad_val = item_usd * d["approx_rate"]
+            mfn = d["per_unit_usd"] + ad_val
         else:
-            mfn = item_usd * d["rate"]
+            ad_val = mfn = item_usd * d["rate"]
         lines = [CostLine(f"US duty MFN {key} HTS {d['hts'] or '-'} ({note})", round(mfn, 2),
                           self._cite("us_duty_mfn_by_category", key))]
-        extra = R["us_additional_duty_japan"]["value"]
-        if extra:
-            lines.append(CostLine(f"US additional duty {extra:.0%} (estimate)", round(item_usd * extra, 2),
-                                  self._cite("us_additional_duty_japan")))
+        floor = R["us_japan_floor_rate"]
+        if cat not in floor["exempt_categories"]:
+            top_up = max(0.0, item_usd * floor["value"] - ad_val)
+            if top_up > 0:
+                lines.append(CostLine(f"US Japan {floor['value']:.1%} floor top-up (HTS 9903.05.49)",
+                                      round(top_up, 2), self._cite("us_japan_floor_rate")))
         return lines
 
     # --- main ------------------------------------------------------------------------------

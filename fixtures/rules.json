@@ -131,11 +131,12 @@
     "note": "General (Column 1) rates read from the USITC HTS search API on 2026-11-20. Watch is a compound rate; we use 40c + 8.5% of the item value (treating the whole value as the case) and mark it estimate. Unknown categories use the 5% default (estimate)."
   },
 
-  "us_additional_duty_japan": {
-    "value": 0.10, "as_of": "2026-11-20", "status": "estimate",
-    "url": "https://hts.usitc.gov/",
-    "tried": "HTS API shows heading 9903.03.01: 'The duty provided in the applicable subheading + 10%' for articles of any country. Supreme Court struck IEEPA tariffs on 2026-02-20 (Learning Resources v. Trump, https://www.supremecourt.gov/opinions/slipopinion/25) and CBP is refunding IEEPA duties (https://www.cbp.gov/trade/programs-administration/trade-remedies/ieepa-duty-refunds). We could not confirm the legal authority or end date of 9903.03.01, so it is applied as a conservative estimate.",
-    "note": "Extra ad-valorem duty on Japanese goods on top of the MFN rate. Set to 0 to drop it."
+  "us_japan_floor_rate": {
+    "value": 0.125,
+    "exempt_categories": ["book", "vinyl", "cd", "art", "poster", "photo", "magazine", "manga"],
+    "as_of": "2026-11-20", "status": "verified",
+    "url": "https://hts.usitc.gov/reststop/search?keyword=9903.05.49",
+    "note": "HTSUS 9903.05.48 / 9903.05.49 (U.S. note 52), read on 2026-11-20: articles the product of Japan with a column 1 rate under 12.5% pay 12.5%; at or above 12.5% pay the column 1 rate. Exempt: 9903.05.92 informational materials (publications, posters, phonograph records, photographs, CDs, artworks). Context: IEEPA tariffs struck down 2026-02-20 (https://www.supremecourt.gov/opinions/slipopinion/25); the 10% Section 122 surcharge (9903.03.01) ran 2026-02-24 to 2026-07-24 (CBP CSMS 67844987, https://content.govdelivery.com/accounts/USDHSCBP/bulletins/40b3b7b); secondary sources describe note 52 as the Section 301 tariffs that replaced it from 2026-07-24. Engine adds a top-up line = 12.5% of value minus the MFN ad valorem part."
   },
 
   "prohibited": {
