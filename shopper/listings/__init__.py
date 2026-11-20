@@ -2,6 +2,8 @@
 
     FixtureSource     offline: fixtures/listings.json (raw Japanese rows) -> normalize -> match
     BuyeeLiveSource   SHOPPER_LIVE=1: public Buyee search pages, falls back to fixtures on any error
+    ClaudeWebSearchSource  SHOPPER_LIVE=1 + ANTHROPIC_API_KEY: Claude web search finds real listings,
+                      falls back to the Buyee source (and so to fixtures) on any error
     default_source()  what shopper/app.py wires in
 
 Both sources run the same pipeline: English query -> Japanese keywords (query.py), raw row ->
@@ -18,7 +20,7 @@ from .normalize import (extract_fields, guess_category, normalize_condition, to_
                         translate_title)
 from .query import QueryPlan, expand_query, parse_query, relevance
 
-__all__ = ["FixtureSource", "BuyeeLiveSource", "default_source", "expand_query", "parse_query",
+__all__ = ["FixtureSource", "BuyeeLiveSource", "ClaudeWebSearchSource", "default_source", "expand_query", "parse_query",
            "relevance", "normalize_condition", "extract_fields", "guess_category",
            "translate_title", "to_listing", "QueryPlan"]
 
@@ -42,8 +44,9 @@ class FixtureSource:
 
 
 from .buyee import BuyeeLiveSource  # noqa: E402  (needs FixtureSource above)
+from .websearch import ClaudeWebSearchSource  # noqa: E402
 
 
 def default_source():
-    """Live Buyee search when SHOPPER_LIVE=1 (with fixture fallback), fixtures otherwise."""
-    return BuyeeLiveSource(fallback=FixtureSource())
+    """SHOPPER_LIVE=1: Claude web search, then live Buyee search, then fixtures. Offline: fixtures."""
+    return ClaudeWebSearchSource(fallback=BuyeeLiveSource(fallback=FixtureSource()))
