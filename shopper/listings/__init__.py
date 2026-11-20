@@ -1,5 +1,12 @@
-"""Listing search. Base: offline fixture source. TODO(listings pane): real Mercari / Yahoo Auctions
-search + Japanese->English extraction (Superlinked SIE adapter behind SHOPPER_LIVE)."""
+"""Listing search.
+
+    FixtureSource     offline: fixtures/listings.json (raw Japanese rows) -> normalize -> match
+    BuyeeLiveSource   SHOPPER_LIVE=1: public Buyee search pages, falls back to fixtures on any error
+    default_source()  what shopper/app.py wires in
+
+Both sources run the same pipeline: English query -> Japanese keywords (query.py), raw row ->
+Listing with normalized condition / extracted fields / translated title (normalize.py).
+"""
 from __future__ import annotations
 
 import json
@@ -7,18 +14,36 @@ from pathlib import Path
 
 from ..config import FIXTURES
 from ..models import Listing, Preferences, ShoppingRequest
+from .normalize import (extract_fields, guess_category, normalize_condition, to_listing,
+                        translate_title)
+from .query import QueryPlan, expand_query, parse_query, relevance
+
+__all__ = ["FixtureSource", "BuyeeLiveSource", "default_source", "expand_query", "parse_query",
+           "relevance", "normalize_condition", "extract_fields", "guess_category",
+           "translate_title", "to_listing", "QueryPlan"]
 
 
 class FixtureSource:
+    """Offline source. Recall-oriented: returns accessories and junk too, the cost engine and
+    ranker decide what is buyable and what is the best pick."""
+
     def __init__(self, path: Path = FIXTURES / "listings.json"):
         self.path = path
+        self.last_status = ""
+
+    def all(self) -> list[Listing]:
+        return [to_listing(r) for r in json.loads(self.path.read_text(encoding="utf-8"))]
 
     def search(self, req: ShoppingRequest, prefs: Preferences) -> list[Listing]:
-        rows = json.loads(self.path.read_text(encoding="utf-8"))
-        words = [w for w in req.query.lower().split() if len(w) > 2]
-        out = []
-        for r in rows:
-            hay = (r["title_en"] + " " + r.get("category", "")).lower()
-            if not words or any(w in hay for w in words):
-                out.append(Listing(**r))
+        plan = parse_query(req.query)
+        out = [l for l in self.all() if relevance(plan, l).ok]
+        self.last_status = f"fixtures: {len(out)} listings for {plan.ja_keywords or [req.query]}"
         return out
+
+
+from .buyee import BuyeeLiveSource  # noqa: E402  (needs FixtureSource above)
+
+
+def default_source():
+    """Live Buyee search when SHOPPER_LIVE=1 (with fixture fallback), fixtures otherwise."""
+    return BuyeeLiveSource(fallback=FixtureSource())
