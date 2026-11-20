@@ -8,8 +8,8 @@ from __future__ import annotations
 
 from typing import Protocol
 
-from .models import (CartResult, LandedCost, Listing, Preferences, RankedPick,
-                     ShoppingRequest)
+from .models import (CartResult, LandedCost, Listing, PaymentMethodRef, Preferences,
+                     RankedPick, ShippingAddress, ShoppingRequest, VaultRecord)
 
 
 class ListingSource(Protocol):          # owner: shopper/listings
@@ -20,6 +20,17 @@ class MemoryStore(Protocol):            # owner: shopper/memory
     def recall(self, user_id: str) -> Preferences: ...
     def remember_purchase(self, user_id: str, listing: Listing) -> None: ...
     def reject_seller(self, user_id: str, seller: str) -> None: ...
+
+
+class Vault(Protocol):                  # owner: shopper/vault
+    """Per-user checkout info so the user does not re-enter it. Never holds passwords, card
+    numbers or CVV: sign-in lives in the user's own Chrome profile (the vault only remembers
+    which sites it is signed into) and cards are provider references (token, brand, last4, exp)."""
+    def get(self, user_id: str) -> VaultRecord: ...
+    def set_address(self, user_id: str, address: ShippingAddress) -> None: ...
+    def set_signed_in(self, user_id: str, site: str, signed_in: bool) -> None: ...
+    def add_payment_method(self, user_id: str, pm: PaymentMethodRef, default: bool = True) -> None: ...
+    def remove_payment_method(self, user_id: str, token: str) -> None: ...
 
 
 class CostEngine(Protocol):             # owner: shopper/cost
@@ -36,7 +47,8 @@ class Checkout(Protocol):               # owner: shopper/checkout
     """Must stop at status='awaiting_approval'. Never pays."""
 
     def approve(self, approval_token: str) -> CartResult: ...
-    """Only path to 'placed'. Rejects unknown/used tokens."""
+    """Only path to 'placed' (the user's swipe). Rejects unknown/used/expired tokens.
+    Implementations may take `user_id=` and must then refuse a token issued to another user."""
 
     def reject(self, approval_token: str, reason: str = "", reject_seller: bool = False) -> CartResult: ...
     """Reject a pending approval token and optionally block the seller."""

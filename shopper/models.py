@@ -101,3 +101,35 @@ class PipelineResult:
     picks: list[RankedPick]
     cart: CartResult | None
     trail: list[str]                # step-by-step reasoning trail for the demo
+
+
+@dataclass
+class ShippingAddress:
+    """Per-user shipping address kept in the vault (gitignored data dir, 0600)."""
+    name: str
+    line1: str
+    city: str
+    postal_code: str
+    country: str                    # ISO 3166-1 alpha-2, e.g. "US"
+    line2: str = ""
+    region: str = ""                # state / prefecture, e.g. "CA"
+    phone: str = ""
+
+
+@dataclass
+class PaymentMethodRef:
+    """A reference to a card the user saved with a provider / the site. Never a card number or CVV."""
+    token: str                      # provider token, e.g. "pm_..." / "tok_..."
+    brand: str                      # visa | mastercard | amex | jcb | ...
+    last4: str                      # exactly 4 digits
+    exp: str                        # "MM/YY"
+    label: str = ""
+
+
+@dataclass
+class VaultRecord:
+    user_id: str
+    address: ShippingAddress | None = None
+    signed_in_sites: list[str] = field(default_factory=list)   # sites this user's Chrome profile is signed into
+    payment_methods: list[PaymentMethodRef] = field(default_factory=list)
+    default_payment: str | None = None                          # token of the default PaymentMethodRef
