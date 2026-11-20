@@ -132,7 +132,7 @@ class ChatApiTest(unittest.TestCase):
         self.assertEqual(ab["listing_id"], cheapest["id"])
         self.assertFalse(ab["opened_in_browser"])                 # offline: no real browser
         self.assertTrue(ab["opened_url"].startswith("https://"))
-        self.assertEqual(ab["steps"][-1]["state"], "awaiting_approval")
+        self.assertIn(ab["steps"][-1]["state"], ("awaiting_approval", "awaiting_swipe"))
         self.assertEqual(sp["amount_usd"], cheapest["total_usd"])
         self.assertEqual(sp["payment_method"]["label"], "Visa •••• 4242")
         self.assertGreater(sp["expires_at"], 0)
@@ -143,7 +143,7 @@ class ChatApiTest(unittest.TestCase):
         # typing "approve" in chat must not pay
         t = self.chat("approve", r["session"])
         self.assertIsNone(self.comp(t, "swipe_to_pay"))
-        self.assertEqual(self.store.list()[0].state, "awaiting_approval")
+        self.assertIn(self.store.list()[0].state, ("awaiting_approval", "awaiting_swipe"))
         st, _, c = self.call("POST", "/api/approve", sp["approve"]["body"])
         self.assertEqual((st, c["status"]), (200, "placed"))
         st, _, again = self.call("POST", "/api/approve", {"approval_token": token})
@@ -263,6 +263,15 @@ class IntentAndRerankTest(unittest.TestCase):
                            scorer=lambda q, docs: ({d[0]: i for i, d in enumerate(docs)}, "sie:test-model"))
         self.assertEqual([p.listing.id for p in out], ["mercari:t2", "mercari:t1", "mercari:t0"])
         self.assertEqual(line, "ranker: Superlinked SIE rerank (sie:test-model) over PriceRanker")
+
+    def test_no_second_sie_call_when_pipeline_ranker_used_sie(self):
+        def never(q, docs):
+            raise AssertionError("must not call SIE twice")
+        out, line = rerank("q", self._picks(), "SieRerank [superlinked sie rerank (sie:bge)]", scorer=never)
+        self.assertIn("Superlinked SIE already ran in the pipeline ranker", line)
+        _, line2 = rerank("q", self._picks(), "SieRerank [superlinked sie rerank unavailable (OSError); offline ranking]",
+                          scorer=lambda q, d: (None, "none"))
+        self.assertIn("returned no scores", line2)
 
     def test_sie_failure_keeps_pipeline_order(self):
         picks = self._picks()

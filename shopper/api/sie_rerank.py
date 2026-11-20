@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import asyncio
 import os
+import re
 from typing import Callable
 
 from .. import config
@@ -48,6 +49,8 @@ def rerank(query: str, picks: list[RankedPick], ranker_name: str,
     base = f"ranker: {ranker_name} (pipeline order)"
     if not picks:
         return picks, base
+    if re.search(r"superlinked sie rerank(?! unavailable)", ranker_name.lower()):  # rank pane already used SIE
+        return picks, f"ranker: {ranker_name}; Superlinked SIE already ran in the pipeline ranker"
     if scorer is None:
         if not config.live():
             return picks, base + "; Superlinked SIE off (offline)"
