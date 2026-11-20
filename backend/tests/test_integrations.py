@@ -34,7 +34,7 @@ async def test_sie_encode_and_score_request_contract(make_kai):
             return httpx.Response(200, json={"model": "BAAI/bge-m3", "items": [
                 {"id": it["id"], "dense": {"dims": 3, "dtype": "float32", "values": [0.1, 0.2, float(i)]}}
                 for i, it in enumerate(body["items"])]})
-        assert request.url.raw_path == b"/v1/score/BAAI%2Fbge-reranker-v2-m3"
+        assert request.url.raw_path == b"/v1/score/Qwen%2FQwen3-Reranker-0.6B"
         assert body["query"] == {"text": "matte keycap"}
         return httpx.Response(200, json={"model": "x", "scores": [
             {"item_id": "a", "score": 2.0, "rank": 0}, {"item_id": "b", "score": -1.0, "rank": 1}]})
@@ -44,7 +44,7 @@ async def test_sie_encode_and_score_request_contract(make_kai):
     vecs, backend = await k.sie.embed(["one", "two"])
     assert backend == "sie:BAAI/bge-m3" and vecs == [[0.1, 0.2, 0.0], [0.1, 0.2, 1.0]]
     scores, label = await k.sie.rerank("matte keycap", [("a", "matte"), ("b", "glossy")])
-    assert scores == {"a": 1.0, "b": 0.0} and label == "sie:BAAI/bge-reranker-v2-m3"
+    assert scores == {"a": 1.0, "b": 0.0} and label == "sie:Qwen/Qwen3-Reranker-0.6B"
     st = k.sie.state.to_json()
     assert st["mode"] == "live" and st["liveCalls"] == 2
     assert all(r.url.host == "api.superlinked.com" for r in net.requests)

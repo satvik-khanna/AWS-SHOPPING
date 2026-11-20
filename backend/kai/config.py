@@ -61,7 +61,7 @@ class Settings:
     sie_api_key: str | None = None
     sie_base_url: str | None = None
     sie_embed_model: str = "BAAI/bge-m3"
-    sie_rerank_model: str = "BAAI/bge-reranker-v2-m3"
+    sie_rerank_model: str = "Qwen/Qwen3-Reranker-0.6B"
 
     # Senso
     senso_api_key: str | None = None
