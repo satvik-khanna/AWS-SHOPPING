@@ -64,7 +64,7 @@ curl -s -X POST http://127.0.0.1:8000/api/run -H 'Content-Type: application/json
   -d '{"query":"Fujifilm X100V","budget":900,"ship_to":"US-CA","user":"alice","condition_min":null}'
 ```
 
-Response (real; the second pick is cut here for length, the real response had 3 picks):
+Response (real; the second pick is cut here for length, the real response had 2 picks):
 ```json
 {
   "request": {
@@ -85,31 +85,28 @@ Response (real; the second pick is cut here for length, the real response had 3 
   "picks": [
     {
       "listing": {
-        "id": "mercari:m007",
+        "id": "mercari:m001",
         "source": "mercari",
-        "url": "https://jp.mercari.com/item/m007",
-        "title_ja": "X100V 専用 純正レザーケース LC-X100V ブラック",
-        "title_en": "genuine leather case LC-X100V black for X100V",
-        "price_jpy": 6800,
-        "condition": "good",
-        "seller": "parts_jp",
+        "url": "https://jp.mercari.com/item/m001",
+        "title_ja": "富士フイルム X100V シルバー 美品",
+        "title_en": "Fujifilm X100V silver, excellent",
+        "price_jpy": 118000,
+        "condition": "like_new",
+        "seller": "camera_taro",
         "ships_abroad": false,
-        "weight_kg": 0.3,
-        "category": "camera_accessory",
+        "weight_kg": 0.8,
+        "category": "camera",
         "fields": {
-          "item_type": "accessory",
-          "color": "black",
-          "condition_ja": "目立った傷や汚れなし",
-          "buyee_url": "https://buyee.jp/mercari/item/m007"
+          "shutter_count": "3200"
         },
         "photos": []
       },
       "cost": {
-        "listing_id": "mercari:m007",
+        "listing_id": "mercari:m001",
         "lines": [
           {
             "label": "item price",
-            "amount_usd": 45.33,
+            "amount_usd": 786.67,
             "citation": {
               "source": "fixtures/rules.json#fx_jpy_per_usd",
               "as_of": "PLACEHOLDER",
@@ -136,7 +133,7 @@ Response (real; the second pick is cut here for length, the real response had 3 
           },
           {
             "label": "international shipping",
-            "amount_usd": 10.0,
+            "amount_usd": 16.0,
             "citation": {
               "source": "fixtures/rules.json#intl_shipping_jpy_per_kg",
               "as_of": "PLACEHOLDER",
@@ -145,7 +142,7 @@ Response (real; the second pick is cut here for length, the real response had 3 
           },
           {
             "label": "duty",
-            "amount_usd": 2.27,
+            "amount_usd": 0.0,
             "citation": {
               "source": "fixtures/rules.json#duty_rate_by_category",
               "as_of": "PLACEHOLDER",
@@ -155,28 +152,27 @@ Response (real; the second pick is cut here for length, the real response had 3 
         ],
         "fx_jpy_per_usd": 150.0,
         "blocked_reason": null,
-        "total_usd": 66.26
+        "total_usd": 811.33
       },
-      "score": 1.1264,
-      "reason": "$66.26 landed ($834 under budget), condition good"
+      "score": 0.3985,
+      "reason": "$811.33 landed ($89 under budget), condition like_new"
     }
   ],
   "cart": {
     "status": "awaiting_approval",
-    "listing_id": "mercari:m007",
-    "approval_token": "LPPmXsd8nbU",
+    "listing_id": "mercari:m001",
+    "approval_token": "F5ItBsCq9lM",
     "cart_url": null,
-    "detail": "dry run: would add https://jp.mercari.com/item/m007 to Buyee cart"
+    "detail": "dry run: would add https://jp.mercari.com/item/m001 to Buyee cart"
   },
   "trail": [
     "recalled preferences for alice: 0 past purchases, 0 rejected sellers",
-    "found 9 listings",
+    "found 4 listings",
     "skip mercari:m003: landed $1426.66 > budget $900.0",
     "skip mercari:m004: banned category: battery_loose",
-    "pick mercari:m007 $66.26 score=1.13: $66.26 landed ($834 under budget), condition good",
-    "pick mercari:m008 $31.26 score=1.07: $31.26 landed ($869 under budget), condition fair",
-    "pick yahoo_auctions:y006 $437.99 score=0.51: $437.99 landed ($462 under budget), condition junk",
-    "cart awaiting_approval for mercari:m007"
+    "pick mercari:m001 $811.33 score=0.40: $811.33 landed ($89 under budget), condition like_new",
+    "pick yahoo_auctions:y002 $677.99 score=0.35: $677.99 landed ($222 under budget), condition fair",
+    "cart awaiting_approval for mercari:m001"
   ]
 }
 ```
@@ -197,13 +193,13 @@ The **only** way to get `status: "placed"`. Each token works once.
 
 ```
 curl -s -X POST http://127.0.0.1:8000/api/approve -H 'Content-Type: application/json' \
-  -d '{"approval_token":"LPPmXsd8nbU"}'
+  -d '{"approval_token":"F5ItBsCq9lM"}'
 ```
 First use (real):
 ```json
 {
   "status": "placed",
-  "listing_id": "mercari:m007",
+  "listing_id": "mercari:m001",
   "approval_token": null,
   "cart_url": null,
   "detail": "dry run: order not actually placed"
@@ -233,7 +229,7 @@ call `/api/run` again to get new picks without that seller.
 
 ```
 curl -s -X POST http://127.0.0.1:8000/api/reject -H 'Content-Type: application/json' \
-  -d '{"user":"alice","seller":"parts_jp"}'
+  -d '{"user":"alice","seller":"camera_taro"}'
 ```
 ```json
 {
@@ -241,10 +237,10 @@ curl -s -X POST http://127.0.0.1:8000/api/reject -H 'Content-Type: application/j
   "sizes": {},
   "condition_min": null,
   "rejected_sellers": [
-    "parts_jp"
+    "camera_taro"
   ],
   "past_purchases": [
-    "mercari:m007"
+    "mercari:m001"
   ],
   "notes": []
 }
@@ -261,10 +257,10 @@ curl -s 'http://127.0.0.1:8000/api/memory?user=alice'
   "sizes": {},
   "condition_min": null,
   "rejected_sellers": [
-    "parts_jp"
+    "camera_taro"
   ],
   "past_purchases": [
-    "mercari:m007"
+    "mercari:m001"
   ],
   "notes": []
 }
