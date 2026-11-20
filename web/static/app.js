@@ -1,16 +1,15 @@
-/* Japan Shopping Agent demo screen. Plain JS, no external dependencies.
+/* Japan Shopping Agent — assistant-ui + Commerce UI + AI Elements frontend.
    Icons: GitHub Primer Octicons v19.42.0 (MIT License), 16px SVG paths.
    All listing / memory text is untrusted: it only ever goes through textContent. */
 (function () {
   "use strict";
 
   var $ = function (id) { return document.getElementById(id); };
-  var state = { result: null, cart: null, usedToken: null, gateEvent: null, busy: false };
+  var state = { result: null, cart: null, usedToken: null, gateEvent: null, busy: false, selectedIdx: 0 };
 
   var CONDITION = { "new": "New", like_new: "Like new", good: "Good", fair: "Fair", junk: "Junk" };
-  var SOURCE = { mercari: "Mercari", yahoo_auctions: "Yahoo! Auctions", other: "Independent shop" };
+  var SOURCE = { mercari: "Mercari Japan", yahoo_auctions: "Yahoo Auctions", other: "Independent shop" };
 
-  // Official @primer/octicons v19.42.0 16px paths (MIT)
   var OCTICONS = {
     "shield-check": ["m8.533.133 5.25 1.68A1.75 1.75 0 0 1 15 3.48V7c0 1.566-.32 3.182-1.303 4.682-.983 1.498-2.585 2.813-5.032 3.855a1.697 1.697 0 0 1-1.33 0c-2.447-1.042-4.049-2.357-5.032-3.855C1.32 10.182 1 8.566 1 7V3.48a1.75 1.75 0 0 1 1.217-1.667l5.25-1.68a1.748 1.748 0 0 1 1.066 0Zm-.61 1.429.001.001-5.25 1.68a.251.251 0 0 0-.174.237V7c0 1.36.275 2.666 1.057 3.859.784 1.194 2.121 2.342 4.366 3.298a.196.196 0 0 0 .154 0c2.245-.957 3.582-2.103 4.366-3.297C13.225 9.666 13.5 8.358 13.5 7V3.48a.25.25 0 0 0-.174-.238l-5.25-1.68a.25.25 0 0 0-.153 0ZM11.28 6.28l-3.5 3.5a.75.75 0 0 1-1.06 0l-1.5-1.5a.749.749 0 0 1 .326-1.275.749.749 0 0 1 .734.215l.97.97 2.97-2.97a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042Z"],
     "shield-lock": ["m8.533.133 5.25 1.68A1.75 1.75 0 0 1 15 3.48V7c0 1.566-.32 3.182-1.303 4.682-.983 1.498-2.585 2.813-5.032 3.855a1.697 1.697 0 0 1-1.33 0c-2.447-1.042-4.049-2.357-5.032-3.855C1.32 10.182 1 8.566 1 7V3.48a1.75 1.75 0 0 1 1.217-1.667l5.25-1.68a1.748 1.748 0 0 1 1.066 0Zm-.61 1.429.001.001-5.25 1.68a.251.251 0 0 0-.174.237V7c0 1.36.275 2.666 1.057 3.859.784 1.194 2.121 2.342 4.366 3.298a.196.196 0 0 0 .154 0c2.245-.957 3.582-2.103 4.366-3.297C13.225 9.666 13.5 8.358 13.5 7V3.48a.25.25 0 0 0-.174-.238l-5.25-1.68a.25.25 0 0 0-.153 0ZM9.5 6.5c0 .536-.286 1.032-.75 1.3v2.45a.75.75 0 0 1-1.5 0V7.8A1.5 1.5 0 1 1 9.5 6.5Z"],
@@ -44,7 +43,6 @@
     return svg;
   }
 
-  // h("div", {class: "x", onclick: fn}, child, "text", [more])
   function h(tag, attrs) {
     var el = document.createElement(tag);
     for (var k in attrs || {}) {
@@ -64,9 +62,7 @@
   }
   function clear(el) { while (el.firstChild) el.removeChild(el.firstChild); return el; }
 
-  function usd(n) {
-    return "$" + Number(n).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  }
+  function usd(n) { return "$" + Number(n).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
   function usd0(n) { return "$" + Number(n).toLocaleString("en-US", { maximumFractionDigits: 2 }); }
   function yen(n) { return "\u00a5" + Number(n).toLocaleString("en-US"); }
   function safeUrl(u) {
@@ -89,7 +85,7 @@
         return data;
       });
     }, function () {
-      throw new Error("Cannot reach server. Check that `python3 -m web` is running.");
+      throw new Error("Cannot reach server.");
     });
   }
 
@@ -102,19 +98,32 @@
   function setBusy(on, label) {
     state.busy = on;
     $("go").disabled = on;
-    $("go-label").textContent = on ? (label || "Searching\u2026") : "Search";
+    $("go-label").textContent = on ? (label || "Searching\u2026") : "Send";
     if (on) {
-      if (!state.result) {
-        $("empty").hidden = true;
-        $("skeleton").hidden = false;
-      } else {
-        $("results").classList.add("stale");
-      }
+      $("empty").hidden = true;
+      $("results").hidden = true;
+      $("skeleton").hidden = false;
     } else {
       $("skeleton").hidden = true;
-      $("results").classList.remove("stale");
-      if (!state.result) $("empty").hidden = false;
+      if (state.result) $("results").hidden = false;
+      else $("empty").hidden = false;
     }
+  }
+
+  function tweenUsd(el, target) {
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      el.textContent = usd(target);
+      return;
+    }
+    var start = performance.now(), dur = 280;
+    function tick(now) {
+      var t = Math.min(1, (now - start) / dur);
+      var eased = 1 - Math.pow(1 - t, 3);
+      el.textContent = usd(target * eased);
+      if (t < 1) requestAnimationFrame(tick);
+      else el.textContent = usd(target);
+    }
+    requestAnimationFrame(tick);
   }
 
   function requestBody() {
@@ -122,16 +131,20 @@
     return { query: r.query, budget: r.max_total_usd, ship_to: r.ship_to, user_id: r.user_id, condition_min: r.condition_min };
   }
 
-  /* ---------- actions ---------- */
-
   function runSearch(ev) {
     if (ev) ev.preventDefault();
     if (state.busy) return;
     showError("");
+    var rawQuery = $("query").value.trim();
+    var budgetVal = $("budget").value;
+    var m = rawQuery.match(/\$\s*(\d+(?:\.\d+)?)/);
+    if (m) { budgetVal = m[1]; $("budget").value = budgetVal; }
     var body = {
-      query: $("query").value, budget: $("budget").value, ship_to: $("ship_to").value,
+      query: rawQuery, budget: budgetVal, ship_to: $("ship_to").value,
       condition_min: $("condition_min").value || null
     };
+    $("user-turn").hidden = false;
+    $("user-bubble").textContent = rawQuery + " · max " + usd0(budgetVal) + " · " + body.ship_to;
     setBusy(true);
     api("/api/run", body).then(show, function (e) { showError(e.message); }).then(function () { setBusy(false); });
   }
@@ -181,6 +194,7 @@
     state.cart = result.cart;
     state.usedToken = null;
     state.gateEvent = null;
+    state.selectedIdx = 0;
     $("empty").hidden = true;
     $("skeleton").hidden = true;
     $("results").hidden = false;
@@ -188,13 +202,12 @@
     renderMeta(result.meta);
   }
 
-  /* ---------- render ---------- */
-
   function renderAll() {
     renderPrefs();
-    renderPicks();
-    renderGate();
     renderTrail();
+    renderPicks();
+    renderCostPanel();
+    renderGate();
   }
 
   function chip(text, cls) { return h("span", { class: "chip" + (cls ? " " + cls : "") }, text); }
@@ -206,13 +219,11 @@
       ["Condition", p.condition_min ? [chip(CONDITION[p.condition_min] || p.condition_min, "c-ink")] : []],
       ["Sizes", sizes.map(function (k) { return chip(k + " " + p.sizes[k], "c-ink"); })],
       ["Rejected", (p.rejected_sellers || []).map(function (s) { return chip(s, "c-red struck"); })],
-      ["Purchased", (p.past_purchases || []).map(function (s) { return chip(s, "c-green"); })],
-      ["Notes", (p.notes || []).map(function (s) { return chip(s); })]
+      ["Purchased", (p.past_purchases || []).map(function (s) { return chip(s, "c-green"); })]
     ];
     var known = groups.some(function (g) { return g[1].length; });
     if (!known) {
-      box.appendChild(h("span", { class: "prefs-empty" },
-        "No saved preferences for ", h("strong", null, p.user_id), "."));
+      box.appendChild(h("span", { class: "prefs-empty" }, "User " + p.user_id + " · no saved preferences"));
       return;
     }
     box.appendChild(h("dl", { class: "pref" }, h("dt", null, "User"), h("dd", null, p.user_id)));
@@ -229,94 +240,72 @@
     var src = c.source || "no source";
     return h("div", { class: "cite" },
       url ? h("a", { href: url, target: "_blank", rel: "noopener noreferrer", class: "src" }, src) : h("span", { class: "src" }, src),
-      h("span", { class: "asof" + (dated ? "" : " warn"), title: dated ? "Rule date" : "Undated value" },
-        c.as_of || "undated"));
+      h("span", { class: "asof" + (dated ? "" : " warn") }, c.as_of || "undated"));
   }
 
   function pickCard(pick, i, inCart) {
-    var l = pick.listing, cost = pick.cost, req = state.result.request;
-    var total = totalOf(cost), budget = req.max_total_usd, room = budget - total;
-    var scale = Math.max(budget, total) || 1;
+    var l = pick.listing, cost = pick.cost;
+    var total = totalOf(cost);
     var placed = inCart && state.cart && state.cart.status === "placed";
     var url = safeUrl(l.url);
+    var buyeeUrl = l.fields && l.fields.buyee_url ? safeUrl(String(l.fields.buyee_url)) : null;
     var photo = (l.photos || []).map(safeUrl).filter(Boolean)[0];
 
-    var bar = h("div", { class: "bar", role: "img", "aria-label": usd(total) + " of " + usd0(budget) + " budget" });
-    var lines = h("ul", { class: "lines" });
-    cost.lines.forEach(function (line, n) {
-      var seg = h("span", { class: "s" + (n % 6), title: line.label + " " + usd(line.amount_usd) });
-      seg.style.width = (Math.max(line.amount_usd, 0) / scale * 100) + "%";
-      bar.appendChild(seg);
-      var hint = /item/i.test(line.label) && l.price_jpy ? h("small", null, yen(l.price_jpy)) : null;
-      lines.appendChild(h("li", { class: "line" },
-        h("span", { class: "dot s" + (n % 6) }),
-        h("span", { class: "label" }, line.label, hint),
-        h("span", { class: "amt" }, usd(line.amount_usd)),
-        citeNode(line.citation)));
-    });
+    var media;
+    if (photo) {
+      var img = h("img", { class: "thumb", src: photo, alt: l.title_en, loading: "lazy", referrerpolicy: "no-referrer" });
+      img.addEventListener("error", function () { img.remove(); });
+      media = h("div", { class: "pick-media" }, img);
+    } else {
+      media = h("div", { class: "pick-media" },
+        h("div", { class: "pick-placeholder" }, icon("package", 20), SOURCE[l.source] || l.source));
+    }
+    media.appendChild(h("div", { class: "pick-badges" },
+      h("span", { class: "rank" }, "#" + (i + 1)),
+      inCart ? h("span", { class: "tag-cart" + (placed ? " placed" : "") },
+        icon(placed ? "check-circle" : "package", 12), placed ? "Ordered" : "In cart") : null));
 
-    var chips = [
+    var metaChips = [
       chip(CONDITION[l.condition] || l.condition, "c-ink"),
-      chip(SOURCE[l.source] || l.source),
-      chip(l.seller),
       chip(l.ships_abroad ? "Ships abroad" : "Via proxy", l.ships_abroad ? "c-green" : "c-amber")
     ];
-    var buyeeUrl = null;
-    Object.keys(l.fields || {}).forEach(function (k) {
-      var val = l.fields[k];
-      if (k === "buyee_url") { buyeeUrl = safeUrl(String(val || "")); return; }
-      if (/^https?:\/\//i.test(String(val || ""))) return;
-      chips.push(chip(k.replace(/_/g, " ") + ": " + val));
-    });
 
-    var img = null;
-    if (photo) {
-      img = h("img", { class: "thumb", src: photo, alt: l.title_en, loading: "lazy", referrerpolicy: "no-referrer" });
-      img.addEventListener("error", function () { img.remove(); });
-    }
-
-    return h("article", { class: "pick" + (inCart ? " in-cart" : ""), "data-listing": l.id },
-      img,
-      h("div", { class: "pick-head" },
-        h("div", { class: "pick-rank" },
-          h("span", { class: "rank" }, "#" + (i + 1)),
-          inCart ? h("span", { class: "tag-cart" + (placed ? " placed" : "") },
-            icon(placed ? "check-circle" : "package", 12), placed ? "Ordered" : "In cart") : null),
+    return h("article", {
+      class: "pick" + (i === state.selectedIdx ? " selected" : "") + (inCart ? " in-cart" : ""),
+      style: "--i:" + i,
+      "data-listing": l.id,
+      tabindex: "0",
+      onclick: function () { state.selectedIdx = i; renderPicks(); renderCostPanel(); }
+    },
+      media,
+      h("div", { class: "pick-body" },
         h("h3", null, l.title_en),
-        h("p", { class: "ja", lang: "ja" }, l.title_ja),
-        h("div", { class: "chips" }, chips)),
-      h("div", { class: "total" },
-        h("div", { class: "total-top" },
-          h("span", { class: "total-label" }, "Landed to " + req.ship_to),
-          h("span", { class: "total-sub" },
-            room >= 0 ? h("span", { class: "under" }, usd(room) + " under") : h("span", { class: "over" }, usd(-room) + " over"),
-            " " + usd0(budget))),
-        h("div", { class: "total-num" }, usd(total)),
-        bar,
-        h("div", { class: "bar-cap" }, h("span", null, "$0"), h("span", null, usd0(budget)))),
-      lines,
-      h("div", { class: "fx" }, "FX " + cost.fx_jpy_per_usd + " JPY/USD"),
-      h("p", { class: "why" }, h("b", null, "Rank " + Number(pick.score).toFixed(2)), pick.reason),
-      h("div", { class: "pick-actions" },
+        h("div", { class: "pick-price-row" },
+          h("span", { class: "pick-price" }, usd(total)),
+          h("span", { class: "pick-source" }, SOURCE[l.source] || l.source)),
+        h("div", { class: "pick-meta" }, metaChips)),
+      h("div", { class: "pick-foot" },
         h("div", { class: "pick-links" },
-          url ? h("a", { href: url, target: "_blank", rel: "noopener noreferrer", class: "ext-link" },
-            "Open listing", icon("link-external", 14)) : h("span", { class: "step-sub" }, "No listing link"),
-          buyeeUrl ? h("a", { href: buyeeUrl, target: "_blank", rel: "noopener noreferrer", class: "ext-link" },
-            "Buyee", icon("link-external", 14)) : null),
-        h("button", { type: "button", class: "btn btn-small btn-danger", onclick: function () { rejectSeller(l.seller); } },
-          icon("blocked", 14), "Reject seller")));
+          url ? h("a", { href: url, target: "_blank", rel: "noopener noreferrer", class: "ext-link", onclick: function (e) { e.stopPropagation(); } },
+            "Listing", icon("link-external", 12)) : null,
+          buyeeUrl ? h("a", { href: buyeeUrl, target: "_blank", rel: "noopener noreferrer", class: "ext-link", onclick: function (e) { e.stopPropagation(); } },
+            "Buyee", icon("link-external", 12)) : null),
+        h("button", {
+          type: "button", class: "btn btn-small btn-danger",
+          onclick: function (e) { e.stopPropagation(); rejectSeller(l.seller); }
+        }, icon("blocked", 12), "Reject")));
   }
 
   function renderPicks() {
     var r = state.result, box = clear($("picks"));
     var cartId = state.cart && state.cart.listing_id;
     $("picks-sub").textContent = r.picks.length
-      ? r.picks.length + " within " + usd0(r.request.max_total_usd)
-      : "0 matches";
+      ? r.picks.length + " matching items found within " + usd0(r.request.max_total_usd)
+      : "No matching items found within " + usd0(r.request.max_total_usd);
     if (!r.picks.length) {
       box.appendChild(h("div", { class: "none-found" },
         h("strong", null, "No listing within " + usd0(r.request.max_total_usd)),
-        "Raise the budget or lower the minimum condition."));
+        "Raise the max budget or lower the minimum condition."));
     }
     r.picks.forEach(function (p, i) { box.appendChild(pickCard(p, i, p.listing.id === cartId)); });
 
@@ -332,9 +321,41 @@
     }
   }
 
+  function renderCostPanel() {
+    var r = state.result, panel = clear($("cost-panel"));
+    var pick = r.picks[state.selectedIdx] || r.picks[0];
+    if (!pick) { panel.hidden = true; return; }
+    panel.hidden = false;
+    var l = pick.listing, cost = pick.cost, req = r.request;
+    var total = totalOf(cost), room = req.max_total_usd - total;
+
+    var lines = h("ul", { class: "lines" });
+    cost.lines.forEach(function (line, n) {
+      var hint = /item/i.test(line.label) && l.price_jpy ? h("small", null, yen(l.price_jpy)) : null;
+      lines.appendChild(h("li", { class: "line", style: "--i:" + n },
+        h("span", { class: "dot s" + (n % 6) }),
+        h("span", { class: "label" }, line.label, hint),
+        h("span", { class: "amt" }, usd(line.amount_usd)),
+        citeNode(line.citation)));
+    });
+
+    var totalEl = h("span", { class: "cost-total-num" }, usd(total));
+    panel.appendChild(h("div", { class: "cost-head" },
+      h("span", { class: "cost-title" }, "#" + (state.selectedIdx + 1) + " · " + l.title_en),
+      h("span", { class: "cost-sub" },
+        room >= 0 ? h("span", { class: "under" }, usd(room) + " under") : h("span", { class: "over" }, usd(-room) + " over"),
+        " · FX " + cost.fx_jpy_per_usd)));
+    panel.appendChild(lines);
+    panel.appendChild(h("div", { class: "cost-total-row" },
+      h("span", { class: "cost-total-label" }, "Estimated landed total (" + req.ship_to + ")"),
+      totalEl));
+    panel.appendChild(h("p", { class: "cost-why" }, "Rank " + Number(pick.score).toFixed(2) + " · " + pick.reason));
+    tweenUsd(totalEl, total);
+  }
+
   var GATE_ICONS = { awaiting: "shield-lock", placed: "check-circle", stopped: "x-circle", idle: "inbox" };
 
-  function gateShell(kind, kicker, note, item, total, actions) {
+  function gateShell(kind, kicker, note, item, actions) {
     var g = $("gate");
     clear(g).className = "gate " + kind;
     g.appendChild(h("div", { class: "gate-body" },
@@ -342,29 +363,20 @@
         h("div", { class: "gate-icon", "aria-hidden": "true" }, icon(GATE_ICONS[kind] || "inbox", 16)),
         h("div", null, h("div", { class: "gate-kicker" }, kicker), h("div", { class: "gate-note" }, note))),
       h("div", { class: "gate-item" }, item),
-      total === null ? h("div") : h("div", { class: "gate-total" }, h("div", { class: "k" }, "Total landed"), h("div", { class: "v" }, usd(total))),
       h("div", { class: "gate-actions" }, actions)));
   }
 
   function renderGate() {
     var r = state.result, cart = state.cart;
     if (!cart) {
-      gateShell("idle", "No cart created", "No listing fit within budget.", null, null, null);
+      gateShell("idle", "No cart created", "No listing fit within budget.", null, null);
       return;
     }
     var pick = r.picks.filter(function (p) { return p.listing.id === cart.listing_id; })[0] || null;
-    var total = pick ? totalOf(pick.cost) : null;
     var item = [
       pick ? h("div", { class: "t" }, pick.listing.title_en) : null,
       cart.detail ? h("div", { class: "d" }, cart.detail) : null
     ];
-    var cartUrl = cart.cart_url && safeUrl(cart.cart_url);
-    if (cartUrl) {
-      item.push(h("div", { class: "d" },
-        h("a", { href: cartUrl, target: "_blank", rel: "noopener noreferrer", class: "ext-link" },
-          "Open filled cart", icon("link-external", 12))));
-    }
-
     if (cart.status === "awaiting_approval") {
       var copyBtn = h("button", {
         type: "button", class: "btn btn-ghost btn-copy", "aria-label": "Copy approval token",
@@ -378,21 +390,20 @@
         }
       }, icon("copy", 12), "Copy");
       item.push(h("div", { class: "tok-row" }, h("span", { class: "tok" }, "token " + cart.approval_token), copyBtn));
-      gateShell("awaiting", "Awaiting approval", "Cart filled. Nothing paid.", item, total, [
+      gateShell("awaiting", "Approval required", "Cart filled. Nothing paid yet.", item, [
         h("button", { type: "button", class: "btn btn-primary", id: "approve", onclick: function (e) { approve(e.currentTarget); } },
           icon("check", 14), "Approve and place order"),
         pick ? h("button", { type: "button", class: "btn btn-small btn-danger", id: "reject", onclick: function () { rejectSeller(pick.listing.seller); } },
           icon("blocked", 14), "Reject " + pick.listing.seller) : null
       ]);
     } else if (cart.status === "placed") {
-      item.push(h("div", { class: "tok" }, "token consumed (single-use)"));
       if (state.gateEvent) item.push(h("div", { class: "ev" }, state.gateEvent));
-      gateShell("placed", "Order placed", "Approved. Token cannot be reused.", item, total, [
+      gateShell("placed", "Order placed", "Approved. Single-use token consumed.", item, [
         state.usedToken ? h("button", { type: "button", class: "btn btn-small", id: "replay", onclick: function (e) { replayToken(e.currentTarget); } },
-          icon("sync", 14), "Test token replay") : null
+          icon("sync", 14), "Test replay") : null
       ]);
     } else {
-      gateShell("stopped", cart.status === "failed" ? "Checkout failed" : "Blocked", "Nothing paid.", item, total, null);
+      gateShell("stopped", cart.status === "failed" ? "Checkout failed" : "Blocked", "Nothing paid.", item, null);
     }
   }
 
@@ -403,7 +414,9 @@
   ];
   function renderTrail() {
     var box = clear($("trail"));
-    state.result.trail.forEach(function (t) {
+    var trail = state.result.trail || [];
+    $("steps-summary").textContent = "Agent steps (" + trail.length + " actions · preferences & reasoning)";
+    trail.forEach(function (t) {
       var kind = "step";
       for (var i = 0; i < KINDS.length; i++) if (KINDS[i][0].test(t)) { kind = KINDS[i][1]; break; }
       box.appendChild(h("li", null, h("span", { class: "k k-" + kind }, kind), h("span", { class: "txt" }, t)));
@@ -417,11 +430,8 @@
     m.className = "mode" + (meta.live ? " live" : "");
     append(m, [icon(meta.live ? "globe" : "shield-check", 14), meta.live ? "Live" : "Offline dry run"]);
     var w = meta.wiring || {};
-    $("foot").textContent = Object.keys(w).map(function (k) { return k + "=" + w[k]; }).join(" · ") +
-      (meta.live ? "" : " · offline dry run");
+    $("foot").textContent = Object.keys(w).map(function (k) { return k + "=" + w[k]; }).join(" · ");
   }
-
-  /* ---------- theme & keyboard ---------- */
 
   function currentTheme() {
     var saved = null;
@@ -458,8 +468,6 @@
       }
     }
   });
-
-  /* ---------- boot ---------- */
 
   $("form").addEventListener("submit", runSearch);
   document.querySelectorAll(".example-chip").forEach(function (btn) {

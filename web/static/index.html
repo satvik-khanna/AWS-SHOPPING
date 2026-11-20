@@ -13,7 +13,7 @@
       <svg class="octicon brand-icon" viewBox="0 0 16 16" width="18" height="18" aria-hidden="true">
         <path d="m8.878.392 5.25 3.045c.54.314.872.89.872 1.514v6.098a1.75 1.75 0 0 1-.872 1.514l-5.25 3.045a1.75 1.75 0 0 1-1.756 0l-5.25-3.045A1.75 1.75 0 0 1 1 11.049V4.951c0-.624.332-1.201.872-1.514L7.122.392a1.75 1.75 0 0 1 1.756 0ZM7.875 1.69l-4.63 2.685L8 7.133l4.755-2.758-4.63-2.685a.248.248 0 0 0-.25 0ZM2.5 5.677v5.372c0 .09.047.171.125.216l4.625 2.683V8.432Zm6.25 8.271 4.625-2.683a.25.25 0 0 0 .125-.216V5.677L8.75 8.432Z"></path>
       </svg>
-      <h1>Japan Shopping Agent</h1>
+      <h1>Shopping Agent</h1>
     </div>
     <div class="top-actions">
       <div class="mode" id="mode" hidden></div>
@@ -22,136 +22,103 @@
   </div>
 </header>
 
-<main>
-  <section class="step step-request" id="step-request" aria-labelledby="h-request">
-    <h2 id="h-request" class="sr-only">Search request</h2>
-    <form id="form" class="request" autocomplete="off">
-      <label class="f f-query">
-        <span>Item</span>
-        <span class="input-wrap">
-          <svg class="octicon input-icon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
-            <path d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z"></path>
-          </svg>
-          <input id="query" name="query" type="text" value="Fujifilm X100V" maxlength="300" placeholder="Search Japanese listings" required>
-        </span>
-      </label>
-      <label class="f f-budget">
-        <span>Max landed (USD)</span>
-        <span class="money-in"><i>$</i><input id="budget" name="budget" type="number" value="900" min="1" step="1" required></span>
-      </label>
-      <label class="f f-ship">
-        <span>Ship to</span>
-        <input id="ship_to" name="ship_to" type="text" value="US-CA" maxlength="40" required>
-      </label>
-      <label class="f f-cond">
-        <span>Min condition</span>
-        <select id="condition_min" name="condition_min">
-          <option value="">Any</option>
-          <option value="fair">Fair</option>
-          <option value="good">Good</option>
-          <option value="like_new">Like new</option>
-          <option value="new">New</option>
-        </select>
-      </label>
-      <button id="go" type="submit" class="btn btn-primary">
-        <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
-          <path d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z"></path>
-        </svg>
-        <span id="go-label">Search</span>
-      </button>
-    </form>
-    <p class="error" id="error" role="alert" hidden></p>
-  </section>
-
-  <div id="empty" class="empty">
-    <svg class="octicon empty-icon" viewBox="0 0 16 16" width="20" height="20" aria-hidden="true">
-      <path d="M2.8 2.06A1.75 1.75 0 0 1 4.41 1h7.18c.7 0 1.333.417 1.61 1.06l2.74 6.395c.04.093.06.194.06.295v4.5A1.75 1.75 0 0 1 14.25 15H1.75A1.75 1.75 0 0 1 0 13.25v-4.5c0-.101.02-.202.06-.295Zm1.61.44a.25.25 0 0 0-.23.152L1.887 8H4.75a.75.75 0 0 1 .6.3L6.625 10h2.75l1.275-1.7a.75.75 0 0 1 .6-.3h2.863L11.82 2.652a.25.25 0 0 0-.23-.152Zm10.09 7h-2.875l-1.275 1.7a.75.75 0 0 1-.6.3h-3.5a.75.75 0 0 1-.6-.3L4.375 9.5H1.5v3.75c0 .138.112.25.25.25h12.5a.25.25 0 0 0 .25-.25Z"></path>
-    </svg>
-    <p class="empty-lead">No search run yet.</p>
-    <div class="examples" id="examples" aria-label="Example queries">
-      <button type="button" class="example-chip" data-q="Fujifilm X100V" data-budget="900">Fujifilm X100V · $900</button>
-      <button type="button" class="example-chip" data-q="Seiko SARB033" data-budget="600">Seiko SARB033 · $600</button>
-      <button type="button" class="example-chip" data-q="Game Boy Micro" data-budget="250">Game Boy Micro · $250</button>
-    </div>
-  </div>
-
-  <div id="skeleton" class="skeleton" aria-busy="true" aria-label="Loading search results" hidden>
-    <div class="sk-row sk-prefs"></div>
-    <div class="sk-grid">
-      <div class="sk-card">
-        <div class="sk-line sk-w40"></div>
-        <div class="sk-line sk-w80 sk-lg"></div>
-        <div class="sk-line sk-w60"></div>
-        <div class="sk-block"></div>
-        <div class="sk-line sk-w90"></div>
-        <div class="sk-line sk-w75"></div>
-      </div>
-      <div class="sk-card">
-        <div class="sk-line sk-w40"></div>
-        <div class="sk-line sk-w80 sk-lg"></div>
-        <div class="sk-line sk-w60"></div>
-        <div class="sk-block"></div>
-        <div class="sk-line sk-w90"></div>
-        <div class="sk-line sk-w75"></div>
+<main class="chat-shell">
+  <div id="thread" class="thread" aria-live="polite">
+    <div id="empty" class="empty">
+      <svg class="octicon empty-icon" viewBox="0 0 16 16" width="20" height="20" aria-hidden="true">
+        <path d="M7.53 1.282a.5.5 0 0 1 .94 0l.478 1.306a7.492 7.492 0 0 0 4.464 4.464l1.305.478a.5.5 0 0 1 0 .94l-1.305.478a7.492 7.492 0 0 0-4.464 4.464l-.478 1.305a.5.5 0 0 1-.94 0l-.478-1.305a7.492 7.492 0 0 0-4.464-4.464L1.282 8.47a.5.5 0 0 1 0-.94l1.306-.478a7.492 7.492 0 0 0 4.464-4.464Z"></path>
+      </svg>
+      <p class="empty-lead">Ask for a Japanese marketplace item.</p>
+      <div class="examples" id="examples" aria-label="Example prompts">
+        <button type="button" class="example-chip" data-q="Fujifilm X100V" data-budget="900">Fujifilm X100V under $900</button>
+        <button type="button" class="example-chip" data-q="Seiko SARB033" data-budget="600">Seiko SARB033 under $600</button>
+        <button type="button" class="example-chip" data-q="Game Boy Micro" data-budget="250">Game Boy Micro under $250</button>
       </div>
     </div>
-  </div>
 
-  <div id="results" hidden>
-    <section class="step" aria-labelledby="h-prefs">
-      <div class="step-head">
-        <h2 id="h-prefs">
-          <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
-            <path d="M15 2.75a.75.75 0 0 1-.75.75h-4a.75.75 0 0 1 0-1.5h4a.75.75 0 0 1 .75.75Zm-8.5.75v1.25a.75.75 0 0 0 1.5 0v-4a.75.75 0 0 0-1.5 0V2H1.75a.75.75 0 0 0 0 1.5H6.5Zm1.25 5.25a.75.75 0 0 0 0-1.5h-6a.75.75 0 0 0 0 1.5h6ZM15 8a.75.75 0 0 1-.75.75H11.5V10a.75.75 0 1 1-1.5 0V6a.75.75 0 0 1 1.5 0v1.25h2.75A.75.75 0 0 1 15 8Zm-9 5.25v-2a.75.75 0 0 0-1.5 0v1.25H1.75a.75.75 0 0 0 0 1.5H4.5v1.25a.75.75 0 0 0 1.5 0v-2Zm9 0a.75.75 0 0 1-.75.75h-6a.75.75 0 0 1 0-1.5h6a.75.75 0 0 1 .75.75Z"></path>
-          </svg>
-          Recalled preferences
-        </h2>
+    <div id="user-turn" class="msg msg-user" hidden>
+      <div class="bubble" id="user-bubble"></div>
+    </div>
+
+    <div id="skeleton" class="msg msg-agent skeleton" aria-busy="true" aria-label="Loading search results" hidden>
+      <div class="sk-line sk-w40"></div>
+      <div class="sk-cards">
+        <div class="sk-card"><div class="sk-block"></div><div class="sk-line sk-w80"></div><div class="sk-line sk-w40"></div></div>
+        <div class="sk-card"><div class="sk-block"></div><div class="sk-line sk-w80"></div><div class="sk-line sk-w40"></div></div>
       </div>
-      <div id="prefs" class="prefs"></div>
-    </section>
+      <div class="sk-card"><div class="sk-line sk-w60"></div><div class="sk-line sk-w90"></div></div>
+    </div>
 
-    <section class="step" aria-labelledby="h-picks">
-      <div class="step-head">
-        <h2 id="h-picks">
-          <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
-            <path d="M1 7.775V2.75C1 1.784 1.784 1 2.75 1h5.025c.464 0 .91.184 1.238.513l6.25 6.25a1.75 1.75 0 0 1 0 2.474l-5.026 5.026a1.75 1.75 0 0 1-2.474 0l-6.25-6.25A1.752 1.752 0 0 1 1 7.775Zm1.5 0c0 .066.026.13.073.177l6.25 6.25a.25.25 0 0 0 .354 0l5.025-5.025a.25.25 0 0 0 0-.354l-6.25-6.25a.25.25 0 0 0-.177-.073H2.75a.25.25 0 0 0-.25.25ZM6 5a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z"></path>
-          </svg>
-          Ranked picks
-        </h2>
-        <span class="step-sub" id="picks-sub"></span>
-      </div>
-      <div id="picks" class="picks"></div>
-      <div id="skipped" class="skipped" hidden></div>
-    </section>
-
-    <section class="step step-gate" aria-labelledby="h-gate">
-      <div class="step-head">
-        <h2 id="h-gate">
-          <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
-            <path d="m8.533.133 5.25 1.68A1.75 1.75 0 0 1 15 3.48V7c0 1.566-.32 3.182-1.303 4.682-.983 1.498-2.585 2.813-5.032 3.855a1.697 1.697 0 0 1-1.33 0c-2.447-1.042-4.049-2.357-5.032-3.855C1.32 10.182 1 8.566 1 7V3.48a1.75 1.75 0 0 1 1.217-1.667l5.25-1.68a1.748 1.748 0 0 1 1.066 0Zm-.61 1.429.001.001-5.25 1.68a.251.251 0 0 0-.174.237V7c0 1.36.275 2.666 1.057 3.859.784 1.194 2.121 2.342 4.366 3.298a.196.196 0 0 0 .154 0c2.245-.957 3.582-2.103 4.366-3.297C13.225 9.666 13.5 8.358 13.5 7V3.48a.25.25 0 0 0-.174-.238l-5.25-1.68a.25.25 0 0 0-.153 0ZM9.5 6.5c0 .536-.286 1.032-.75 1.3v2.45a.75.75 0 0 1-1.5 0V7.8A1.5 1.5 0 1 1 9.5 6.5Z"></path>
-          </svg>
-          Approval gate
-        </h2>
-      </div>
-      <div id="gate" class="gate" aria-live="polite"></div>
-    </section>
-
-    <section class="step" aria-labelledby="h-trail">
-      <div class="step-head">
-        <h2 id="h-trail">
-          <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+    <div id="results" class="msg msg-agent" hidden>
+      <!-- AI Elements: tool-call / reasoning steps accordion -->
+      <details class="ai-steps" id="ai-steps">
+        <summary class="ai-steps-head">
+          <svg class="octicon" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
             <path d="M5 8.25a.75.75 0 0 1 .75-.75h4a.75.75 0 0 1 0 1.5h-4A.75.75 0 0 1 5 8.25ZM4 10.5A.75.75 0 0 0 4 12h4a.75.75 0 0 0 0-1.5H4Z"></path>
             <path d="M13-.005c1.654 0 3 1.328 3 3 0 .982-.338 1.933-.783 2.818-.443.879-1.028 1.758-1.582 2.588l-.011.017c-.568.853-1.104 1.659-1.501 2.446-.398.789-.623 1.494-.623 2.136a1.5 1.5 0 1 0 2.333-1.248.75.75 0 0 1 .834-1.246A3 3 0 0 1 13 16H3a3 3 0 0 1-3-3c0-1.582.891-3.135 1.777-4.506.209-.322.418-.637.623-.946.473-.709.923-1.386 1.287-2.048H2.51c-.576 0-1.381-.133-1.907-.783A2.68 2.68 0 0 1 0 2.995a3 3 0 0 1 3-3Zm0 1.5a1.5 1.5 0 0 0-1.5 1.5c0 .476.223.834.667 1.132A.75.75 0 0 1 11.75 5.5H5.368c-.467 1.003-1.141 2.015-1.773 2.963-.192.289-.381.571-.558.845C2.13 10.711 1.5 11.916 1.5 13A1.5 1.5 0 0 0 3 14.5h7.401A2.989 2.989 0 0 1 10 13c0-.979.338-1.928.784-2.812.441-.874 1.023-1.748 1.575-2.576l.017-.026c.568-.853 1.103-1.658 1.501-2.448.398-.79.623-1.497.623-2.143 0-.838-.669-1.5-1.5-1.5Zm-10 0a1.5 1.5 0 0 0-1.5 1.5c0 .321.1.569.27.778.097.12.325.227.74.227h7.674A2.737 2.737 0 0 1 10 2.995c0-.546.146-1.059.401-1.5Z"></path>
           </svg>
-          Reasoning trail
-        </h2>
+          <span id="steps-summary">Agent steps</span>
+        </summary>
+        <div class="ai-steps-body">
+          <div id="prefs" class="prefs"></div>
+          <ol id="trail" class="trail"></ol>
+        </div>
+      </details>
+
+      <!-- Assistant reply summary -->
+      <p class="agent-lead" id="picks-sub"></p>
+
+      <!-- Commerce UI: Product cards row -->
+      <div id="picks" class="picks"></div>
+      <div id="skipped" class="skipped" hidden></div>
+
+      <!-- Selected product Landed Cost breakdown -->
+      <section class="cost-panel" id="cost-panel" aria-label="Landed cost breakdown" hidden></section>
+
+      <!-- Approval Gate -->
+      <div id="gate" class="gate" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <!-- assistant-ui sticky bottom composer -->
+  <div class="composer-wrap">
+    <p class="error" id="error" role="alert" hidden></p>
+    <form id="form" class="composer" autocomplete="off">
+      <div class="composer-row">
+        <label class="sr-only" for="query">Item or request</label>
+        <input id="query" name="query" type="text" value="Fujifilm X100V" maxlength="300" placeholder="Ask for an item (e.g. Fujifilm X100V under $900)…" required>
+        <button id="go" type="submit" class="btn btn-primary">
+          <svg class="octicon" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+            <path d="M8.22 2.97a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042l2.97-2.97H3.75a.75.75 0 0 1 0-1.5h7.44L8.22 4.03a.75.75 0 0 1 0-1.06Z"></path>
+          </svg>
+          <span id="go-label">Send</span>
+        </button>
       </div>
-      <ol id="trail" class="trail"></ol>
-    </section>
+      <div class="composer-controls">
+        <label class="ctrl">
+          <span>Max $</span>
+          <input id="budget" name="budget" type="number" value="900" min="1" step="1" required>
+        </label>
+        <label class="ctrl">
+          <span>Ship to</span>
+          <input id="ship_to" name="ship_to" type="text" value="US-CA" maxlength="40" required>
+        </label>
+        <label class="ctrl">
+          <span>Condition</span>
+          <select id="condition_min" name="condition_min">
+            <option value="">Any</option>
+            <option value="fair">Fair+</option>
+            <option value="good">Good+</option>
+            <option value="like_new">Like new+</option>
+            <option value="new">New</option>
+          </select>
+        </label>
+        <span class="foot-inline" id="foot"></span>
+      </div>
+    </form>
   </div>
 </main>
 
-<footer class="foot" id="foot"></footer>
 <script src="/static/app.js"></script>
 </body>
 </html>
