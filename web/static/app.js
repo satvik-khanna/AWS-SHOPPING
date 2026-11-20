@@ -91,6 +91,7 @@
   }
 
   function show(result, stayOnPage) {
+    if (agentMod.isAborted()) return;
     state.result = result;
     state.cart = result.cart;
     state.usedToken = null;
@@ -107,6 +108,8 @@
     ui.$("results").hidden = false;
     renderAll();
     renderMeta(result.meta);
+    var count = (result.picks && result.picks.length) || 0;
+    agentMod.finish(count ? (count + " matches ready · nothing paid") : "No matches within budget");
     if (openItem) routerMod.go("item");
     else if (!stayOnPage) routerMod.go("shop");
   }
@@ -126,7 +129,8 @@
     ui.$("user-bubble").textContent = body.query + " · $" + body.budget;
     if (!stayOnPage) routerMod.go("shop");
     setBusy(true);
-    api("/api/run", body).then(function (res) { show(res, stayOnPage); }, function (e) { showError(e.message); }).then(function () { setBusy(false); });
+    agentMod.start();
+    api("/api/run", body).then(function (res) { show(res, stayOnPage); }, function (e) { agentMod.stop(); showError(e.message); }).then(function () { setBusy(false); });
   }
 
   function rejectSeller(seller) {
@@ -136,7 +140,8 @@
     body.seller = seller;
     routerMod.go("shop");
     setBusy(true);
-    api("/api/reject", body).then(function (res) { show(res, false); }, function (e) { showError(e.message); }).then(function () { setBusy(false); });
+    agentMod.start();
+    api("/api/reject", body).then(function (res) { show(res, false); }, function (e) { agentMod.stop(); showError(e.message); }).then(function () { setBusy(false); });
   }
 
   function approve(btn) {
@@ -150,6 +155,7 @@
       state.cart = r.cart;
       state.result.trail = state.result.trail.concat(r.trail || []);
       renderAll();
+      if (r.cart.status === "placed") agentMod.notify("Order placed");
     }, function (e) { showError(e.message); btn.disabled = false; });
   }
 
@@ -174,6 +180,7 @@
   }
 
   // Init modules
+  var agentMod = root.JSA.agent.init(function () { setBusy(false); });
   var menuMod = root.JSA.menu.init({});
   var routerMod = root.JSA.router.init(function (page) {
     menuMod.close();

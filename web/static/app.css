@@ -2,19 +2,21 @@
    Shibubu Design Tokens + GitHub Primer Octicons v19.42.0 (MIT). Zero external assets. */
 
 :root {
-  --bg-app: #ffffff;
+  /* Blended Dia warm paper (#FBFAF6) + Shibubu compact ink tokens */
+  --bg-app: #fbfaf6;
   --surface-1: #ffffff;
-  --surface-2: #f6f7f8;
-  --surface-3: #eaedf1;
-  --surface-press: #dfe4ea;
-  --border: #e5e8ec;
-  --border-strong: #c2c9d2;
-  --text-primary: #202731;
-  --text-secondary: #515d6b;
-  --text-tertiary: #6c7682;
+  --surface-2: #f3f2ee;
+  --surface-3: #e8e6e0;
+  --surface-press: #dcd9d0;
+  --border: rgba(17, 17, 17, 0.1);
+  --border-strong: rgba(17, 17, 17, 0.22);
+  --text-primary: #111111;
+  --text-secondary: #515860;
+  --text-tertiary: #757c85;
+  --rainbow: linear-gradient(90deg, #c679c4, #fa3d1d, #ffb005, #e1e1fe, #0358f7, #c679c4);
 
-  --ink-fill: #202731;
-  --ink-fill-hover: #323b47;
+  --ink-fill: #111111;
+  --ink-fill-hover: #2c2c2c;
   --on-ink: #ffffff;
 
   --danger: #ab271e; --danger-soft: #fdecea;
@@ -242,10 +244,43 @@ a { color: inherit; text-decoration: none; }
 .skeleton { flex: 1; display: flex; flex-direction: column; gap: 8px; padding-top: 6px; }
 .sk-row { height: 48px; border-radius: var(--radius-sm); background: linear-gradient(90deg, var(--surface-2) 25%, var(--surface-3) 50%, var(--surface-2) 75%); background-size: 200% 100%; animation: shimmer 1.1s ease-in-out infinite; }
 
+/* Dia-style orb, live plan strip, rainbow working ring, notify switch */
+.dia-orb {
+  width: 14px; height: 14px; border-radius: 50%; flex: none;
+  background: conic-gradient(from 200deg, #c679c4, #fa3d1d, #ffb005, #e1e1fe, #0358f7, #c679c4);
+}
+.agent-plan { flex: none; border-bottom: var(--hairline) solid var(--border); padding-bottom: 6px; animation: enter 180ms var(--ease-out); }
+.plan-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.live-dot { display: inline-flex; align-items: center; gap: 5px; font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-secondary); }
+.live-dot::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #fa3d1d; }
+.live-dot.live::before { animation: pulseDot 1.2s ease-in-out infinite; }
+.live-dot.paused::before { background: var(--success); }
+.live-dot.stopped::before { background: var(--text-tertiary); }
+.plan-steps { list-style: none; margin: 0; padding: 0; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; flex: 1; }
+.plan-steps li { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: var(--text-tertiary); transition: color 150ms var(--ease-out); }
+.plan-steps li.now { color: var(--text-primary); font-weight: 600; }
+.plan-steps li.done { color: var(--text-secondary); }
+.step-dot { width: 15px; height: 15px; border-radius: 50%; border: var(--hairline) solid var(--border-strong); display: grid; place-items: center; font-family: var(--font-mono); font-size: 10px; }
+.plan-steps li.done .step-dot { background: var(--ink-fill); border-color: var(--ink-fill); color: var(--on-ink); }
+.plan-steps li.now .step-dot { border-color: #0358f7; color: #0358f7; }
+.plan-elapsed { font-family: var(--font-mono); font-size: 12px; color: var(--text-tertiary); font-variant-numeric: tabular-nums; }
+
+.composer-ring { border-radius: 14px; padding: 1.5px; background: var(--border-strong); transition: background 240ms var(--ease-out); }
+.composer-ring.working { background: var(--rainbow); background-size: 200% 100%; animation: flowRing 2.6s linear infinite; }
+.composer { border: 0; border-radius: 12.5px; padding: 4px 6px 4px 10px; background: var(--surface-1); }
+
+.notify-row { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-secondary); cursor: pointer; }
+.switch { appearance: none; width: 28px; height: 16px; border-radius: 999px; background: var(--border-strong); position: relative; cursor: pointer; margin: 0; transition: background 180ms var(--ease-out); }
+.switch::after { content: ""; position: absolute; left: 2px; top: 2px; width: 12px; height: 12px; border-radius: 50%; background: var(--surface-1); transition: transform 180ms var(--ease-out); }
+.switch:checked { background: var(--ink-fill); }
+.switch:checked::after { transform: translateX(12px); }
+
+@keyframes flowRing { to { background-position: -200% 0; } }
+@keyframes pulseDot { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
 /* Bottom pinned composer */
 .composer-wrap { flex: none; padding: 6px 0 10px; background: var(--bg-app); }
 .error { margin: 0 0 6px; padding: 6px 10px; border-radius: var(--radius-sm); background: var(--danger-soft); color: var(--danger); font-size: 12px; }
-.composer { border: var(--hairline) solid var(--border-strong); border-radius: var(--radius-lg); padding: 4px 6px 4px 10px; background: var(--bg-app); }
 .composer-row { display: flex; align-items: center; gap: 6px; }
 .composer-row > input { flex: 1; min-width: 0; height: 30px; border: 0; background: transparent; color: var(--text-primary); font-family: var(--font-sans); font-size: 13px; }
 .composer-row > input:focus { outline: none; }

@@ -9,19 +9,21 @@
    Shibubu Design Tokens + GitHub Primer Octicons v19.42.0 (MIT). Zero external assets. */
 
 :root {
-  --bg-app: #ffffff;
+  /* Blended Dia warm paper (#FBFAF6) + Shibubu compact ink tokens */
+  --bg-app: #fbfaf6;
   --surface-1: #ffffff;
-  --surface-2: #f6f7f8;
-  --surface-3: #eaedf1;
-  --surface-press: #dfe4ea;
-  --border: #e5e8ec;
-  --border-strong: #c2c9d2;
-  --text-primary: #202731;
-  --text-secondary: #515d6b;
-  --text-tertiary: #6c7682;
+  --surface-2: #f3f2ee;
+  --surface-3: #e8e6e0;
+  --surface-press: #dcd9d0;
+  --border: rgba(17, 17, 17, 0.1);
+  --border-strong: rgba(17, 17, 17, 0.22);
+  --text-primary: #111111;
+  --text-secondary: #515860;
+  --text-tertiary: #757c85;
+  --rainbow: linear-gradient(90deg, #c679c4, #fa3d1d, #ffb005, #e1e1fe, #0358f7, #c679c4);
 
-  --ink-fill: #202731;
-  --ink-fill-hover: #323b47;
+  --ink-fill: #111111;
+  --ink-fill-hover: #2c2c2c;
   --on-ink: #ffffff;
 
   --danger: #ab271e; --danger-soft: #fdecea;
@@ -249,10 +251,43 @@ a { color: inherit; text-decoration: none; }
 .skeleton { flex: 1; display: flex; flex-direction: column; gap: 8px; padding-top: 6px; }
 .sk-row { height: 48px; border-radius: var(--radius-sm); background: linear-gradient(90deg, var(--surface-2) 25%, var(--surface-3) 50%, var(--surface-2) 75%); background-size: 200% 100%; animation: shimmer 1.1s ease-in-out infinite; }
 
+/* Dia-style orb, live plan strip, rainbow working ring, notify switch */
+.dia-orb {
+  width: 14px; height: 14px; border-radius: 50%; flex: none;
+  background: conic-gradient(from 200deg, #c679c4, #fa3d1d, #ffb005, #e1e1fe, #0358f7, #c679c4);
+}
+.agent-plan { flex: none; border-bottom: var(--hairline) solid var(--border); padding-bottom: 6px; animation: enter 180ms var(--ease-out); }
+.plan-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.live-dot { display: inline-flex; align-items: center; gap: 5px; font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-secondary); }
+.live-dot::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #fa3d1d; }
+.live-dot.live::before { animation: pulseDot 1.2s ease-in-out infinite; }
+.live-dot.paused::before { background: var(--success); }
+.live-dot.stopped::before { background: var(--text-tertiary); }
+.plan-steps { list-style: none; margin: 0; padding: 0; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; flex: 1; }
+.plan-steps li { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: var(--text-tertiary); transition: color 150ms var(--ease-out); }
+.plan-steps li.now { color: var(--text-primary); font-weight: 600; }
+.plan-steps li.done { color: var(--text-secondary); }
+.step-dot { width: 15px; height: 15px; border-radius: 50%; border: var(--hairline) solid var(--border-strong); display: grid; place-items: center; font-family: var(--font-mono); font-size: 10px; }
+.plan-steps li.done .step-dot { background: var(--ink-fill); border-color: var(--ink-fill); color: var(--on-ink); }
+.plan-steps li.now .step-dot { border-color: #0358f7; color: #0358f7; }
+.plan-elapsed { font-family: var(--font-mono); font-size: 12px; color: var(--text-tertiary); font-variant-numeric: tabular-nums; }
+
+.composer-ring { border-radius: 14px; padding: 1.5px; background: var(--border-strong); transition: background 240ms var(--ease-out); }
+.composer-ring.working { background: var(--rainbow); background-size: 200% 100%; animation: flowRing 2.6s linear infinite; }
+.composer { border: 0; border-radius: 12.5px; padding: 4px 6px 4px 10px; background: var(--surface-1); }
+
+.notify-row { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-secondary); cursor: pointer; }
+.switch { appearance: none; width: 28px; height: 16px; border-radius: 999px; background: var(--border-strong); position: relative; cursor: pointer; margin: 0; transition: background 180ms var(--ease-out); }
+.switch::after { content: ""; position: absolute; left: 2px; top: 2px; width: 12px; height: 12px; border-radius: 50%; background: var(--surface-1); transition: transform 180ms var(--ease-out); }
+.switch:checked { background: var(--ink-fill); }
+.switch:checked::after { transform: translateX(12px); }
+
+@keyframes flowRing { to { background-position: -200% 0; } }
+@keyframes pulseDot { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
 /* Bottom pinned composer */
 .composer-wrap { flex: none; padding: 6px 0 10px; background: var(--bg-app); }
 .error { margin: 0 0 6px; padding: 6px 10px; border-radius: var(--radius-sm); background: var(--danger-soft); color: var(--danger); font-size: 12px; }
-.composer { border: var(--hairline) solid var(--border-strong); border-radius: var(--radius-lg); padding: 4px 6px 4px 10px; background: var(--bg-app); }
 .composer-row { display: flex; align-items: center; gap: 6px; }
 .composer-row > input { flex: 1; min-width: 0; height: 30px; border: 0; background: transparent; color: var(--text-primary); font-family: var(--font-sans); font-size: 13px; }
 .composer-row > input:focus { outline: none; }
@@ -296,6 +331,7 @@ a { color: inherit; text-decoration: none; }
           <path d="M7.78 12.53a.75.75 0 0 1-1.06 0L2.47 8.28a.75.75 0 0 1 0-1.06l4.25-4.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042L4.81 7h7.44a.75.75 0 0 1 0 1.5H4.81l2.97 2.97a.75.75 0 0 1 0 1.06Z"></path>
         </svg>
       </button>
+      <span class="dia-orb" aria-hidden="true"></span>
       <h1 id="page-title">Shopping Agent</h1>
     </div>
     <div class="top-actions">
@@ -355,6 +391,10 @@ a { color: inherit; text-decoration: none; }
     <h3>Recent</h3>
     <ul id="history-list" class="drawer-list"></ul>
   </div>
+
+  <div class="drawer-section">
+    <label class="notify-row"><input type="checkbox" id="notify-toggle" class="switch" checked><span>Notify when ready</span></label>
+  </div>
 </aside>
 
 <main class="viewport">
@@ -362,6 +402,16 @@ a { color: inherit; text-decoration: none; }
   <section id="page-shop" class="page">
     <div id="user-turn" class="msg msg-user" hidden>
       <div class="bubble" id="user-bubble"></div>
+    </div>
+
+    <!-- Dia-style compact live plan bar -->
+    <div id="agent-plan" class="agent-plan" hidden>
+      <div class="plan-top">
+        <span id="plan-dot" class="live-dot live">Live</span>
+        <ol id="plan-steps" class="plan-steps"></ol>
+        <span id="plan-elapsed" class="plan-elapsed">0s</span>
+        <button type="button" id="plan-stop" class="btn btn-ghost btn-small">Stop</button>
+      </div>
     </div>
 
     <div id="empty" class="empty">
@@ -394,6 +444,7 @@ a { color: inherit; text-decoration: none; }
 
     <div class="composer-wrap">
       <p class="error" id="error" role="alert" hidden></p>
+      <div id="composer-ring" class="composer-ring">
       <form id="form" class="composer" autocomplete="off">
         <div class="composer-row">
           <label class="sr-only" for="query">Search</label>
@@ -421,6 +472,7 @@ a { color: inherit; text-decoration: none; }
           </button>
         </div>
       </form>
+      </div>
     </div>
   </section>
 
@@ -471,7 +523,7 @@ a { color: inherit; text-decoration: none; }
 
 <script>
 (function(){
-  var SAMPLES = {"fujifilm x100v": {"request": {"query": "Fujifilm X100V", "max_total_usd": 900, "ship_to": "US-CA", "user_id": "default", "condition_min": null}, "preferences": {"user_id": "default", "sizes": {}, "condition_min": null, "rejected_sellers": ["camera_taro"], "past_purchases": ["mercari:m007", "mercari:m005", "mercari:m009", "yahoo_auctions:y002"], "notes": ["bought mercari:m007: genuine leather case LC-X100V black for X100V from parts_jp", "bought mercari:m005: FUJIFILM X100V black good condition with original box shutter count 8500 from fuji_fan_osaka", "bought mercari:m009: FUJIFILM X100V silver some scratches slight lens haze from cam_recycle_55", "bought yahoo_auctions:y002: FUJIFILM X100V black scratches from kanto_resale"]}, "picks": [{"listing": {"id": "mercari:m005", "source": "mercari", "url": "https://jp.mercari.com/item/m005", "title_ja": "FUJIFILM X100V ブラック 良品 元箱付き シャッター数8500", "title_en": "FUJIFILM X100V black good condition with original box shutter count 8500", "price_jpy": 109800, "condition": "good", "seller": "fuji_fan_osaka", "ships_abroad": false, "weight_kg": 0.8, "category": "camera", "fields": {"color": "black", "shutter_count": "8500", "box": "yes", "year": "2021", "tested": "working", "domestic_shipping": "seller pays", "condition_ja": "目立った傷や汚れなし", "buyee_url": "https://buyee.jp/mercari/item/m005"}, "photos": []}, "cost": {"listing_id": "mercari:m005", "lines": [{"label": "item price (JPY 109,800 @ 159.93)", "amount_usd": 686.55, "citation": {"source": "fixtures/rules.json#fx_jpy_per_usd", "as_of": "2026-11-13", "url": "https://www.federalreserve.gov/releases/h10/current/"}}, {"label": "Buyee service fee", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_service_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "Buyee standard plan", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_plan_fee_jpy.standard", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "payment fee", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#payment_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "domestic shipping (JP)", "amount_usd": 4.69, "citation": {"source": "fixtures/rules.json#domestic_shipping_jpy", "as_of": "2026-11-20", "url": "https://help.jp.mercari.com/guide/articles/136/"}}, {"label": "international shipping Japan Post EMS 1.00 kg (4-8 days)", "amount_usd": 33.14, "citation": {"source": "fixtures/rules.json#intl_shipping_us.ems", "as_of": "2026-11-20", "url": "https://www.post.japanpost.jp/send/oversea/charge/list-ems/all_en.html"}}, {"label": "US duty MFN camera HTS 8525.89.40.00 (de minimis suspended)", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#us_duty_mfn_by_category.camera", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/"}}, {"label": "US Japan 12.5% floor top-up (HTS 9903.05.49)", "amount_usd": 85.82, "citation": {"source": "fixtures/rules.json#us_japan_floor_rate", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/reststop/search?keyword=9903.05.49"}}], "fx_jpy_per_usd": 159.93, "blocked_reason": null, "total_usd": 816.46}, "score": 0.4089, "reason": "matches Fujifilm, x100v; $816 landed, $84 under budget; condition good (no notable marks) (seller grade: 目立った傷や汚れなし); box included (as you prefer); tested working. Watch out: you already bought this one"}, {"listing": {"id": "yahoo_auctions:y002", "source": "yahoo_auctions", "url": "https://page.auctions.yahoo.co.jp/jp/auction/y002", "title_ja": "FUJIFILM X100V ブラック 傷あり", "title_en": "FUJIFILM X100V black scratches", "price_jpy": 98000, "condition": "fair", "seller": "kanto_resale", "ships_abroad": false, "weight_kg": 0.8, "category": "camera", "fields": {"color": "black", "box": "no", "domestic_shipping": "buyer pays", "flaws": "scuffs, scratches", "condition_ja": "傷や汚れあり", "buyee_url": "https://buyee.jp/item/jdirectitems/auction/y002"}, "photos": []}, "cost": {"listing_id": "yahoo_auctions:y002", "lines": [{"label": "item price (JPY 98,000 @ 159.93)", "amount_usd": 612.77, "citation": {"source": "fixtures/rules.json#fx_jpy_per_usd", "as_of": "2026-11-13", "url": "https://www.federalreserve.gov/releases/h10/current/"}}, {"label": "Buyee service fee", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_service_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "Buyee standard plan", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_plan_fee_jpy.standard", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "payment fee", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#payment_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "domestic shipping (JP)", "amount_usd": 4.69, "citation": {"source": "fixtures/rules.json#domestic_shipping_jpy", "as_of": "2026-11-20", "url": "https://help.jp.mercari.com/guide/articles/136/"}}, {"label": "international shipping Japan Post EMS 1.00 kg (4-8 days)", "amount_usd": 33.14, "citation": {"source": "fixtures/rules.json#intl_shipping_us.ems", "as_of": "2026-11-20", "url": "https://www.post.japanpost.jp/send/oversea/charge/list-ems/all_en.html"}}, {"label": "US duty MFN camera HTS 8525.89.40.00 (de minimis suspended)", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#us_duty_mfn_by_category.camera", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/"}}, {"label": "US Japan 12.5% floor top-up (HTS 9903.05.49)", "amount_usd": 76.6, "citation": {"source": "fixtures/rules.json#us_japan_floor_rate", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/reststop/search?keyword=9903.05.49"}}], "fx_jpy_per_usd": 159.93, "blocked_reason": null, "total_usd": 733.46}, "score": 0.3748, "reason": "matches Fujifilm, x100v; $733 landed, $167 under budget; condition fair (some wear) (seller grade: 傷や汚れあり). Watch out: flaws noted: scuffs, scratches; you already bought this one"}, {"listing": {"id": "mercari:m009", "source": "mercari", "url": "https://jp.mercari.com/item/m009", "title_ja": "FUJIFILM X100V シルバー やや傷あり レンズに薄クモリ", "title_en": "FUJIFILM X100V silver some scratches slight lens haze", "price_jpy": 95000, "condition": "fair", "seller": "cam_recycle_55", "ships_abroad": false, "weight_kg": 0.8, "category": "camera", "fields": {"color": "silver", "box": "no", "flaws": "haze, scratches", "condition_ja": "やや傷や汚れあり", "buyee_url": "https://buyee.jp/mercari/item/m009"}, "photos": []}, "cost": {"listing_id": "mercari:m009", "lines": [{"label": "item price (JPY 95,000 @ 159.93)", "amount_usd": 594.01, "citation": {"source": "fixtures/rules.json#fx_jpy_per_usd", "as_of": "2026-11-13", "url": "https://www.federalreserve.gov/releases/h10/current/"}}, {"label": "Buyee service fee", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_service_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "Buyee standard plan", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_plan_fee_jpy.standard", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "payment fee", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#payment_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "domestic shipping (JP)", "amount_usd": 4.69, "citation": {"source": "fixtures/rules.json#domestic_shipping_jpy", "as_of": "2026-11-20", "url": "https://help.jp.mercari.com/guide/articles/136/"}}, {"label": "international shipping Japan Post EMS 1.00 kg (4-8 days)", "amount_usd": 33.14, "citation": {"source": "fixtures/rules.json#intl_shipping_us.ems", "as_of": "2026-11-20", "url": "https://www.post.japanpost.jp/send/oversea/charge/list-ems/all_en.html"}}, {"label": "US duty MFN camera HTS 8525.89.40.00 (de minimis suspended)", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#us_duty_mfn_by_category.camera", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/"}}, {"label": "US Japan 12.5% floor top-up (HTS 9903.05.49)", "amount_usd": 74.25, "citation": {"source": "fixtures/rules.json#us_japan_floor_rate", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/reststop/search?keyword=9903.05.49"}}], "fx_jpy_per_usd": 159.93, "blocked_reason": null, "total_usd": 712.35}, "score": 0.3188, "reason": "matches Fujifilm, x100v; $712 landed, $188 under budget; condition fair (some wear) (seller grade: やや傷や汚れあり). Watch out: flaws noted: haze, scratches; you already bought this one"}], "cart": {"status": "awaiting_approval", "listing_id": "mercari:m005", "approval_token": "demo-token-001", "cart_url": "https://buyee.jp/cart#sim-4ec5c3ec", "detail": "[session 4ec5c3ecbfb8db28] cart filled on sim-buyee; nothing paid. approve(token) to place", "session_id": "4ec5c3ecbfb8db28"}, "trail": ["recalled preferences for default: 4 past purchases, 1 rejected sellers", "source: fixtures: 10 listings for ['X100V', '富士フイルム X100V']", "found 9 listings", "skip mercari:m003: landed $1543.11 > budget $900", "skip mercari:m004: banned: battery_loose: standalone lithium batteries cannot be shipped overseas via any shipping method (https://buyee.jp/helpcenter/guide/lithium-battery)", "skip other:hardoff-3012: landed $944.48 > budget $900", "ranker: offline ranking", "pick mercari:m005 $816.46 score=0.41: matches Fujifilm, x100v; $816 landed, $84 under budget; condition good (no notable marks) (seller grade: 目立った傷や汚れなし); box included (as you prefer); tested working. Watch out: you already bought this one", "pick yahoo_auctions:y002 $733.46 score=0.37: matches Fujifilm, x100v; $733 landed, $167 under budget; condition fair (some wear) (seller grade: 傷や汚れあり). Watch out: flaws noted: scuffs, scratches; you already bought this one", "pick mercari:m009 $712.35 score=0.32: matches Fujifilm, x100v; $712 landed, $188 under budget; condition fair (some wear) (seller grade: やや傷や汚れあり). Watch out: flaws noted: haze, scratches; you already bought this one", "cart awaiting_approval for mercari:m005"], "meta": {"live": false, "wiring": {"mode": "standalone-preview"}}}, "seiko sarb033": {"request": {"query": "Seiko SARB033", "max_total_usd": 600, "ship_to": "US-CA", "user_id": "default", "condition_min": null}, "preferences": {"user_id": "default", "sizes": {}, "condition_min": null, "rejected_sellers": ["camera_taro"], "past_purchases": ["mercari:m007", "mercari:m005", "mercari:m009", "yahoo_auctions:y002"], "notes": ["bought mercari:m007: genuine leather case LC-X100V black for X100V from parts_jp", "bought mercari:m005: FUJIFILM X100V black good condition with original box shutter count 8500 from fuji_fan_osaka", "bought mercari:m009: FUJIFILM X100V silver some scratches slight lens haze from cam_recycle_55", "bought yahoo_auctions:y002: FUJIFILM X100V black scratches from kanto_resale"]}, "picks": [], "cart": null, "trail": ["recalled preferences for default: 4 past purchases, 1 rejected sellers", "source: fixtures: 0 listings for ['SARB033', 'seiko SARB033']", "found 0 listings", "ranker: offline ranking", "no candidate within budget"], "meta": {"live": false, "wiring": {"mode": "standalone-preview"}}}, "game boy micro": {"request": {"query": "Game Boy Micro", "max_total_usd": 250, "ship_to": "US-CA", "user_id": "default", "condition_min": null}, "preferences": {"user_id": "default", "sizes": {}, "condition_min": null, "rejected_sellers": ["camera_taro"], "past_purchases": ["mercari:m007", "mercari:m005", "mercari:m009", "yahoo_auctions:y002"], "notes": ["bought mercari:m007: genuine leather case LC-X100V black for X100V from parts_jp", "bought mercari:m005: FUJIFILM X100V black good condition with original box shutter count 8500 from fuji_fan_osaka", "bought mercari:m009: FUJIFILM X100V silver some scratches slight lens haze from cam_recycle_55", "bought yahoo_auctions:y002: FUJIFILM X100V black scratches from kanto_resale"]}, "picks": [{"listing": {"id": "other:hardoff-3006", "source": "other", "url": "https://netmall.hardoff.co.jp/product/3006/", "title_ja": "任天堂 ゲームボーイ 初代 箱説付き 動作確認済み", "title_en": "Nintendo Game Boy 初代 with box and manual tested working", "price_jpy": 12800, "condition": "good", "seller": "ホビーオフ 福岡店", "ships_abroad": false, "weight_kg": 0.6, "category": "electronics", "fields": {"tested": "working", "flaws": "scratches", "rank": "B", "marketplace": "Off Mall (Hard Off Net Mall)", "store_name": "ホビーオフ 福岡店", "hardoff_brand": "HOBBY OFF"}, "photos": []}, "cost": {"listing_id": "other:hardoff-3006", "lines": [{"label": "item price (JPY 12,800 @ 159.93)", "amount_usd": 80.04, "citation": {"source": "fixtures/rules.json#fx_jpy_per_usd", "as_of": "2026-11-13", "url": "https://www.federalreserve.gov/releases/h10/current/"}}, {"label": "Buyee service fee", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_service_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "Buyee standard plan", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_plan_fee_jpy.standard", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "payment fee", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#payment_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "domestic shipping (JP)", "amount_usd": 4.69, "citation": {"source": "fixtures/rules.json#domestic_shipping_jpy", "as_of": "2026-11-20", "url": "https://help.jp.mercari.com/guide/articles/136/"}}, {"label": "international shipping Japan Post EMS 0.80 kg (4-8 days)", "amount_usd": 29.64, "citation": {"source": "fixtures/rules.json#intl_shipping_us.ems", "as_of": "2026-11-20", "url": "https://www.post.japanpost.jp/send/oversea/charge/list-ems/all_en.html"}}, {"label": "US duty MFN default HTS - (de minimis suspended)", "amount_usd": 4.0, "citation": {"source": "fixtures/rules.json#us_duty_mfn_by_category.default", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/"}}, {"label": "US Japan 12.5% floor top-up (HTS 9903.05.49)", "amount_usd": 6.0, "citation": {"source": "fixtures/rules.json#us_japan_floor_rate", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/reststop/search?keyword=9903.05.49"}}], "fx_jpy_per_usd": 159.93, "blocked_reason": null, "total_usd": 130.63}, "score": 0.4866, "reason": "matches Game Boy; $131 landed, $119 under budget; condition good (no notable marks); HOBBY OFF store via Off Mall (ホビーオフ 福岡店), rank B; tested working. Watch out: not described as micro; flaws noted: scratches"}, {"listing": {"id": "other:hardoff-3004", "source": "other", "url": "https://netmall.hardoff.co.jp/product/3004/", "title_ja": "Nintendo 任天堂 初代 ゲームボーイ DMG-01 本体のみ ジャンク 通電確認のみ", "title_en": "Nintendo Nintendo 初代 Game Boy DMG-01 body only junk power-on checked only", "price_jpy": 1650, "condition": "junk", "seller": "ホビーオフ 町田店", "ships_abroad": false, "weight_kg": 0.4, "category": "electronics_junk", "fields": {"junk_risk": "repairable", "junk_reason": "通電確認のみ", "condition_source": "from title wording", "rank": "J", "returns": "none (junk rank J: no returns or warranty, even via Buyee)", "marketplace": "Off Mall (Hard Off Net Mall)", "store_name": "ホビーオフ 町田店", "hardoff_brand": "HOBBY OFF"}, "photos": []}, "cost": {"listing_id": "other:hardoff-3004", "lines": [{"label": "item price (JPY 1,650 @ 159.93)", "amount_usd": 10.32, "citation": {"source": "fixtures/rules.json#fx_jpy_per_usd", "as_of": "2026-11-13", "url": "https://www.federalreserve.gov/releases/h10/current/"}}, {"label": "Buyee service fee", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_service_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "Buyee standard plan", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_plan_fee_jpy.standard", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "payment fee", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#payment_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "domestic shipping (JP)", "amount_usd": 4.69, "citation": {"source": "fixtures/rules.json#domestic_shipping_jpy", "as_of": "2026-11-20", "url": "https://help.jp.mercari.com/guide/articles/136/"}}, {"label": "international shipping Japan Post EMS 0.60 kg (4-8 days)", "amount_usd": 26.14, "citation": {"source": "fixtures/rules.json#intl_shipping_us.ems", "as_of": "2026-11-20", "url": "https://www.post.japanpost.jp/send/oversea/charge/list-ems/all_en.html"}}, {"label": "US duty MFN default HTS - (de minimis suspended)", "amount_usd": 0.52, "citation": {"source": "fixtures/rules.json#us_duty_mfn_by_category.default", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/"}}, {"label": "US Japan 12.5% floor top-up (HTS 9903.05.49)", "amount_usd": 0.77, "citation": {"source": "fixtures/rules.json#us_japan_floor_rate", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/reststop/search?keyword=9903.05.49"}}], "fx_jpy_per_usd": 159.93, "blocked_reason": null, "total_usd": 48.7}, "score": 0.0708, "reason": "matches Game Boy; $49 landed, $201 under budget; condition junk / for parts; HOBBY OFF store via Off Mall (ホビーオフ 町田店), rank J. Watch out: not described as micro; sold as junk / for parts; no returns or warranty on junk, even via Buyee"}, {"listing": {"id": "other:hardoff-3005", "source": "other", "url": "https://netmall.hardoff.co.jp/product/3005/", "title_ja": "任天堂 ゲームボーイポケット ジャンク 通電不可", "title_en": "Nintendo Game Boy ポケット junk does not power on", "price_jpy": 880, "condition": "junk", "seller": "ホビーオフ 仙台店", "ships_abroad": false, "weight_kg": 0.3, "category": "electronics_junk", "fields": {"junk_risk": "parts only", "junk_reason": "通電不可、液漏れ、部品取り", "flaws": "battery corrosion", "condition_source": "from title wording", "rank": "J", "returns": "none (junk rank J: no returns or warranty, even via Buyee)", "marketplace": "Off Mall (Hard Off Net Mall)", "store_name": "ホビーオフ 仙台店", "hardoff_brand": "HOBBY OFF"}, "photos": []}, "cost": {"listing_id": "other:hardoff-3005", "lines": [{"label": "item price (JPY 880 @ 159.93)", "amount_usd": 5.5, "citation": {"source": "fixtures/rules.json#fx_jpy_per_usd", "as_of": "2026-11-13", "url": "https://www.federalreserve.gov/releases/h10/current/"}}, {"label": "Buyee service fee", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_service_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "Buyee standard plan", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_plan_fee_jpy.standard", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "payment fee", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#payment_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "domestic shipping (JP)", "amount_usd": 4.69, "citation": {"source": "fixtures/rules.json#domestic_shipping_jpy", "as_of": "2026-11-20", "url": "https://help.jp.mercari.com/guide/articles/136/"}}, {"label": "international shipping Japan Post EMS 0.50 kg (4-8 days)", "amount_usd": 24.39, "citation": {"source": "fixtures/rules.json#intl_shipping_us.ems", "as_of": "2026-11-20", "url": "https://www.post.japanpost.jp/send/oversea/charge/list-ems/all_en.html"}}, {"label": "US duty MFN default HTS - (de minimis suspended)", "amount_usd": 0.28, "citation": {"source": "fixtures/rules.json#us_duty_mfn_by_category.default", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/"}}, {"label": "US Japan 12.5% floor top-up (HTS 9903.05.49)", "amount_usd": 0.41, "citation": {"source": "fixtures/rules.json#us_japan_floor_rate", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/reststop/search?keyword=9903.05.49"}}], "fx_jpy_per_usd": 159.93, "blocked_reason": null, "total_usd": 41.53}, "score": -0.0449, "reason": "matches Game Boy; $42 landed, $208 under budget; condition junk / for parts; HOBBY OFF store via Off Mall (ホビーオフ 仙台店), rank J. Watch out: not described as micro; sold as junk / for parts; no returns or warranty on junk, even via Buyee; flaws noted: battery corrosion"}], "cart": {"status": "awaiting_approval", "listing_id": "other:hardoff-3006", "approval_token": "demo-token-001", "cart_url": "https://buyee.jp/cart#sim-734bf2f5", "detail": "[session 734bf2f593cb7aa9] cart filled on sim-buyee; nothing paid. approve(token) to place; 1 warning(s) in listing text", "session_id": "734bf2f593cb7aa9"}, "trail": ["recalled preferences for default: 4 past purchases, 1 rejected sellers", "source: fixtures: 3 listings for ['ゲームボーイ', 'micro ゲームボーイ']", "found 3 listings", "ranker: offline ranking", "pick other:hardoff-3006 $130.63 score=0.49: matches Game Boy; $131 landed, $119 under budget; condition good (no notable marks); HOBBY OFF store via Off Mall (ホビーオフ 福岡店), rank B; tested working. Watch out: not described as micro; flaws noted: scratches", "pick other:hardoff-3004 $48.7 score=0.07: matches Game Boy; $49 landed, $201 under budget; condition junk / for parts; HOBBY OFF store via Off Mall (ホビーオフ 町田店), rank J. Watch out: not described as micro; sold as junk / for parts; no returns or warranty on junk, even via Buyee", "pick other:hardoff-3005 $41.53 score=-0.04: matches Game Boy; $42 landed, $208 under budget; condition junk / for parts; HOBBY OFF store via Off Mall (ホビーオフ 仙台店), rank J. Watch out: not described as micro; sold as junk / for parts; no returns or warranty on junk, even via Buyee; flaws noted: battery corrosion", "cart awaiting_approval for other:hardoff-3006"], "meta": {"live": false, "wiring": {"mode": "standalone-preview"}}}};
+  var SAMPLES = {"fujifilm x100v": {"request": {"query": "Fujifilm X100V", "max_total_usd": 900, "ship_to": "US-CA", "user_id": "default", "condition_min": null}, "preferences": {"user_id": "default", "sizes": {}, "condition_min": null, "rejected_sellers": ["camera_taro"], "past_purchases": ["mercari:m007", "mercari:m005", "mercari:m009", "yahoo_auctions:y002"], "notes": ["bought mercari:m007: genuine leather case LC-X100V black for X100V from parts_jp", "bought mercari:m005: FUJIFILM X100V black good condition with original box shutter count 8500 from fuji_fan_osaka", "bought mercari:m009: FUJIFILM X100V silver some scratches slight lens haze from cam_recycle_55", "bought yahoo_auctions:y002: FUJIFILM X100V black scratches from kanto_resale"]}, "picks": [{"listing": {"id": "mercari:m005", "source": "mercari", "url": "https://jp.mercari.com/item/m005", "title_ja": "FUJIFILM X100V ブラック 良品 元箱付き シャッター数8500", "title_en": "FUJIFILM X100V black good condition with original box shutter count 8500", "price_jpy": 109800, "condition": "good", "seller": "fuji_fan_osaka", "ships_abroad": false, "weight_kg": 0.8, "category": "camera", "fields": {"color": "black", "shutter_count": "8500", "box": "yes", "year": "2021", "tested": "working", "domestic_shipping": "seller pays", "condition_ja": "目立った傷や汚れなし", "buyee_url": "https://buyee.jp/mercari/item/m005"}, "photos": []}, "cost": {"listing_id": "mercari:m005", "lines": [{"label": "item price (JPY 109,800 @ 159.93)", "amount_usd": 686.55, "citation": {"source": "fixtures/rules.json#fx_jpy_per_usd", "as_of": "2026-11-13", "url": "https://www.federalreserve.gov/releases/h10/current/"}}, {"label": "Buyee service fee", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_service_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "Buyee standard plan", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_plan_fee_jpy.standard", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "payment fee", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#payment_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "domestic shipping (JP)", "amount_usd": 4.69, "citation": {"source": "fixtures/rules.json#domestic_shipping_jpy", "as_of": "2026-11-20", "url": "https://help.jp.mercari.com/guide/articles/136/"}}, {"label": "international shipping Japan Post EMS 1.00 kg (4-8 days)", "amount_usd": 33.14, "citation": {"source": "fixtures/rules.json#intl_shipping_us.ems", "as_of": "2026-11-20", "url": "https://www.post.japanpost.jp/send/oversea/charge/list-ems/all_en.html"}}, {"label": "US duty MFN camera HTS 8525.89.40.00 (de minimis suspended)", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#us_duty_mfn_by_category.camera", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/"}}, {"label": "US Japan 12.5% floor top-up (HTS 9903.05.49)", "amount_usd": 85.82, "citation": {"source": "fixtures/rules.json#us_japan_floor_rate", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/reststop/search?keyword=9903.05.49"}}], "fx_jpy_per_usd": 159.93, "blocked_reason": null, "total_usd": 816.46}, "score": 0.4089, "reason": "matches Fujifilm, x100v; $816 landed, $84 under budget; condition good (no notable marks) (seller grade: 目立った傷や汚れなし); box included (as you prefer); tested working. Watch out: you already bought this one"}, {"listing": {"id": "yahoo_auctions:y002", "source": "yahoo_auctions", "url": "https://page.auctions.yahoo.co.jp/jp/auction/y002", "title_ja": "FUJIFILM X100V ブラック 傷あり", "title_en": "FUJIFILM X100V black scratches", "price_jpy": 98000, "condition": "fair", "seller": "kanto_resale", "ships_abroad": false, "weight_kg": 0.8, "category": "camera", "fields": {"color": "black", "box": "no", "domestic_shipping": "buyer pays", "flaws": "scuffs, scratches", "condition_ja": "傷や汚れあり", "buyee_url": "https://buyee.jp/item/jdirectitems/auction/y002"}, "photos": []}, "cost": {"listing_id": "yahoo_auctions:y002", "lines": [{"label": "item price (JPY 98,000 @ 159.93)", "amount_usd": 612.77, "citation": {"source": "fixtures/rules.json#fx_jpy_per_usd", "as_of": "2026-11-13", "url": "https://www.federalreserve.gov/releases/h10/current/"}}, {"label": "Buyee service fee", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_service_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "Buyee standard plan", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_plan_fee_jpy.standard", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "payment fee", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#payment_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "domestic shipping (JP)", "amount_usd": 4.69, "citation": {"source": "fixtures/rules.json#domestic_shipping_jpy", "as_of": "2026-11-20", "url": "https://help.jp.mercari.com/guide/articles/136/"}}, {"label": "international shipping Japan Post EMS 1.00 kg (4-8 days)", "amount_usd": 33.14, "citation": {"source": "fixtures/rules.json#intl_shipping_us.ems", "as_of": "2026-11-20", "url": "https://www.post.japanpost.jp/send/oversea/charge/list-ems/all_en.html"}}, {"label": "US duty MFN camera HTS 8525.89.40.00 (de minimis suspended)", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#us_duty_mfn_by_category.camera", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/"}}, {"label": "US Japan 12.5% floor top-up (HTS 9903.05.49)", "amount_usd": 76.6, "citation": {"source": "fixtures/rules.json#us_japan_floor_rate", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/reststop/search?keyword=9903.05.49"}}], "fx_jpy_per_usd": 159.93, "blocked_reason": null, "total_usd": 733.46}, "score": 0.3748, "reason": "matches Fujifilm, x100v; $733 landed, $167 under budget; condition fair (some wear) (seller grade: 傷や汚れあり). Watch out: flaws noted: scuffs, scratches; you already bought this one"}, {"listing": {"id": "mercari:m009", "source": "mercari", "url": "https://jp.mercari.com/item/m009", "title_ja": "FUJIFILM X100V シルバー やや傷あり レンズに薄クモリ", "title_en": "FUJIFILM X100V silver some scratches slight lens haze", "price_jpy": 95000, "condition": "fair", "seller": "cam_recycle_55", "ships_abroad": false, "weight_kg": 0.8, "category": "camera", "fields": {"color": "silver", "box": "no", "flaws": "haze, scratches", "condition_ja": "やや傷や汚れあり", "buyee_url": "https://buyee.jp/mercari/item/m009"}, "photos": []}, "cost": {"listing_id": "mercari:m009", "lines": [{"label": "item price (JPY 95,000 @ 159.93)", "amount_usd": 594.01, "citation": {"source": "fixtures/rules.json#fx_jpy_per_usd", "as_of": "2026-11-13", "url": "https://www.federalreserve.gov/releases/h10/current/"}}, {"label": "Buyee service fee", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_service_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "Buyee standard plan", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_plan_fee_jpy.standard", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "payment fee", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#payment_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "domestic shipping (JP)", "amount_usd": 4.69, "citation": {"source": "fixtures/rules.json#domestic_shipping_jpy", "as_of": "2026-11-20", "url": "https://help.jp.mercari.com/guide/articles/136/"}}, {"label": "international shipping Japan Post EMS 1.00 kg (4-8 days)", "amount_usd": 33.14, "citation": {"source": "fixtures/rules.json#intl_shipping_us.ems", "as_of": "2026-11-20", "url": "https://www.post.japanpost.jp/send/oversea/charge/list-ems/all_en.html"}}, {"label": "US duty MFN camera HTS 8525.89.40.00 (de minimis suspended)", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#us_duty_mfn_by_category.camera", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/"}}, {"label": "US Japan 12.5% floor top-up (HTS 9903.05.49)", "amount_usd": 74.25, "citation": {"source": "fixtures/rules.json#us_japan_floor_rate", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/reststop/search?keyword=9903.05.49"}}], "fx_jpy_per_usd": 159.93, "blocked_reason": null, "total_usd": 712.35}, "score": 0.3188, "reason": "matches Fujifilm, x100v; $712 landed, $188 under budget; condition fair (some wear) (seller grade: やや傷や汚れあり). Watch out: flaws noted: haze, scratches; you already bought this one"}], "cart": {"status": "awaiting_approval", "listing_id": "mercari:m005", "approval_token": "demo-token-001", "cart_url": "https://buyee.jp/cart#sim-bdeff8c9", "detail": "[session bdeff8c99d65ef8f] cart filled on sim-buyee; nothing paid. approve(token) to place", "session_id": "bdeff8c99d65ef8f"}, "trail": ["recalled preferences for default: 4 past purchases, 1 rejected sellers", "source: fixtures: 10 listings for ['X100V', '富士フイルム X100V']", "found 9 listings", "skip mercari:m003: landed $1543.11 > budget $900", "skip mercari:m004: banned: battery_loose: standalone lithium batteries cannot be shipped overseas via any shipping method (https://buyee.jp/helpcenter/guide/lithium-battery)", "skip other:hardoff-3012: landed $944.48 > budget $900", "ranker: offline ranking", "pick mercari:m005 $816.46 score=0.41: matches Fujifilm, x100v; $816 landed, $84 under budget; condition good (no notable marks) (seller grade: 目立った傷や汚れなし); box included (as you prefer); tested working. Watch out: you already bought this one", "pick yahoo_auctions:y002 $733.46 score=0.37: matches Fujifilm, x100v; $733 landed, $167 under budget; condition fair (some wear) (seller grade: 傷や汚れあり). Watch out: flaws noted: scuffs, scratches; you already bought this one", "pick mercari:m009 $712.35 score=0.32: matches Fujifilm, x100v; $712 landed, $188 under budget; condition fair (some wear) (seller grade: やや傷や汚れあり). Watch out: flaws noted: haze, scratches; you already bought this one", "cart awaiting_approval for mercari:m005"], "meta": {"live": false, "wiring": {"mode": "standalone-preview"}}}, "seiko sarb033": {"request": {"query": "Seiko SARB033", "max_total_usd": 600, "ship_to": "US-CA", "user_id": "default", "condition_min": null}, "preferences": {"user_id": "default", "sizes": {}, "condition_min": null, "rejected_sellers": ["camera_taro"], "past_purchases": ["mercari:m007", "mercari:m005", "mercari:m009", "yahoo_auctions:y002"], "notes": ["bought mercari:m007: genuine leather case LC-X100V black for X100V from parts_jp", "bought mercari:m005: FUJIFILM X100V black good condition with original box shutter count 8500 from fuji_fan_osaka", "bought mercari:m009: FUJIFILM X100V silver some scratches slight lens haze from cam_recycle_55", "bought yahoo_auctions:y002: FUJIFILM X100V black scratches from kanto_resale"]}, "picks": [], "cart": null, "trail": ["recalled preferences for default: 4 past purchases, 1 rejected sellers", "source: fixtures: 0 listings for ['SARB033', 'seiko SARB033']", "found 0 listings", "ranker: offline ranking", "no candidate within budget"], "meta": {"live": false, "wiring": {"mode": "standalone-preview"}}}, "game boy micro": {"request": {"query": "Game Boy Micro", "max_total_usd": 250, "ship_to": "US-CA", "user_id": "default", "condition_min": null}, "preferences": {"user_id": "default", "sizes": {}, "condition_min": null, "rejected_sellers": ["camera_taro"], "past_purchases": ["mercari:m007", "mercari:m005", "mercari:m009", "yahoo_auctions:y002"], "notes": ["bought mercari:m007: genuine leather case LC-X100V black for X100V from parts_jp", "bought mercari:m005: FUJIFILM X100V black good condition with original box shutter count 8500 from fuji_fan_osaka", "bought mercari:m009: FUJIFILM X100V silver some scratches slight lens haze from cam_recycle_55", "bought yahoo_auctions:y002: FUJIFILM X100V black scratches from kanto_resale"]}, "picks": [{"listing": {"id": "other:hardoff-3006", "source": "other", "url": "https://netmall.hardoff.co.jp/product/3006/", "title_ja": "任天堂 ゲームボーイ 初代 箱説付き 動作確認済み", "title_en": "Nintendo Game Boy 初代 with box and manual tested working", "price_jpy": 12800, "condition": "good", "seller": "ホビーオフ 福岡店", "ships_abroad": false, "weight_kg": 0.6, "category": "electronics", "fields": {"tested": "working", "flaws": "scratches", "rank": "B", "marketplace": "Off Mall (Hard Off Net Mall)", "store_name": "ホビーオフ 福岡店", "hardoff_brand": "HOBBY OFF"}, "photos": []}, "cost": {"listing_id": "other:hardoff-3006", "lines": [{"label": "item price (JPY 12,800 @ 159.93)", "amount_usd": 80.04, "citation": {"source": "fixtures/rules.json#fx_jpy_per_usd", "as_of": "2026-11-13", "url": "https://www.federalreserve.gov/releases/h10/current/"}}, {"label": "Buyee service fee", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_service_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "Buyee standard plan", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_plan_fee_jpy.standard", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "payment fee", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#payment_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "domestic shipping (JP)", "amount_usd": 4.69, "citation": {"source": "fixtures/rules.json#domestic_shipping_jpy", "as_of": "2026-11-20", "url": "https://help.jp.mercari.com/guide/articles/136/"}}, {"label": "international shipping Japan Post EMS 0.80 kg (4-8 days)", "amount_usd": 29.64, "citation": {"source": "fixtures/rules.json#intl_shipping_us.ems", "as_of": "2026-11-20", "url": "https://www.post.japanpost.jp/send/oversea/charge/list-ems/all_en.html"}}, {"label": "US duty MFN default HTS - (de minimis suspended)", "amount_usd": 4.0, "citation": {"source": "fixtures/rules.json#us_duty_mfn_by_category.default", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/"}}, {"label": "US Japan 12.5% floor top-up (HTS 9903.05.49)", "amount_usd": 6.0, "citation": {"source": "fixtures/rules.json#us_japan_floor_rate", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/reststop/search?keyword=9903.05.49"}}], "fx_jpy_per_usd": 159.93, "blocked_reason": null, "total_usd": 130.63}, "score": 0.4866, "reason": "matches Game Boy; $131 landed, $119 under budget; condition good (no notable marks); HOBBY OFF store via Off Mall (ホビーオフ 福岡店), rank B; tested working. Watch out: not described as micro; flaws noted: scratches"}, {"listing": {"id": "other:hardoff-3004", "source": "other", "url": "https://netmall.hardoff.co.jp/product/3004/", "title_ja": "Nintendo 任天堂 初代 ゲームボーイ DMG-01 本体のみ ジャンク 通電確認のみ", "title_en": "Nintendo Nintendo 初代 Game Boy DMG-01 body only junk power-on checked only", "price_jpy": 1650, "condition": "junk", "seller": "ホビーオフ 町田店", "ships_abroad": false, "weight_kg": 0.4, "category": "electronics_junk", "fields": {"junk_risk": "repairable", "junk_reason": "通電確認のみ", "condition_source": "from title wording", "rank": "J", "returns": "none (junk rank J: no returns or warranty, even via Buyee)", "marketplace": "Off Mall (Hard Off Net Mall)", "store_name": "ホビーオフ 町田店", "hardoff_brand": "HOBBY OFF"}, "photos": []}, "cost": {"listing_id": "other:hardoff-3004", "lines": [{"label": "item price (JPY 1,650 @ 159.93)", "amount_usd": 10.32, "citation": {"source": "fixtures/rules.json#fx_jpy_per_usd", "as_of": "2026-11-13", "url": "https://www.federalreserve.gov/releases/h10/current/"}}, {"label": "Buyee service fee", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_service_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "Buyee standard plan", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_plan_fee_jpy.standard", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "payment fee", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#payment_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "domestic shipping (JP)", "amount_usd": 4.69, "citation": {"source": "fixtures/rules.json#domestic_shipping_jpy", "as_of": "2026-11-20", "url": "https://help.jp.mercari.com/guide/articles/136/"}}, {"label": "international shipping Japan Post EMS 0.60 kg (4-8 days)", "amount_usd": 26.14, "citation": {"source": "fixtures/rules.json#intl_shipping_us.ems", "as_of": "2026-11-20", "url": "https://www.post.japanpost.jp/send/oversea/charge/list-ems/all_en.html"}}, {"label": "US duty MFN default HTS - (de minimis suspended)", "amount_usd": 0.52, "citation": {"source": "fixtures/rules.json#us_duty_mfn_by_category.default", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/"}}, {"label": "US Japan 12.5% floor top-up (HTS 9903.05.49)", "amount_usd": 0.77, "citation": {"source": "fixtures/rules.json#us_japan_floor_rate", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/reststop/search?keyword=9903.05.49"}}], "fx_jpy_per_usd": 159.93, "blocked_reason": null, "total_usd": 48.7}, "score": 0.0708, "reason": "matches Game Boy; $49 landed, $201 under budget; condition junk / for parts; HOBBY OFF store via Off Mall (ホビーオフ 町田店), rank J. Watch out: not described as micro; sold as junk / for parts; no returns or warranty on junk, even via Buyee"}, {"listing": {"id": "other:hardoff-3005", "source": "other", "url": "https://netmall.hardoff.co.jp/product/3005/", "title_ja": "任天堂 ゲームボーイポケット ジャンク 通電不可", "title_en": "Nintendo Game Boy ポケット junk does not power on", "price_jpy": 880, "condition": "junk", "seller": "ホビーオフ 仙台店", "ships_abroad": false, "weight_kg": 0.3, "category": "electronics_junk", "fields": {"junk_risk": "parts only", "junk_reason": "通電不可、液漏れ、部品取り", "flaws": "battery corrosion", "condition_source": "from title wording", "rank": "J", "returns": "none (junk rank J: no returns or warranty, even via Buyee)", "marketplace": "Off Mall (Hard Off Net Mall)", "store_name": "ホビーオフ 仙台店", "hardoff_brand": "HOBBY OFF"}, "photos": []}, "cost": {"listing_id": "other:hardoff-3005", "lines": [{"label": "item price (JPY 880 @ 159.93)", "amount_usd": 5.5, "citation": {"source": "fixtures/rules.json#fx_jpy_per_usd", "as_of": "2026-11-13", "url": "https://www.federalreserve.gov/releases/h10/current/"}}, {"label": "Buyee service fee", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_service_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "Buyee standard plan", "amount_usd": 3.13, "citation": {"source": "fixtures/rules.json#buyee_plan_fee_jpy.standard", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "payment fee", "amount_usd": 0.0, "citation": {"source": "fixtures/rules.json#payment_fee_jpy", "as_of": "2026-11-20", "url": "https://buyee.jp/helpcenter/guide/fees"}}, {"label": "domestic shipping (JP)", "amount_usd": 4.69, "citation": {"source": "fixtures/rules.json#domestic_shipping_jpy", "as_of": "2026-11-20", "url": "https://help.jp.mercari.com/guide/articles/136/"}}, {"label": "international shipping Japan Post EMS 0.50 kg (4-8 days)", "amount_usd": 24.39, "citation": {"source": "fixtures/rules.json#intl_shipping_us.ems", "as_of": "2026-11-20", "url": "https://www.post.japanpost.jp/send/oversea/charge/list-ems/all_en.html"}}, {"label": "US duty MFN default HTS - (de minimis suspended)", "amount_usd": 0.28, "citation": {"source": "fixtures/rules.json#us_duty_mfn_by_category.default", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/"}}, {"label": "US Japan 12.5% floor top-up (HTS 9903.05.49)", "amount_usd": 0.41, "citation": {"source": "fixtures/rules.json#us_japan_floor_rate", "as_of": "2026-11-20", "url": "https://hts.usitc.gov/reststop/search?keyword=9903.05.49"}}], "fx_jpy_per_usd": 159.93, "blocked_reason": null, "total_usd": 41.53}, "score": -0.0449, "reason": "matches Game Boy; $42 landed, $208 under budget; condition junk / for parts; HOBBY OFF store via Off Mall (ホビーオフ 仙台店), rank J. Watch out: not described as micro; sold as junk / for parts; no returns or warranty on junk, even via Buyee; flaws noted: battery corrosion"}], "cart": {"status": "awaiting_approval", "listing_id": "other:hardoff-3006", "approval_token": "demo-token-001", "cart_url": "https://buyee.jp/cart#sim-8fab14c1", "detail": "[session 8fab14c13181eed2] cart filled on sim-buyee; nothing paid. approve(token) to place; 1 warning(s) in listing text", "session_id": "8fab14c13181eed2"}, "trail": ["recalled preferences for default: 4 past purchases, 1 rejected sellers", "source: fixtures: 3 listings for ['ゲームボーイ', 'micro ゲームボーイ']", "found 3 listings", "ranker: offline ranking", "pick other:hardoff-3006 $130.63 score=0.49: matches Game Boy; $131 landed, $119 under budget; condition good (no notable marks); HOBBY OFF store via Off Mall (ホビーオフ 福岡店), rank B; tested working. Watch out: not described as micro; flaws noted: scratches", "pick other:hardoff-3004 $48.7 score=0.07: matches Game Boy; $49 landed, $201 under budget; condition junk / for parts; HOBBY OFF store via Off Mall (ホビーオフ 町田店), rank J. Watch out: not described as micro; sold as junk / for parts; no returns or warranty on junk, even via Buyee", "pick other:hardoff-3005 $41.53 score=-0.04: matches Game Boy; $42 landed, $208 under budget; condition junk / for parts; HOBBY OFF store via Off Mall (ホビーオフ 仙台店), rank J. Watch out: not described as micro; sold as junk / for parts; no returns or warranty on junk, even via Buyee; flaws noted: battery corrosion", "cart awaiting_approval for other:hardoff-3006"], "meta": {"live": false, "wiring": {"mode": "standalone-preview"}}}};
   var DEFAULT_KEY = "fujifilm x100v";
   var origFetch = window.fetch;
   window.fetch = function(path, opts) {
@@ -491,14 +543,14 @@ a { color: inherit; text-decoration: none; }
       return new Promise(function(resolve){
         setTimeout(function(){
           resolve(new Response(JSON.stringify(data), {status:200, headers:{"Content-Type":"application/json"}}));
-        }, 420);
+        }, 650);
       });
     }
     if (path === "/api/approve") {
       return new Promise(function(resolve){
         setTimeout(function(){
           resolve(new Response(JSON.stringify({cart:{status:"placed", detail:"Approved"}, trail:["approval accepted"]}), {status:200, headers:{"Content-Type":"application/json"}}));
-        }, 240);
+        }, 260);
       });
     }
     return origFetch.apply(this, arguments);
@@ -1278,6 +1330,114 @@ a { color: inherit; text-decoration: none; }
   root.JSA.pages = { renderOrders: renderOrders, renderStore: renderStore, initConnect: initConnect, loadStores: loadStores };
 })(window);
 
+/* Module: Dia-style live agent plan checklist, rainbow working ring, elapsed timer, and notifications
+   Blended from origin/ui-mockup (web/mockup/agent.html) into real API pipeline. */
+(function (root) {
+  "use strict";
+
+  var STEPS = [
+    "Recall preferences",
+    "Search & translate JP",
+    "Landed cost (cited)",
+    "Rank matches",
+    "Fill cart & pause"
+  ];
+
+  function initAgent(onStop) {
+    var ui = root.JSA.ui;
+    var ring = ui.$("composer-ring");
+    var strip = ui.$("agent-plan");
+    var stepsEl = ui.$("plan-steps");
+    var dot = ui.$("plan-dot");
+    var elapsedEl = ui.$("plan-elapsed");
+    var stopBtn = ui.$("plan-stop");
+    var notifyToggle = ui.$("notify-toggle");
+    var timers = [], clock = null, startAt = 0, aborted = false;
+
+    function renderSteps(activeIdx) {
+      if (!stepsEl) return;
+      ui.clear(stepsEl);
+      STEPS.forEach(function (label, i) {
+        var cls = i < activeIdx ? "done" : (i === activeIdx ? "now" : "");
+        stepsEl.appendChild(ui.h("li", { class: cls },
+          ui.h("span", { class: "step-dot" }, i < activeIdx ? "\u2713" : String(i + 1)),
+          ui.h("span", null, label)));
+      });
+    }
+
+    function clearTimers() {
+      timers.forEach(clearTimeout);
+      timers = [];
+      clearInterval(clock);
+      clock = null;
+    }
+
+    function start() {
+      aborted = false;
+      clearTimers();
+      if (ring) ring.classList.add("working");
+      if (strip) strip.hidden = false;
+      if (dot) { dot.className = "live-dot live"; dot.textContent = "Live"; }
+      if (stopBtn) stopBtn.disabled = false;
+      startAt = Date.now();
+      if (elapsedEl) elapsedEl.textContent = "0s";
+      clock = setInterval(function () {
+        if (elapsedEl) elapsedEl.textContent = Math.round((Date.now() - startAt) / 1000) + "s";
+      }, 250);
+      renderSteps(0);
+      timers.push(setTimeout(function () { renderSteps(1); }, 110));
+      timers.push(setTimeout(function () { renderSteps(2); }, 230));
+      timers.push(setTimeout(function () { renderSteps(3); }, 340));
+    }
+
+    function finish(summaryMsg) {
+      clearTimers();
+      if (ring) ring.classList.remove("working");
+      renderSteps(STEPS.length);
+      if (dot) { dot.className = "live-dot paused"; dot.textContent = "Paused"; }
+      if (stopBtn) stopBtn.disabled = true;
+      if (summaryMsg) notify(summaryMsg);
+    }
+
+    function stop() {
+      aborted = true;
+      clearTimers();
+      if (ring) ring.classList.remove("working");
+      if (dot) { dot.className = "live-dot stopped"; dot.textContent = "Stopped"; }
+      if (stopBtn) stopBtn.disabled = true;
+      ui.toast("Stopped · nothing paid");
+      if (onStop) onStop();
+    }
+
+    function notify(msg) {
+      ui.toast(msg);
+      if (notifyToggle && notifyToggle.checked && document.hidden && "Notification" in window && Notification.permission === "granted") {
+        try { new Notification("Shopping Agent", { body: msg }); } catch (e) {}
+      }
+    }
+
+    if (stopBtn) stopBtn.addEventListener("click", stop);
+    if (notifyToggle) {
+      notifyToggle.addEventListener("change", function () {
+        if (notifyToggle.checked && "Notification" in window && Notification.permission === "default") {
+          Notification.requestPermission().catch(function () {});
+        }
+      });
+    }
+
+    return {
+      start: start,
+      finish: finish,
+      stop: stop,
+      notify: notify,
+      isAborted: function () { return aborted; }
+    };
+  }
+
+  root.JSA = root.JSA || {};
+  root.JSA.agent = { init: initAgent };
+})(window);
+
 /* Orchestrator: wires 6-page router, icons, menu, search, links, commerce, and secondary pages. */
 (function (root) {
   "use strict";
@@ -1371,6 +1531,7 @@ a { color: inherit; text-decoration: none; }
   }
 
   function show(result, stayOnPage) {
+    if (agentMod.isAborted()) return;
     state.result = result;
     state.cart = result.cart;
     state.usedToken = null;
@@ -1387,6 +1548,8 @@ a { color: inherit; text-decoration: none; }
     ui.$("results").hidden = false;
     renderAll();
     renderMeta(result.meta);
+    var count = (result.picks && result.picks.length) || 0;
+    agentMod.finish(count ? (count + " matches ready · nothing paid") : "No matches within budget");
     if (openItem) routerMod.go("item");
     else if (!stayOnPage) routerMod.go("shop");
   }
@@ -1406,7 +1569,8 @@ a { color: inherit; text-decoration: none; }
     ui.$("user-bubble").textContent = body.query + " · $" + body.budget;
     if (!stayOnPage) routerMod.go("shop");
     setBusy(true);
-    api("/api/run", body).then(function (res) { show(res, stayOnPage); }, function (e) { showError(e.message); }).then(function () { setBusy(false); });
+    agentMod.start();
+    api("/api/run", body).then(function (res) { show(res, stayOnPage); }, function (e) { agentMod.stop(); showError(e.message); }).then(function () { setBusy(false); });
   }
 
   function rejectSeller(seller) {
@@ -1416,7 +1580,8 @@ a { color: inherit; text-decoration: none; }
     body.seller = seller;
     routerMod.go("shop");
     setBusy(true);
-    api("/api/reject", body).then(function (res) { show(res, false); }, function (e) { showError(e.message); }).then(function () { setBusy(false); });
+    agentMod.start();
+    api("/api/reject", body).then(function (res) { show(res, false); }, function (e) { agentMod.stop(); showError(e.message); }).then(function () { setBusy(false); });
   }
 
   function approve(btn) {
@@ -1430,6 +1595,7 @@ a { color: inherit; text-decoration: none; }
       state.cart = r.cart;
       state.result.trail = state.result.trail.concat(r.trail || []);
       renderAll();
+      if (r.cart.status === "placed") agentMod.notify("Order placed");
     }, function (e) { showError(e.message); btn.disabled = false; });
   }
 
@@ -1454,6 +1620,7 @@ a { color: inherit; text-decoration: none; }
   }
 
   // Init modules
+  var agentMod = root.JSA.agent.init(function () { setBusy(false); });
   var menuMod = root.JSA.menu.init({});
   var routerMod = root.JSA.router.init(function (page) {
     menuMod.close();
