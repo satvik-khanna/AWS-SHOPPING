@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Japan Shopping Agent</title>
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <span class="mark" aria-hidden="true"></span>
+    <div>
+      <h1>Japan Shopping Agent</h1>
+      <p>Finds it in Japan. Shows the full landed cost. Never pays without you.</p>
+    </div>
+  </div>
+  <div class="mode" id="mode" hidden></div>
+</header>
+
+<main>
+  <section class="step" id="step-request" aria-labelledby="h-request">
+    <h2 id="h-request"><span class="n">1</span>Request</h2>
+    <form id="form" class="request" autocomplete="off">
+      <label class="f f-query">
+        <span>What are you looking for?</span>
+        <input id="query" name="query" type="text" value="Fujifilm X100V" maxlength="300" required>
+      </label>
+      <label class="f f-budget">
+        <span>Budget, landed (USD)</span>
+        <span class="money-in"><i>$</i><input id="budget" name="budget" type="number" value="900" min="1" step="1" required></span>
+      </label>
+      <label class="f f-ship">
+        <span>Ship to</span>
+        <input id="ship_to" name="ship_to" type="text" value="US-CA" maxlength="40" required>
+      </label>
+      <label class="f f-cond">
+        <span>Condition at least</span>
+        <select id="condition_min" name="condition_min">
+          <option value="">Any</option>
+          <option value="fair">Fair</option>
+          <option value="good">Good</option>
+          <option value="like_new">Like new</option>
+          <option value="new">New</option>
+        </select>
+      </label>
+      <button id="go" type="submit" class="btn btn-primary">Find and fill cart</button>
+    </form>
+    <p class="error" id="error" role="alert" hidden></p>
+  </section>
+
+  <div id="empty" class="empty">
+    <p class="empty-lead">Ask for something that is only sold in Japan.</p>
+    <ol class="flow">
+      <li>Recall your preferences</li>
+      <li>Search and translate listings</li>
+      <li>Work out the landed cost, every line cited</li>
+      <li>Fill the cart and stop for your approval</li>
+    </ol>
+  </div>
+
+  <div id="results" hidden>
+    <section class="step" aria-labelledby="h-prefs">
+      <h2 id="h-prefs"><span class="n">2</span>Recalled preferences</h2>
+      <div id="prefs" class="prefs"></div>
+    </section>
+
+    <section class="step" aria-labelledby="h-picks">
+      <h2 id="h-picks"><span class="n">3</span>Ranked picks and landed cost <small id="picks-sub"></small></h2>
+      <div id="picks" class="picks"></div>
+      <div id="skipped" class="skipped" hidden></div>
+    </section>
+
+    <section class="step step-gate" aria-labelledby="h-gate">
+      <h2 id="h-gate"><span class="n">4</span>Approval gate</h2>
+    </section>
+    <div id="gate" class="gate" aria-live="polite"></div>
+
+    <section class="step" aria-labelledby="h-trail">
+      <h2 id="h-trail"><span class="n">5</span>Reasoning trail</h2>
+      <ol id="trail" class="trail"></ol>
+    </section>
+  </div>
+</main>
+
+<footer class="foot" id="foot"></footer>
+<script src="/static/app.js"></script>
+</body>
+</html>
