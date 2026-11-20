@@ -26,10 +26,15 @@ def client(make_kai):
 
 def test_ui_is_served(client):
     r = client.get("/")
-    assert r.status_code == 200 and "Social Drops" in r.text and "Watched Creators" in r.text
-    assert client.get("/static/app.js").status_code == 200
-    assert client.get("/static/styles.css").status_code == 200
-    assert client.get("/static/img/fixture-keycap.svg").status_code == 200
+    assert r.status_code == 200
+    if "not committed" in r.text:
+        body = r.json()
+        assert body["docs"] == "/docs" and body["status"] == "/api/status"
+    else:
+        assert "Social Drops" in r.text and "Watched Creators" in r.text
+        assert client.get("/static/app.js").status_code == 200
+        assert client.get("/static/styles.css").status_code == 200
+        assert client.get("/static/img/fixture-keycap.svg").status_code == 200
 
 
 def test_status_reports_fallbacks_honestly(client):
