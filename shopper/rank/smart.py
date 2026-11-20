@@ -22,7 +22,7 @@ CONDITION_ORDER = ["junk", "fair", "good", "like_new", "new"]
 CONDITION_WORDS = {"new": "new/unused", "like_new": "like new", "good": "good (no notable marks)",
                    "fair": "fair (some wear)", "junk": "junk / for parts"}
 W_REL, W_VALUE, W_COND = 0.45, 0.30, 0.15
-MISSING_PENALTY = 0.08            # per asked-for brand / name / term the listing does not mention
+MISSING_PENALTY = 0.10            # per asked-for brand / name / term the listing does not mention
 _ACCESSORY_ASK = re.compile(r"case|strap|hood|filter|adapter|charger|battery|grip|cap|lens cap|"
                             r"box|parts|ケース|ストラップ|フード|フィルター|バッテリー|箱")
 

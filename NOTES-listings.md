@@ -14,5 +14,5 @@
 ## Demo queries (offline, placeholder cost rules)
 
 - `"limited-edition risograph artbook or acrylic stand from Japanese indie artist on BOOTH/BASE under $80, shipped to US-CA"` --budget 80 -> BOOTH / BASE goods, reason says the shop does not ship abroad and the proxy forwards.
-- `"Kapital or vintage Champion Reverse Weave sweatshirt, size L, under $180, shipped to US-CA"` --budget 180 -> #1 90s Champion RW tagged L (m043); 80s RW m044 dropped (over budget after 16% duty, once the cost pane ships that rate); wrong sizes sink with "tagged M, you wear L".
+- `"Kapital or vintage Champion Reverse Weave sweatshirt, size L, under $180, shipped to US-CA"` --budget 180 -> #1 90s Champion RW tagged L (m043); 80s RW m044 and the Kapital size 3 m041 are dropped as over budget once duty + EMS are added with the cost pane rules; wrong sizes sink with "tagged M, you wear L".
 - `"junk Sony Walkman or Game Boy from Hard Off Net Mall under $60, shipped to US-CA"` --budget 60 -> power-on-checked junk first, "parts only" (液漏れ / 通電不可) last, every junk pick says no returns.
