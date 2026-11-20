@@ -55,3 +55,22 @@ python3 agent-chat/relay.py inbox             # read
 python3 agent-chat/relay.py listen            # stream new messages
 ```
 Plain HTTP: do not send secrets over venue Wi-Fi.
+
+## Code layout (base framework)
+
+Offline by default (no paid / live calls unless `SHOPPER_LIVE=1`). Python 3.10+, stdlib only.
+
+```
+python3 -m shopper "Fujifilm X100V" --budget 900 --ship-to US-CA   # demo flow, stops for approval
+python3 -m unittest discover -s tests -t .                         # tests
+```
+
+| Module | Interface (`shopper/interfaces.py`) | Base impl | Real target |
+|---|---|---|---|
+| `shopper/listings` | `ListingSource.search` | fixtures/listings.json | Mercari / Yahoo Auctions + Superlinked extraction |
+| `shopper/memory` | `MemoryStore` | local JSON | Cognee |
+| `shopper/cost` | `CostEngine.landed_cost` (every line cited) | fixtures/rules.json (PLACEHOLDER numbers) | Senso + researched rules |
+| `shopper/rank` | `Ranker.rank` | cheapest + condition | Superlinked rerank + Claude explanation |
+| `shopper/checkout` | `Checkout.fill_cart` / `approve` | dry run + single-use approval token | Buyee via Browserbase, Firedrill runs |
+
+Shared types are in `shopper/models.py`, the flow is in `shopper/pipeline.py`, and wiring is in `shopper/app.py`. Each module only touches its own folder, plus a line in `app.py` to swap in its implementation.

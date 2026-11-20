@@ -1,0 +1,18 @@
+[
+  {"id": "mercari:m001", "source": "mercari", "url": "https://jp.mercari.com/item/m001",
+   "title_ja": "富士フイルム X100V シルバー 美品", "title_en": "Fujifilm X100V silver, excellent",
+   "price_jpy": 118000, "condition": "like_new", "seller": "camera_taro", "ships_abroad": false,
+   "weight_kg": 0.8, "category": "camera", "fields": {"shutter_count": "3200"}},
+  {"id": "yahoo_auctions:y002", "source": "yahoo_auctions", "url": "https://page.auctions.yahoo.co.jp/jp/auction/y002",
+   "title_ja": "FUJIFILM X100V ブラック 傷あり", "title_en": "Fujifilm X100V black, scratches",
+   "price_jpy": 98000, "condition": "fair", "seller": "kanto_resale", "ships_abroad": false,
+   "weight_kg": 0.8, "category": "camera", "fields": {}},
+  {"id": "mercari:m003", "source": "mercari", "url": "https://jp.mercari.com/item/m003",
+   "title_ja": "富士フイルム X100V 新品未使用", "title_en": "Fujifilm X100V new, unused",
+   "price_jpy": 210000, "condition": "new", "seller": "shop_new", "ships_abroad": true,
+   "weight_kg": 0.9, "category": "camera", "fields": {}},
+  {"id": "mercari:m004", "source": "mercari", "url": "https://jp.mercari.com/item/m004",
+   "title_ja": "X100V 用 予備バッテリー 単品", "title_en": "Spare battery for Fujifilm X100V",
+   "price_jpy": 3000, "condition": "good", "seller": "parts_jp", "ships_abroad": false,
+   "weight_kg": 0.1, "category": "battery_loose", "fields": {}}
+]

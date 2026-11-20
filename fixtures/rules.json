@@ -1,0 +1,10 @@
+{
+  "_note": "PLACEHOLDER values for the offline base. The cost module must replace each with a researched value, real as_of and source url.",
+  "fx_jpy_per_usd":          {"value": 150.0, "as_of": "PLACEHOLDER", "url": null},
+  "proxy_service_fee_jpy":   {"value": 500,   "as_of": "PLACEHOLDER", "url": null},
+  "domestic_shipping_jpy":   {"value": 800,   "as_of": "PLACEHOLDER", "url": null},
+  "intl_shipping_jpy_per_kg":{"value": 3000,  "as_of": "PLACEHOLDER", "url": null},
+  "default_weight_kg":       {"value": 1.0,   "as_of": "PLACEHOLDER", "url": null},
+  "duty_rate_by_category":   {"value": {"camera": 0.0, "default": 0.05}, "as_of": "PLACEHOLDER", "url": null},
+  "banned_categories":       {"value": ["battery_loose", "knife"], "as_of": "PLACEHOLDER", "url": null}
+}
