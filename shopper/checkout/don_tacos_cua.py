@@ -43,13 +43,16 @@ _NEVER_TYPE = re.compile(r"pass|card|cvv|cvc|security|有効期限|カード番�
 
 
 def ax_path() -> str | None:
-    """Resolve `dt-ax`: $DT_AX, then `dt-ax` on PATH, then ~/don-tacos/mac/build/dt-ax."""
+    """Resolve `dt-ax`: $DT_AX, then PATH, then don-tacos's install dir, then ~/don-tacos/mac/build/dt-ax."""
     env = os.environ.get("DT_AX")
     if env:
         return env if os.path.isfile(env) and os.access(env, os.X_OK) else None
     on_path = shutil.which("dt-ax")
     if on_path:
         return on_path
+    installed = Path.home() / "Library" / "Application Support" / "don-tacos" / "dt-ax"  # don-tacos `mac/build.sh install`
+    if installed.is_file() and os.access(installed, os.X_OK):
+        return str(installed)
     p = Path.home() / "don-tacos" / "mac" / "build" / "dt-ax"
     return str(p) if p.is_file() and os.access(p, os.X_OK) else None
 
