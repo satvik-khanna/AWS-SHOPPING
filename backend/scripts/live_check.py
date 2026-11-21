@@ -92,7 +92,8 @@ async def main() -> int:
         line("Cognee", "NOT ATTEMPTED", k.cognee.state.to_json()["detail"])
 
     if k.llm.available:
-        out = await k.llm.complete_json("Reply with a JSON object.", 'Return {"ok": true}', max_tokens=20, purpose="live_check")
+        out = await k.llm.complete_json('Translate Japanese product text to English. Reply as JSON {"en": string}.',
+                                        "木製キーキャップ マット仕上げ", max_tokens=200, purpose="live_check")
         line("LLM", "LIVE OK" if out else "FAILED", str(out or k.llm.last_error))
     else:
         line("LLM", "NOT ATTEMPTED", "no credentials")

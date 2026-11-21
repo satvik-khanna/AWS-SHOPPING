@@ -53,6 +53,7 @@ class Settings:
     openai_base_url: str = "https://api.openai.com/v1"
     anthropic_api_key: str | None = None
     llm_model: str | None = None
+    llm_reasoning_effort: str | None = None  # e.g. "none" for local thinking models served by Ollama
     llm_input_usd_per_mtok: float | None = None
     llm_output_usd_per_mtok: float | None = None
 
@@ -136,6 +137,7 @@ class Settings:
             openai_base_url=(_s(env, "OPENAI_BASE_URL") or d.openai_base_url).rstrip("/"),
             anthropic_api_key=_s(env, "ANTHROPIC_API_KEY"),
             llm_model=_s(env, "LLM_MODEL"),
+            llm_reasoning_effort=_s(env, "LLM_REASONING_EFFORT"),
             llm_input_usd_per_mtok=_f(env, "LLM_INPUT_USD_PER_MTOK", -1) if _s(env, "LLM_INPUT_USD_PER_MTOK") else None,
             llm_output_usd_per_mtok=_f(env, "LLM_OUTPUT_USD_PER_MTOK", -1) if _s(env, "LLM_OUTPUT_USD_PER_MTOK") else None,
             sie_api_key=_s(env, "SIE_API_KEY"),

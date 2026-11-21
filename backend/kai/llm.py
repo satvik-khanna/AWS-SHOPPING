@@ -94,6 +94,8 @@ class LLMClient:
             "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}],
             "response_format": {"type": "json_object"},
         }
+        if self.settings.llm_reasoning_effort:
+            body["reasoning_effort"] = self.settings.llm_reasoning_effort
         r = await client.post(url, headers=headers, json=body)
         if r.status_code == 400:
             # Some OpenAI-compatible gateways reject response_format; retry once without it.
